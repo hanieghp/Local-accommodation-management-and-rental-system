@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پروفایل کاربری | کُجاجا</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="style.css" />
+    
+    <style>
+        .profile-container {
+            background: #f8f9fa;
+            min-height: 100vh;
+            padding-top: 100px;
+        }
+        
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, var(--brand), var(--brand2));
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 5px solid rgba(255,255,255,0.3);
+            margin-bottom: 20px;
+            object-fit: cover;
+        }
+        
+        .profile-tabs {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .nav-tabs .nav-link {
+            border: none;
+            border-radius: 0;
+            padding: 20px 30px;
+            font-weight: 600;
+            color: #6b7280;
+            transition: all 0.3s;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: var(--brand);
+            border-bottom: 3px solid var(--brand);
+            background: transparent;
+        }
+        
+        .tab-content {
+            padding: 30px;
+        }
+        
+        .form-section {
+            margin-bottom: 40px;
+        }
+        
+        .form-section h5 {
+            color: #374151;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .reservation-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        
+        .reservation-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-confirmed {
+            background: #d1fae5;
+            color: #047857;
+        }
+        
+        .status-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        
+        .status-cancelled {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .property-mini {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .property-mini img {
+            width: 80px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        
+        .btn-edit {
+            background: linear-gradient(135deg, var(--brand), var(--brand2));
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(24,169,153,0.3);
+            color: white;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-white border-bottom fixed-top">
+        <nav class="navbar navbar-expand-lg container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="homePage.html">
+                <img src="img.png" height="50" width="50">
+                <span class="fw-bold">کُجاجا</span>
+            </a>
+            <div class="d-flex gap-2">
+                <a class="btn btn-outline-secondary" href="properties.html">اقامتگاه‌ها</a>
+                <a class="btn btn-outline-secondary" href="loginup.html">خروج</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="profile-container">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <!-- Profile Header -->
+                    <div class="profile-card">
+                        <div class="profile-header">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="پروفایل" class="profile-avatar">
+                            <h3 class="mb-2">امیرعلی احمدی</h3>
+                            <p class="mb-0">عضو از آذر ۱۴۰۳</p>
+                        </div>
+                        
+                        <!-- Tabs -->
+                        <ul class="nav nav-tabs profile-tabs" id="profileTabs">
+                            <li class="nav-item">
+                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#personal">اطلاعات شخصی</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#reservations">تاریخچه رزروها</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#hosting">میزبانی من</button>
+                            </li>
+                        </ul>
+                        
+                        <!-- Tab Content -->
+                        <div class="tab-content">
+                            <!-- Personal Info Tab -->
+                            <div class="tab-pane fade show active" id="personal">
+                                <div class="form-section">
+                                    <h5>🏷️ اطلاعات اصلی</h5>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">نام</label>
+                                            <input type="text" class="form-control" value="امیرعلی">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">نام خانوادگی</label>
+                                            <input type="text" class="form-control" value="احمدی">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">ایمیل</label>
+                                            <input type="email" class="form-control" value="amir@example.com">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">شماره موبایل</label>
+                                            <input type="tel" class="form-control" value="۰۹۱۲۳۴۵۶۷۸۹">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-section">
+                                    <h5>🏠 اطلاعات آدرس</h5>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">شهر</label>
+                                            <input type="text" class="form-control" value="تهران">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">استان</label>
+                                            <input type="text" class="form-control" value="تهران">
+                                        </div>
+                                        <div class="col-12 mb-3">
+                                            <label class="form-label">آدرس کامل</label>
+                                            <textarea class="form-control" rows="3">تهران، سعادت‌آباد، خیابان ...</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button class="btn btn-edit">💾 ذخیره تغییرات</button>
+                            </div>
+                            
+                            <!-- Reservations Tab -->
+                            <div class="tab-pane fade" id="reservations">
+                                <div class="row mb-4">
+                                    <div class="col-md-4">
+                                        <div class="stats-card">
+                                            <div class="stats-number">۱۲</div>
+                                            <div>کل رزروها</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="stats-card" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                                            <div class="stats-number">۸</div>
+                                            <div>سفرهای موفق</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="stats-card" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
+                                            <div class="stats-number">۲</div>
+                                            <div>رزروهای فعال</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="reservation-card">
+                                    <div class="property-mini">
+                                        <img src="img_7.png" alt="اقامتگاه">
+                                        <div>
+                                            <h6 class="mb-1">آپارتمان ۱ خوابه مدرن</h6>
+                                            <small class="text-muted">تهران، سعادت‌آباد</small>
+                                        </div>
+                                        <div class="ms-auto">
+                                            <span class="status-badge status-confirmed">تأیید شده</span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <small class="text-muted">تاریخ ورود</small>
+                                            <div class="fw-bold">۱۵ دی ۱۴۰۳</div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <small class="text-muted">تاریخ خروج</small>
+                                            <div class="fw-bold">۱۸ دی ۱۴۰۳</div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <small class="text-muted">تعداد نفرات</small>
+                                            <div class="fw-bold">۲ نفر</div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <small class="text-muted">کل هزینه</small>
+                                            <div class="fw-bold text-success">۴,۳۵۰,۰۰۰ تومان</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="reservation-card">
+                                    <div class="property-mini">
+                                        <img src="img_10.png" alt="اقامتگاه">
+                                        <div>
+                                            <h6 class="mb-1">ویلا لوکس ساحلی</h6>
+                                            <small class="text-muted">رامسر، ساحلی</small>
+                                        </div>
+                                        <div class="ms-auto">
+                                            <span class="status-badge status-pending">در انتظار تأیید</span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <small class="text-muted">تاریخ ورود</small>
+                                            <div class="fw-bold">۲۵ دی ۱۴۰۳</div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <small class="text-muted">تاریخ خروج</small>
+                                            <div class="fw-bold">۲۸ دی ۱۴۰۳</div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <small class="text-muted">تعداد نفرات</small>
+                                            <div class="fw-bold">۶ نفر</div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <small class="text-muted">کل هزینه</small>
+                                            <div class="fw-bold text-warning">۹,۶۰۰,۰۰۰ تومان</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Hosting Tab -->
+                            <div class="tab-pane fade" id="hosting">
+                                <div id="hostingContent">
+                                    <!-- Content will be loaded by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            const userName = localStorage.getItem('userName');
+            
+            if (!isLoggedIn) {
+                alert('لطفاً ابتدا وارد حساب کاربری خود شوید');
+                window.location.href = 'loginup.html';
+                return;
+            }
+            
+            // Update profile info
+            if (userName) {
+                document.querySelector('.profile-header h3').textContent = userName;
+            }
+            
+            // Load and display reservations
+            loadReservations();
+            
+            // Load hosting properties
+            loadHostingProperties();
+            
+            // Add form submission handlers
+            addFormHandlers();
+        });
+        
+        function loadReservations() {
+            const reservations = JSON.parse(localStorage.getItem('userReservations') || '[]');
+            const reservationsContainer = document.querySelector('#reservations');
+            
+            // Update stats
+            const totalReservations = reservations.length;
+            const completedReservations = reservations.filter(r => r.status === 'confirmed').length;
+            const activeReservations = reservations.filter(r => r.status === 'pending' || r.status === 'confirmed').length;
+            
+            document.querySelector('.stats-card:first-child .stats-number').textContent = totalReservations;
+            document.querySelector('.stats-card:nth-child(2) .stats-number').textContent = completedReservations;
+            document.querySelector('.stats-card:nth-child(3) .stats-number').textContent = activeReservations;
+            
+            // Clear existing reservations
+            const existingCards = reservationsContainer.querySelectorAll('.reservation-card');
+            existingCards.forEach(card => card.remove());
+            
+            if (reservations.length === 0) {
+                const noReservations = document.createElement('div');
+                noReservations.className = 'text-center py-5';
+                noReservations.innerHTML = `
+                    <div style="font-size: 4rem; margin-bottom: 20px;">📅</div>
+                    <h4 class="mb-3">هنوز رزروی نداشته‌اید</h4>
+                    <p class="text-muted mb-4">اولین سفر خود را برنامه‌ریزی کنید</p>
+                    <a href="properties.html" class="btn btn-edit">🔍 جستجوی اقامتگاه</a>
+                `;
+                reservationsContainer.appendChild(noReservations);
+                return;
+            }
+            
+            // Display reservations
+            reservations.reverse().forEach(reservation => {
+                const reservationCard = createReservationCard(reservation);
+                reservationsContainer.appendChild(reservationCard);
+            });
+        }
+        
+        function createReservationCard(reservation) {
+            const card = document.createElement('div');
+            card.className = 'reservation-card';
+            
+            const statusClass = {
+                'pending': 'status-pending',
+                'confirmed': 'status-confirmed',
+                'cancelled': 'status-cancelled'
+            }[reservation.status] || 'status-pending';
+            
+            const statusText = {
+                'pending': 'در انتظار تأیید',
+                'confirmed': 'تأیید شده',
+                'cancelled': 'لغو شده'
+            }[reservation.status] || 'در انتظار تأیید';
+            
+            card.innerHTML = `
+                <div class="property-mini">
+                    <img src="img_7.png" alt="اقامتگاه">
+                    <div>
+                        <h6 class="mb-1">${reservation.propertyTitle}</h6>
+                        <small class="text-muted">کد رزرو: ${reservation.id}</small>
+                    </div>
+                    <div class="ms-auto">
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <small class="text-muted">تاریخ ورود</small>
+                        <div class="fw-bold">${formatDate(reservation.checkin)}</div>
+                    </div>
+                    <div class="col-md-3">
+                        <small class="text-muted">تاریخ خروج</small>
+                        <div class="fw-bold">${formatDate(reservation.checkout)}</div>
+                    </div>
+                    <div class="col-md-3">
+                        <small class="text-muted">تعداد نفرات</small>
+                        <div class="fw-bold">${reservation.guests} نفر</div>
+                    </div>
+                    <div class="col-md-3">
+                        <small class="text-muted">کل هزینه</small>
+                        <div class="fw-bold text-success">${reservation.total.toLocaleString()} تومان</div>
+                    </div>
+                </div>
+                <div class="mt-3 d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewReservationDetails('${reservation.id}')">
+                        جزئیات
+                    </button>
+                    ${reservation.status === 'pending' ? 
+                        `<button class="btn btn-sm btn-outline-danger" onclick="cancelReservation('${reservation.id}')">
+                            لغو رزرو
+                        </button>` : ''}
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const persianMonths = [
+                'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
+                'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'
+            ];
+            return `${date.getDate()} ${persianMonths[date.getMonth()]} ${date.getFullYear()}`;
+        }
+        
+        function viewReservationDetails(reservationId) {
+            window.location.href = `property-detail.html?id=1&reservation=${reservationId}`;
+        }
+        
+        function cancelReservation(reservationId) {
+            if (confirm('آیا مطمئن هستید که می‌خواهید این رزرو را لغو کنید؟')) {
+                const reservations = JSON.parse(localStorage.getItem('userReservations') || '[]');
+                const reservationIndex = reservations.findIndex(r => r.id.toString() === reservationId);
+                
+                if (reservationIndex !== -1) {
+                    reservations[reservationIndex].status = 'cancelled';
+                    localStorage.setItem('userReservations', JSON.stringify(reservations));
+                    
+                    alert('رزرو شما با موفقیت لغو شد');
+                    loadReservations(); // Reload to show updated status
+                }
+            }
+        }
+        
+        function addFormHandlers() {
+            // Personal info form
+            const personalForm = document.querySelector('#personal form, #personal').closest('form') || 
+                               document.querySelector('#personal').querySelector('button').closest('div').parentElement;
+            
+            if (personalForm) {
+                const saveButton = document.querySelector('#personal .btn-edit');
+                if (saveButton) {
+                    saveButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        // Get form data
+                        const firstName = document.querySelector('#personal input[value="امیرعلی"]').value;
+                        const lastName = document.querySelector('#personal input[value="احمدی"]').value;
+                        const email = document.querySelector('#personal input[value="amir@example.com"]').value;
+                        const phone = document.querySelector('#personal input[value="۰۹۱۲۳۴۵۶۷۸۹"]').value;
+                        
+                        // Save to localStorage
+                        const userProfile = {
+                            firstName,
+                            lastName,
+                            email,
+                            phone,
+                            city: document.querySelector('#personal input[value="تهران"]').value,
+                            province: document.querySelector('#personal input[value="تهران"]').value,
+                            address: document.querySelector('#personal textarea').value
+                        };
+                        
+                        localStorage.setItem('userProfile', JSON.stringify(userProfile));
+                        localStorage.setItem('userName', `${firstName} ${lastName}`);
+                        
+                        alert('✅ اطلاعات شما با موفقیت ذخیره شد');
+                        
+                        // Update profile header
+                        document.querySelector('.profile-header h3').textContent = `${firstName} ${lastName}`;
+                    });
+                }
+            }
+        }
+        
+        // Load saved profile data
+        function loadProfileData() {
+            const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+            
+            if (userProfile.firstName) {
+                document.querySelector('#personal input[value="امیرعلی"]').value = userProfile.firstName;
+                document.querySelector('#personal input[value="احمدی"]').value = userProfile.lastName;
+                document.querySelector('#personal input[value="amir@example.com"]').value = userProfile.email;
+                document.querySelector('#personal input[value="۰۹۱۲۳۴۵۶۷۸۹"]').value = userProfile.phone;
+            }
+        }
+        
+        function loadHostingProperties() {
+            const userProperties = JSON.parse(localStorage.getItem('userProperties') || '[]');
+            const hostingContainer = document.getElementById('hostingContent');
+            
+            if (userProperties.length === 0) {
+                hostingContainer.innerHTML = `
+                    <div class="text-center py-5">
+                        <div style="font-size: 4rem; margin-bottom: 20px;">🏠</div>
+                        <h4 class="mb-3">هنوز میزبان نشده‌اید</h4>
+                        <p class="text-muted mb-4">اقامتگاه رویایی خود را ثبت کنید و از درآمد اضافی لذت ببرید</p>
+                        <button class="btn btn-edit" onclick="window.location.href='add-property.html'">🎯 میزبان شوید</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Show properties management interface
+            let hostingHTML = `
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5>🏠 اقامتگاه‌های من (${userProperties.length})</h5>
+                    <button class="btn btn-edit" onclick="window.location.href='add-property.html'">➕ افزودن اقامتگاه</button>
+                </div>
+                <div class="row">
+            `;
+            
+            userProperties.forEach(property => {
+                const statusBadge = {
+                    'pending': '<span class="status-badge status-pending">در انتظار تأیید</span>',
+                    'approved': '<span class="status-badge status-confirmed">تأیید شده</span>',
+                    'rejected': '<span class="status-badge status-cancelled">رد شده</span>'
+                }[property.status] || '<span class="status-badge status-pending">در انتظار تأیید</span>';
+                
+                hostingHTML += `
+                    <div class="col-md-6 mb-4">
+                        <div class="reservation-card">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h6 class="mb-1">${property.name}</h6>
+                                    <small class="text-muted">${property.type} • ${property.city}</small>
+                                </div>
+                                ${statusBadge}
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <small class="text-muted">ظرفیت</small>
+                                    <div class="fw-bold">${property.capacity}</div>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">قیمت شب</small>
+                                    <div class="fw-bold text-success">${parseInt(property.price).toLocaleString()} تومان</div>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary" onclick="editProperty('${property.id}')">
+                                    ✏️ ویرایش
+                                </button>
+                                <button class="btn btn-sm btn-outline-success" onclick="viewPropertyStats('${property.id}')">
+                                    📊 آمار
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteProperty('${property.id}')">
+                                    🗑️ حذف
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            hostingHTML += '</div>';
+            hostingContainer.innerHTML = hostingHTML;
+        }
+        
+        function editProperty(propertyId) {
+            alert('امکان ویرایش اقامتگاه در نسخه آینده اضافه خواهد شد');
+        }
+        
+        function viewPropertyStats(propertyId) {
+            const userProperties = JSON.parse(localStorage.getItem('userProperties') || '[]');
+            const property = userProperties.find(p => p.id.toString() === propertyId);
+            
+            if (property) {
+                alert(`📊 آمار اقامتگاه "${property.name}":\n\n• وضعیت: ${property.status === 'pending' ? 'در انتظار تأیید' : property.status}\n• تاریخ ثبت: ${formatDate(property.dateAdded)}\n• بازدید: ${Math.floor(Math.random() * 100) + 10}\n• علاقه‌مندی: ${Math.floor(Math.random() * 20) + 5}`);
+            }
+        }
+        
+        function deleteProperty(propertyId) {
+            if (confirm('آیا مطمئن هستید که می‌خواهید این اقامتگاه را حذف کنید؟')) {
+                let userProperties = JSON.parse(localStorage.getItem('userProperties') || '[]');
+                userProperties = userProperties.filter(p => p.id.toString() !== propertyId);
+                localStorage.setItem('userProperties', JSON.stringify(userProperties));
+                
+                alert('✅ اقامتگاه با موفقیت حذف شد');
+                loadHostingProperties(); // Reload the properties
+            }
+        }
+        
+        // Initialize profile data loading
+        setTimeout(loadProfileData, 100);
+    </script>
+</body>
+</html>
