@@ -12,7 +12,7 @@ body{background:#f8f9fa}
 .shadow-soft{box-shadow:0 10px 30px rgba(0,0,0,.08)}
 
 .hero{
-    min-height:88vh;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;color:#111;background:url('img_2.png') center/cover fixed;overflow:hidden;
+    min-height:88vh;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;color:#111;background:url('../images/img_2.png') center/cover fixed;overflow:hidden;
     clip-path:ellipse(85% 100% at 50% 0%);
 }
 

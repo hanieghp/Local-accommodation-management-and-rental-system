@@ -9,7 +9,6 @@
 " rel="stylesheet"/>
 
     <link rel="stylesheet" href="assets/css/style.css" />
-    <script src="assets/js/utils.js"></script>
 </head>
 <body class="body">
 
@@ -30,7 +29,7 @@
             </ul>
             <div class="d-flex gap-2">
                 <a class="btn btn-outline-secondary" href="pages/loginup.html">ورود / ثبت‌نام</a>
-                <a class="btn1 brand-grad border-0 m-6 p-2" href="add-property.html">میزبان شوید</a>
+                <a class="btn1 brand-grad border-0 m-6 p-2" href="pages/add-property.html">میزبان شوید</a>
             </div>
         </div>
     </nav>
@@ -64,9 +63,9 @@
                 <div class="k-curtain"></div>
                 <div class="k-panel">
                     <ul>
-                        <li><a href="properties.html?city=mashhad&type=suite">اجاره سوئیت مشهد</a></li>
-                        <li><a href="properties.html?city=mashhad&area=shandiz">ویلا شاندیز</a></li>
-                        <li><a href="properties.html?city=gonabad">اجاره اقامتگاه در گناباد</a></li>
+                        <li><a href="pages/properties.html?city=mashhad&type=suite">اجاره سوئیت مشهد</a></li>
+                        <li><a href="pages/properties.html?city=mashhad&area=shandiz">ویلا شاندیز</a></li>
+                        <li><a href="pages/properties.html?city=gonabad">اجاره اقامتگاه در گناباد</a></li>
                     </ul>
                 </div>
                 <div class="k-arrow"></div>
@@ -78,9 +77,9 @@
                 <div class="k-curtain"></div>
                 <div class="k-panel">
                     <ul>
-                        <li><a href="properties.html?city=karaj&type=villa">اجاره ویلا در کرج</a></li>
-                        <li><a href="properties.html?city=fasham&type=villa">اجاره ویلا در فشم</a></li>
-                        <li><a href="properties.html?city=damavand&type=villa">اجاره ویلا در دماوند</a></li>
+                        <li><a href="pages/properties.html?city=karaj&type=villa">اجاره ویلا در کرج</a></li>
+                        <li><a href="pages/properties.html?city=fasham&type=villa">اجاره ویلا در فشم</a></li>
+                        <li><a href="pages/properties.html?city=damavand&type=villa">اجاره ویلا در دماوند</a></li>
                     </ul>
                 </div>
                 <div class="k-arrow"></div>
@@ -92,9 +91,9 @@
                 <div class="k-curtain"></div>
                 <div class="k-panel">
                     <ul>
-                        <li><a href="properties.html?city=kish&type=villa&feature=beach">ویلا ساحلی</a></li>
-                        <li><a href="properties.html?city=kish&type=suite&feature=beach">سوئیت نزدیک دریا</a></li>
-                        <li><a href="properties.html?city=kish&type=apartment">هتل آپارتمان</a></li>
+                        <li><a href="pages/properties.html?city=kish&type=villa&feature=beach">ویلا ساحلی</a></li>
+                        <li><a href="pages/properties.html?city=kish&type=suite&feature=beach">سوئیت نزدیک دریا</a></li>
+                        <li><a href="pages/properties.html?city=kish&type=apartment">هتل آپارتمان</a></li>
                     </ul>
                 </div>
                 <div class="k-arrow"></div>
@@ -107,9 +106,9 @@
                 <div class="k-curtain"></div>
                 <div class="k-panel">
                     <ul>
-                        <li><a href="properties.html?region=north&type=villa&feature=forest">ویلا جنگلی</a></li>
-                        <li><a href="properties.html?region=north&type=cabin">کلبه چوبی</a></li>
-                        <li><a href="properties.html?region=north&type=suite&feature=beach">سوئیت ساحلی</a></li>
+                        <li><a href="pages/properties.html?region=north&type=villa&feature=forest">ویلا جنگلی</a></li>
+                        <li><a href="pages/properties.html?region=north&type=cabin">کلبه چوبی</a></li>
+                        <li><a href="pages/properties.html?region=north&type=suite&feature=beach">سوئیت ساحلی</a></li>
                     </ul>
                 </div>
                 <div class="k-arrow"></div>
@@ -127,7 +126,7 @@
         <div class="rail-wrap">
 
             <div class="rail" id="rail-popular">
-                <article class="card" onclick="window.location.href='property-detail.html?id=1'">
+                <article class="card" onclick="window.location.href='pages/property-detail.html?id=1'">
                     <img src="assets/images/img_7.png" alt="تهران">
                     <div class="meta">
                         <div class="city">تهران، سعادت‌آباد</div>
@@ -307,7 +306,7 @@
 <footer class="footer" dir="rtl">
     <div class="footer-top">
         <div class="col brand">
-            <img src="img.png" class="logo" height="80" width="80" alt="logo">
+            <img src="assets/images/img.png" class="logo" height="80" width="80" alt="logo">
             <p>رزرو آسان و مطمئن اقامتگاه در سراسر ایران. از شمال تا جنوب، کُجاجا همیشه همراه سفر شماست.</p>
         </div>
 
@@ -317,7 +316,7 @@
                 <li><a href="index.html">خانه</a></li>
                 <li><a href="pages/properties.html">اقامتگاه‌ها</a></li>
                 <li><a href="#faq">پرسش‌های متداول</a></li>
-                <li><a href="add-property.html">میزبان شوید</a></li>
+                <li><a href="pages/add-property.html">میزبان شوید</a></li>
             </ul>
         </div>
 
@@ -354,15 +353,15 @@
         event.preventDefault();
         const searchTerm = document.getElementById('searchInput').value.trim();
         if (searchTerm) {
-            window.location.href = `properties.html?search=${encodeURIComponent(searchTerm)}`;
+            window.location.href = `pages/properties.html?search=${encodeURIComponent(searchTerm)}`;
         } else {
-            window.location.href = 'properties.html';
+            window.location.href = 'pages/properties.html';
         }
     }
     
     function showFilters() {
         // Redirect to properties page with filters open
-        window.location.href = 'properties.html?filters=open';
+        window.location.href = 'pages/properties.html?filters=open';
     }
     
     // Make all property cards clickable
@@ -371,7 +370,7 @@
         propertyCards.forEach((card, index) => {
             card.style.cursor = 'pointer';
             card.addEventListener('click', function() {
-                window.location.href = `property-detail.html?id=${index + 2}`;
+                window.location.href = `pages/property-detail.html?id=${index + 2}`;
             });
         });
         
@@ -386,7 +385,7 @@
         
         if (isLoggedIn && userName) {
             loginButton.innerHTML = `👤 ${userName}`;
-            loginButton.href = 'profile.html';
+            loginButton.href = 'pages/profile.html';
             loginButton.title = 'پروفایل کاربری';
         }
     }
