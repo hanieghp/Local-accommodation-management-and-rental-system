@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اقامتگاه‌ها | کُجاجا</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    
+    <style>
+        .properties-container {
+            background: #f8f9fa;
+            min-height: 100vh;
+            padding-top: 100px;
+        }
+        
+        .search-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .filter-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            height: fit-content;
+            position: sticky;
+            top: 120px;
+        }
+        
+        .property-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+        
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .property-image {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .property-image img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        
+        .property-card:hover .property-image img {
+            transform: scale(1.05);
+        }
+        
+        .property-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, var(--brand), var(--brand2));
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .property-favorite {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .property-favorite:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+        
+        .property-info {
+            padding: 20px;
+        }
+        
+        .property-location {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .property-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1f2937;
+        }
+        
+        .property-features {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .property-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .price-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--brand);
+        }
+        
+        .price-unit {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .property-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+        
+        .filter-section {
+            margin-bottom: 25px;  
+        }
+        
+        .filter-section h6 {
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .price-range {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .price-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .filter-checkbox {
+            margin-bottom: 10px;
+        }
+        
+        .filter-checkbox input[type="checkbox"] {
+            margin-left: 8px;
+        }
+        
+        .btn-filter {
+            background: linear-gradient(135deg, var(--brand), var(--brand2));
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        
+        .btn-filter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(24,169,153,0.3);
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .sort-select {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: white;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+        
+        @media (max-width: 992px) {
+            .filter-card {
+                position: static;
+                margin-bottom: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-white border-bottom fixed-top">
+        <nav class="navbar navbar-expand-lg container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="homePage.html">
+                <img src="img.png" height="50" width="50">
+                <span class="fw-bold">کُجاجا</span>
+            </a>
+            <div class="d-flex gap-2">
+                <a class="btn btn-outline-secondary" href="profile.html">پروفایل</a>
+                <a class="btn btn-outline-secondary" href="loginup.html">ورود / ثبت‌نام</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="properties-container">
+        <div class="container">
+            <!-- Search Section -->
+            <div class="search-section">
+                <h4 class="mb-4">🔍 جستجوی اقامتگاه</h4>
+                <form id="searchForm" onsubmit="performSearch(event)">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">مقصد</label>
+                            <input type="text" class="form-control" id="destinationInput" placeholder="شهر، منطقه یا نام اقامتگاه">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">تاریخ ورود</label>
+                            <input type="date" class="form-control" id="checkinDate">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">تاریخ خروج</label>
+                            <input type="date" class="form-control" id="checkoutDate">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">تعداد نفرات</label>
+                            <select class="form-control" id="guestCount">
+                                <option value="1">۱ نفر</option>
+                                <option value="2" selected>۲ نفر</option>
+                                <option value="3">۳ نفر</option>
+                                <option value="4">۴ نفر</option>
+                                <option value="5">۵+ نفر</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-filter" style="width: auto; padding: 12px 40px;">🔎 جستجو</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="row">
+                <!-- Filters Sidebar -->
+                <div class="col-lg-3">
+                    <div class="filter-card">
+                        <h5 class="mb-4">🎛️ فیلترها</h5>
+                        
+                        <!-- Price Range -->
+                        <div class="filter-section">
+                            <h6>💰 محدوده قیمت (تومان)</h6>
+                            <div class="price-range">
+                                <input type="number" class="price-input" placeholder="از" value="500000">
+                                <span>تا</span>
+                                <input type="number" class="price-input" placeholder="تا" value="5000000">
+                            </div>
+                        </div>
+                        
+                        <!-- Property Type -->
+                        <div class="filter-section">
+                            <h6>🏠 نوع اقامتگاه</h6>
+                            <div class="filter-checkbox">
+                                <input type="checkbox" id="villa" checked>
+                                <label for="villa">ویلا</label>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox" id="apartment">
+                                <label for="apartment">آپارتمان</label>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox" id="suite">
+                                <label for="suite">سوئیت</label>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox" id="eco">
+                                <label for="eco">بوم‌گردی</label>
+                            </div>
+                        </div>
+                        
+                        <!-- Amenities -->
+                        <div class="filter-section">
+                            <h6>🎯 امکانات</h6>
+                            <div class="filter-checkbox">
+                                <input type="checkbox" id="wifi">
+                                <label for="wifi">وای‌فای</label>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox" id="parking">
+                                <label for="parking">پارکینگ</label>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox" id="pool">
+                                <label for="pool">استخر</label>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox" id="kitchen">
+                                <label for="kitchen">آشپزخانه</label>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox" id="ac">
+                                <label for="ac">کولر/بخاری</label>
+                            </div>
+                        </div>
+                        
+                        <button class="btn-filter">اعمال فیلتر</button>
+                    </div>
+                </div>
+                
+                <!-- Properties List -->
+                <div class="col-lg-9">
+                    <div class="results-header">
+                        <h5>۱۲۴ اقامتگاه یافت شد</h5>
+                        <select class="sort-select">
+                            <option>مرتب‌سازی بر اساس</option>
+                            <option>قیمت: کم به زیاد</option>
+                            <option>قیمت: زیاد به کم</option>
+                            <option>امتیاز</option>
+                            <option>محبوبیت</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Property Cards -->
+                    <div class="property-card" onclick="window.location.href='property-detail.html'">
+                        <div class="property-image">
+                            <img src="img_7.png" alt="آپارتمان مدرن">
+                            <div class="property-badge">ویژه</div>
+                            <div class="property-favorite">❤️</div>
+                        </div>
+                        <div class="property-info">
+                            <div class="property-location">📍 تهران، سعادت‌آباد</div>
+                            <h3 class="property-title">آپارتمان ۱ خوابه مدرن</h3>
+                            <div class="property-features">
+                                <span>👥 ۲+۱ نفر</span>
+                                <span>🛏️ ۱ خواب</span>
+                                <span>📶 وای‌فای</span>
+                                <span>🚗 پارکینگ</span>
+                            </div>
+                            <div class="property-price">
+                                <div>
+                                    <span class="price-amount">۱,۴۵۰,۰۰۰</span>
+                                    <span class="price-unit">تومان / شب</span>
+                                </div>
+                                <div class="property-rating">
+                                    ⭐ ۴.۸ <span class="text-muted">(۲۴ نظر)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="property-card" onclick="window.location.href='property-detail.html'">
+                        <div class="property-image">
+                            <img src="img_8.png" alt="سوئیت سنتی">
+                            <div class="property-favorite">🤍</div>
+                        </div>
+                        <div class="property-info">
+                            <div class="property-location">📍 اصفهان، چهارباغ</div>
+                            <h3 class="property-title">سوئیت سنتی نزدیک سی‌وسه‌پل</h3>
+                            <div class="property-features">
+                                <span>👥 ۲+۱ نفر</span>
+                                <span>🛏️ ۱ خواب</span>
+                                <span>📶 وای‌فای</span>
+                                <span>❄️ کولر</span>
+                            </div>
+                            <div class="property-price">
+                                <div>
+                                    <span class="price-amount">۹۹۰,۰۰۰</span>
+                                    <span class="price-unit">تومان / شب</span>
+                                </div>
+                                <div class="property-rating">
+                                    ⭐ ۴.۶ <span class="text-muted">(۱۸ نظر)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="property-card" onclick="window.location.href='property-detail.html'">
+                        <div class="property-image">
+                            <img src="img_10.png" alt="ویلا ساحلی">
+                            <div class="property-badge">محبوب</div>
+                            <div class="property-favorite">🤍</div>
+                        </div>
+                        <div class="property-info">
+                            <div class="property-location">📍 رامسر، ساحلی</div>
+                            <h3 class="property-title">ویلا لوکس ساحلی</h3>
+                            <div class="property-features">
+                                <span>👥 ۶+۲ نفر</span>
+                                <span>🛏️ ۳ خواب</span>
+                                <span>🏊 استخر</span>
+                                <span>🏖️ دسترسی ساحل</span>
+                            </div>
+                            <div class="property-price">
+                                <div>
+                                    <span class="price-amount">۳,۲۰۰,۰۰۰</span>
+                                    <span class="price-unit">تومان / شب</span>
+                                </div>
+                                <div class="property-rating">
+                                    ⭐ ۴.۹ <span class="text-muted">(۳۷ نظر)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="property-card" onclick="window.location.href='property-detail.html'">
+                        <div class="property-image">
+                            <img src="img_9.png" alt="بوم‌گردی">
+                            <div class="property-favorite">🤍</div>
+                        </div>
+                        <div class="property-info">
+                            <div class="property-location">📍 شیراز، زند</div>
+                            <h3 class="property-title">خانه بوم‌گردی حیاط‌دار</h3>
+                            <div class="property-features">
+                                <span>👥 ۳+۱ نفر</span>
+                                <span>🛏️ ۲ خواب</span>
+                                <span>🌳 حیاط</span>
+                                <span>🍽️ آشپزخانه</span>
+                            </div>
+                            <div class="property-price">
+                                <div>
+                                    <span class="price-amount">۸۵۰,۰۰۰</span>
+                                    <span class="price-unit">تومان / شب</span>
+                                </div>
+                                <div class="property-rating">
+                                    ⭐ ۴.۷ <span class="text-muted">(۱۵ نظر)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <span class="page-link">قبلی</span>
+                            </li>
+                            <li class="page-item active">
+                                <span class="page-link">۱</span>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">۲</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">۳</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">بعدی</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sample property data
+        const properties = [
+            {
+                id: 1,
+                title: "آپارتمان ۱ خوابه مدرن",
+                city: "تهران",
+                area: "سعادت‌آباد",
+                type: "apartment",
+                price: 1450000,
+                capacity: 3,
+                bedrooms: 1,
+                rating: 4.8,
+                reviews: 24,
+                image: "img_7.png",
+                features: ["wifi", "parking", "ac", "tv"]
+            },
+            {
+                id: 2,
+                title: "سوئیت سنتی نزدیک سی‌وسه‌پل",
+                city: "اصفهان",
+                area: "چهارباغ",
+                type: "suite",
+                price: 990000,
+                capacity: 3,
+                bedrooms: 1,
+                rating: 4.6,
+                reviews: 18,
+                image: "img_8.png",
+                features: ["wifi", "ac"]
+            },
+            {
+                id: 3,
+                title: "ویلا لوکس ساحلی",
+                city: "رامسر",
+                area: "ساحلی",
+                type: "villa",
+                price: 3200000,
+                capacity: 8,
+                bedrooms: 3,
+                rating: 4.9,
+                reviews: 37,
+                image: "img_10.png",
+                features: ["pool", "beach", "wifi", "parking"]
+            },
+            {
+                id: 4,
+                title: "خانه بوم‌گردی حیاط‌دار",
+                city: "شیراز",
+                area: "زند",
+                type: "eco",
+                price: 850000,
+                capacity: 4,
+                bedrooms: 2,
+                rating: 4.7,
+                reviews: 15,
+                image: "img_9.png",
+                features: ["garden", "kitchen"]
+            }
+        ];
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set today's date as minimum for date inputs
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('checkinDate').setAttribute('min', today);
+            document.getElementById('checkoutDate').setAttribute('min', today);
+            
+            // Update checkout date when checkin changes
+            document.getElementById('checkinDate').addEventListener('change', function() {
+                const checkinDate = new Date(this.value);
+                checkinDate.setDate(checkinDate.getDate() + 1);
+                const minCheckout = checkinDate.toISOString().split('T')[0];
+                document.getElementById('checkoutDate').setAttribute('min', minCheckout);
+            });
+            
+            // Parse URL parameters
+            parseURLParams();
+            
+            // Initialize filters
+            initializeFilters();
+            
+            // Update navigation
+            updateNavigation();
+        });
+
+        function parseURLParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const search = urlParams.get('search');
+            const city = urlParams.get('city');
+            const type = urlParams.get('type');
+            const filters = urlParams.get('filters');
+            
+            if (search) {
+                document.getElementById('destinationInput').value = search;
+            }
+            
+            if (city) {
+                document.getElementById('destinationInput').value = city;
+            }
+            
+            if (type) {
+                // Check the appropriate type filter
+                const typeCheckbox = document.getElementById(type);
+                if (typeCheckbox) {
+                    typeCheckbox.checked = true;
+                }
+            }
+            
+            if (filters === 'open') {
+                // Highlight filters section
+                document.querySelector('.filter-card').style.border = '2px solid var(--brand)';
+                setTimeout(() => {
+                    document.querySelector('.filter-card').style.border = '';
+                }, 3000);
+            }
+        }
+
+        function performSearch(event) {
+            event.preventDefault();
+            
+            const destination = document.getElementById('destinationInput').value;
+            const checkin = document.getElementById('checkinDate').value;
+            const checkout = document.getElementById('checkoutDate').value;
+            const guests = document.getElementById('guestCount').value;
+            
+            // Validate dates
+            if (checkin && checkout && new Date(checkin) >= new Date(checkout)) {
+                alert('تاریخ خروج باید بعد از تاریخ ورود باشد');
+                return;
+            }
+            
+            filterProperties();
+        }
+
+        function filterProperties() {
+            const destination = document.getElementById('destinationInput').value.toLowerCase();
+            const guests = parseInt(document.getElementById('guestCount').value);
+            const minPrice = parseInt(document.querySelector('.price-input[placeholder="از"]').value) || 0;
+            const maxPrice = parseInt(document.querySelector('.price-input[placeholder="تا"]').value) || Infinity;
+            
+            // Get selected types
+            const selectedTypes = [];
+            document.querySelectorAll('.filter-checkbox input[type="checkbox"]:checked').forEach(checkbox => {
+                selectedTypes.push(checkbox.id);
+            });
+            
+            // Filter properties
+            let filteredProperties = properties.filter(property => {
+                const matchesDestination = !destination || 
+                    property.city.toLowerCase().includes(destination) || 
+                    property.area.toLowerCase().includes(destination) ||
+                    property.title.toLowerCase().includes(destination);
+                
+                const matchesCapacity = property.capacity >= guests;
+                const matchesPrice = property.price >= minPrice && property.price <= maxPrice;
+                const matchesType = selectedTypes.length === 0 || selectedTypes.includes(property.type);
+                
+                return matchesDestination && matchesCapacity && matchesPrice && matchesType;
+            });
+            
+            displayProperties(filteredProperties);
+        }
+
+        function displayProperties(propertiesToShow) {
+            const container = document.querySelector('.col-lg-9');
+            const resultsHeader = container.querySelector('.results-header h5');
+            
+            resultsHeader.textContent = `${propertiesToShow.length} اقامتگاه یافت شد`;
+            
+            // Remove existing property cards
+            const existingCards = container.querySelectorAll('.property-card');
+            existingCards.forEach(card => card.remove());
+            
+            // Add filtered properties
+            propertiesToShow.forEach(property => {
+                const propertyCard = createPropertyCard(property);
+                container.insertBefore(propertyCard, container.querySelector('nav'));
+            });
+            
+            if (propertiesToShow.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                noResults.innerHTML = `
+                    <div style="font-size: 4rem; margin-bottom: 20px;">😔</div>
+                    <h4>متأسفانه اقامتگاهی یافت نشد</h4>
+                    <p>لطفاً فیلترهای خود را تغییر دهید و دوباره تلاش کنید</p>
+                `;
+                container.insertBefore(noResults, container.querySelector('nav'));
+            }
+        }
+
+        function createPropertyCard(property) {
+            const card = document.createElement('div');
+            card.className = 'property-card';
+            card.onclick = () => window.location.href = `property-detail.html?id=${property.id}`;
+            
+            card.innerHTML = `
+                <div class="property-image">
+                    <img src="${property.image}" alt="${property.title}">
+                    <div class="property-badge">ویژه</div>
+                    <div class="property-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">🤍</div>
+                </div>
+                <div class="property-info">
+                    <div class="property-location">📍 ${property.city}، ${property.area}</div>
+                    <h3 class="property-title">${property.title}</h3>
+                    <div class="property-features">
+                        <span>👥 ${property.capacity} نفر</span>
+                        <span>🛏️ ${property.bedrooms} خواب</span>
+                        ${property.features.includes('wifi') ? '<span>📶 وای‌فای</span>' : ''}
+                        ${property.features.includes('parking') ? '<span>🚗 پارکینگ</span>' : ''}
+                    </div>
+                    <div class="property-price">
+                        <div>
+                            <span class="price-amount">${property.price.toLocaleString()}</span>
+                            <span class="price-unit">تومان / شب</span>
+                        </div>
+                        <div class="property-rating">
+                            ⭐ ${property.rating} <span class="text-muted">(${property.reviews} نظر)</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function toggleFavorite(element) {
+            element.innerHTML = element.innerHTML === '🤍' ? '❤️' : '🤍';
+            
+            // Save to localStorage (simulate user favorites)
+            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+            const propertyId = element.closest('.property-card').onclick.toString().match(/id=(\d+)/)[1];
+            
+            if (element.innerHTML === '❤️') {
+                if (!favorites.includes(propertyId)) {
+                    favorites.push(propertyId);
+                }
+            } else {
+                const index = favorites.indexOf(propertyId);
+                if (index > -1) {
+                    favorites.splice(index, 1);
+                }
+            }
+            
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+        }
+
+        function initializeFilters() {
+            // Add event listeners to filter inputs
+            document.querySelectorAll('.filter-checkbox input, .price-input').forEach(input => {
+                input.addEventListener('change', filterProperties);
+            });
+            
+            // Apply filters button
+            document.querySelector('.btn-filter').addEventListener('click', filterProperties);
+            
+            // Load favorites
+            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+            // This would be implemented when properties are displayed
+        }
+
+        function updateNavigation() {
+            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            const userName = localStorage.getItem('userName');
+            const loginLink = document.querySelector('a[href="loginup.html"]');
+            
+            if (isLoggedIn && userName) {
+                loginLink.innerHTML = `👤 ${userName}`;
+                loginLink.href = 'profile.html';
+            }
+        }
+
+        // Initialize with all properties
+        window.addEventListener('load', function() {
+            displayProperties(properties);
+        });
+    </script>
+</body>
+</html>

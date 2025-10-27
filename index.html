@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>کُجاجا | اجاره ویلا و اقامتگاه</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css
+" rel="stylesheet"/>
+
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <script src="assets/js/utils.js"></script>
+</head>
+<body class="body">
+
+<header class="bg-white border-bottom sticky-top">
+    <nav class="navbar navbar-expand-lg container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+            <img src="assets/images/img.png" height="50" width="50">
+            <span class="fw-bold">کُجاجا</span>
+        </a>
+        <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#nav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="nav" class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto gap-lg-3">
+                <li class="nav-item"><a class="nav-link" href="pages/properties.html">اقامتگاه‌ها</a></li>
+                <li class="nav-item"><a class="nav-link" href="#why">مزیت‌ها</a></li>
+                <li class="nav-item"><a class="nav-link" href="#faq">سؤالات</a></li>
+            </ul>
+            <div class="d-flex gap-2">
+                <a class="btn btn-outline-secondary" href="pages/loginup.html">ورود / ثبت‌نام</a>
+                <a class="btn1 brand-grad border-0 m-6 p-2" href="add-property.html">میزبان شوید</a>
+            </div>
+        </div>
+    </nav>
+</header>
+
+
+<main>
+    <section class="hero">
+        <div class="container">
+            <div class="hero-glass shadow-soft">
+                <p class="text-muted mb-1">اقامتگاه‌های بازدید شده</p>
+                <h1 class="fw-bold display-6 mb-1">اجاره ویلا، بوم‌گردی، سوئیت و آپارتمان</h1>
+                <p class="lead mb-3">در سراسر ایران</p>
+                <form class="search-wrap mx-auto" onsubmit="searchProperties(event)">
+                    <div class="input-group input-group-lg shadow-soft">
+                        <span class="input-group-text bg-white border-0 rounded-start-pill">🔎</span>
+                        <input class="form-control border-0 search-pill" id="searchInput" placeholder="مقصدتون کجاست؟" />
+                        <button type="button" class="btn brand-grad border-0" onclick="showFilters()">فیلتر</button>
+                        <button type="submit" class="btn brand-grad border-0 rounded-end-pill">جستجو</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="kojaja-dests curved" dir="rtl">
+        <div class="cards"></div>
+        <div class="grid">
+            <article class="k-card">
+                <img src="assets/images/img_3.png" alt="مشهد">
+                <div class="k-curtain"></div>
+                <div class="k-panel">
+                    <ul>
+                        <li><a href="properties.html?city=mashhad&type=suite">اجاره سوئیت مشهد</a></li>
+                        <li><a href="properties.html?city=mashhad&area=shandiz">ویلا شاندیز</a></li>
+                        <li><a href="properties.html?city=gonabad">اجاره اقامتگاه در گناباد</a></li>
+                    </ul>
+                </div>
+                <div class="k-arrow"></div>
+                <h3 class="k-cap">اقامتگاه‌های مشهد مقدس</h3>
+            </article>
+
+            <article class="k-card">
+                <img src="assets/images/img_5.png" alt="اطراف تهران">
+                <div class="k-curtain"></div>
+                <div class="k-panel">
+                    <ul>
+                        <li><a href="properties.html?city=karaj&type=villa">اجاره ویلا در کرج</a></li>
+                        <li><a href="properties.html?city=fasham&type=villa">اجاره ویلا در فشم</a></li>
+                        <li><a href="properties.html?city=damavand&type=villa">اجاره ویلا در دماوند</a></li>
+                    </ul>
+                </div>
+                <div class="k-arrow"></div>
+                <h3 class="k-cap">اقامتگاه‌های اطراف تهران</h3>
+            </article>
+
+            <article class="k-card">
+                <img src="assets/images/img_4.png" alt="کیش">
+                <div class="k-curtain"></div>
+                <div class="k-panel">
+                    <ul>
+                        <li><a href="properties.html?city=kish&type=villa&feature=beach">ویلا ساحلی</a></li>
+                        <li><a href="properties.html?city=kish&type=suite&feature=beach">سوئیت نزدیک دریا</a></li>
+                        <li><a href="properties.html?city=kish&type=apartment">هتل آپارتمان</a></li>
+                    </ul>
+                </div>
+                <div class="k-arrow"></div>
+
+                <h3 class="k-cap">اقامتگاه‌های کیش</h3>
+            </article>
+
+            <article class="k-card">
+                <img src="assets/images/img_6.png" alt="شمال">
+                <div class="k-curtain"></div>
+                <div class="k-panel">
+                    <ul>
+                        <li><a href="properties.html?region=north&type=villa&feature=forest">ویلا جنگلی</a></li>
+                        <li><a href="properties.html?region=north&type=cabin">کلبه چوبی</a></li>
+                        <li><a href="properties.html?region=north&type=suite&feature=beach">سوئیت ساحلی</a></li>
+                    </ul>
+                </div>
+                <div class="k-arrow"></div>
+                <h3 class="k-cap">ویلاهای شمال</h3>
+            </article>
+        </div>
+    </section>
+
+    <section class="suggested" dir="rtl">
+        <div class="head">
+            <h2>پر بازدیدترین‌ها</h2>
+            <a href="pages/properties.html" class="view-all">مشاهده همه</a>
+        </div>
+
+        <div class="rail-wrap">
+
+            <div class="rail" id="rail-popular">
+                <article class="card" onclick="window.location.href='property-detail.html?id=1'">
+                    <img src="assets/images/img_7.png" alt="تهران">
+                    <div class="meta">
+                        <div class="city">تهران، سعادت‌آباد</div>
+                        <h3 class="title">آپارتمان ۱ خوابه مدرن</h3>
+                        <div class="price">از شبی ۱,۴۵۰,۰۰۰ تومان</div>
+                        <div class="cap">ظرفیت ۲+۱ نفر</div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="assets/images/img_8.png" alt="اصفهان">
+                    <div class="meta">
+                        <div class="city">اصفهان، چهارباغ</div>
+                        <h3 class="title">سوئیت سنتی نزدیک سی‌وسه‌پل</h3>
+                        <div class="price">از شبی ۹۹۰,۰۰۰ تومان</div>
+                        <div class="cap">ظرفیت ۲+۱ نفر</div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="assets/images/img_9.png" alt="شیراز">
+                    <div class="meta">
+                        <div class="city">شیراز، زند</div>
+                        <h3 class="title">خانه بوم‌گردی حیاط‌دار</h3>
+                        <div class="price">از شبی ۸۵۰,۰۰۰ تومان</div>
+                        <div class="cap">ظرفیت ۳+۱ نفر</div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="assets/images/img_10.png" alt="رامسر">
+                    <div class="meta">
+                        <div class="city">رامسر، ساحلی</div>
+                        <h3 class="title">ویلا لوکس ساحلی</h3>
+                        <div class="price">از شبی ۳,۲۰۰,۰۰۰ تومان</div>
+                        <div class="cap">ظرفیت ۶+۲ نفر</div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="assets/images/img_11.png" alt="مشهد">
+                    <div class="meta">
+                        <div class="city">مشهد، امام‌رضا</div>
+                        <h3 class="title">سوئیت ۲ خوابه نزدیک حرم</h3>
+                        <div class="price">از شبی ۱,۳۰۰,۰۰۰ تومان</div>
+                        <div class="cap">ظرفیت ۴+۲ نفر</div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="assets/images/img_12.png" alt="کیش">
+                    <div class="meta">
+                        <div class="city">کیش، شهرک صدف</div>
+                        <h3 class="title">سوئیت نزدیک دریا</h3>
+                        <div class="price">از شبی ۲,۱۰۰,۰۰۰ تومان</div>
+                        <div class="cap">ظرفیت ۳+۱ نفر</div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="assets/images/img_13.png" alt="یزد">
+                    <div class="meta">
+                        <div class="city">یزد، فهادان</div>
+                        <h3 class="title">خانه خشتی با بادگیر</h3>
+                        <div class="price">از شبی ۷۵۰,۰۰۰ تومان</div>
+                        <div class="cap">ظرفیت ۲+۱ نفر</div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="assets/images/img_14.png" alt="تبریز">
+                    <div class="meta">
+                        <div class="city">تبریز، ولیعصر</div>
+                        <h3 class="title">آپارتمان نوساز ۲ خوابه</h3>
+                        <div class="price">از شبی ۱,۱۵۰,۰۰۰ تومان</div>
+                        <div class="cap">ظرفیت ۴ نفر</div>
+                    </div>
+                </article>
+            </div>
+
+
+        </div>
+    </section>
+
+    <hr class="kh">
+
+    <section id="why" class="py-5">
+        <div class="container">
+            <h2 class="fw-bold mb-3 ">چرا کُجاجا؟</h2>
+            <div class="row g-3">
+                <div class="col-12 col-md-6 col-lg-3"><div class="feat shadow-soft d-flex align-items-center gap-3">
+                    <div class="icon brand-grad">۱</div><div><div class="fw-bold">پشتیبانی ۲۴ساعته</div><div class="text-muted small">همراه شما</div></div></div></div>
+                <div class="col-12 col-md-6 col-lg-3"><div class="feat shadow-soft d-flex align-items-center gap-3">
+                    <div class="icon brand-grad">۲</div><div><div class="fw-bold">رزرو امن</div><div class="text-muted small">بازگشت وجه</div></div></div></div>
+                <div class="col-12 col-md-6 col-lg-3"><div class="feat shadow-soft d-flex align-items-center gap-3">
+                    <div class="icon brand-grad">۳</div><div><div class="fw-bold">تنوع بالا</div><div class="text-muted small">از کلبه تا هتل</div></div></div></div>
+                <div class="col-12 col-md-6 col-lg-3"><div class="feat shadow-soft d-flex align-items-center gap-3">
+                    <div class="icon brand-grad">۴</div><div><div class="fw-bold">فیلترهای دقیق</div><div class="text-muted small">قیمت، ظرفیت…</div></div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="py-5 bg-white">
+        <div class="container">
+            <h2 class="fw-bold mb-3">سؤالات پرتکرار</h2>
+            <div class="accordion" id="acc">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="h1">
+                        <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#c1" aria-controls="c1">چطور رزرو کنم؟</button>
+                    </h2>
+                    <div id="c1" class="accordion-collapse collapse show" data-bs-parent="#acc" aria-labelledby="h1">
+                        <div class="accordion-body">مقصد را انتخاب کنید، تاریخ‌ها را تعیین کنید و درخواست رزرو بدهید؛ پس از تأیید میزبان پرداخت می‌کنید.</div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="h2">
+                        <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#c2" aria-controls="c2">آیا امکان لغو وجود دارد؟</button>
+                    </h2>
+                    <div id="c2" class="accordion-collapse collapse" data-bs-parent="#acc" aria-labelledby="h2">
+                        <div class="accordion-body">بله؛ مطابق سیاست لغو هر اقامتگاه که قبل از رزرو نمایش داده می‌شود.</div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="h3">
+                        <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#c3" aria-controls="c3">آیا برای رزرو، نیاز به پرداخت کامل هزینه از قبل است؟</button>
+                    </h2>
+                    <div id="c3" class="accordion-collapse collapse" data-bs-parent="#acc" aria-labelledby="h2">
+                        <div class="accordion-body">معمولاً بخشی از مبلغ به‌عنوان بیعانه پرداخت می‌شود و باقی مبلغ هنگام ورود یا بر اساس قوانین هر اقامتگاه دریافت می‌گردد.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="reviews" dir="rtl">
+        <div class="r-overlay"></div>
+        <div class="r-wrap">
+
+            <aside class="topics">
+                <div class="topic t1">👤 <span>میزبان‌های مورد تأیید</span></div>
+                <div class="topic t2">🌍 <span>رزرو در سراسر ایران</span></div>
+                <div class="topic t3">💳 <span>ضمانت بازگشت هزینه</span></div>
+            </aside>
+
+            <div class="slides">
+                <figure class="slide s1">
+                    <blockquote>میزبان خیلی حرفه‌ای بود و مدارک تأیید شده داشت؛ با خیال راحت رزرو کردم.</blockquote>
+                    <figcaption>
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="">
+                        <strong>امیرعطا قاسمی</strong>
+                    </figcaption>
+                </figure>
+
+                <figure class="slide s2">
+                    <blockquote>برای سفر چندشهره، خیلی سریع در شهرهای مختلف رزرو گرفتم؛ همه‌جا در دسترس بود.</blockquote>
+                    <figcaption>
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="">
+                        <strong>زهرا نادری</strong>
+                    </figcaption>
+                </figure>
+
+                <figure class="slide s3">
+                    <blockquote>رزرو لغو شد و هزینه‌ام دقیق و به‌موقع برگشت. پشتیبانی عالی بود.</blockquote>
+                    <figcaption>
+                        <img src="https://randomuser.me/api/portraits/men/12.jpg" alt="">
+                        <strong>سینا شریفی</strong>
+                    </figcaption>
+                </figure>
+            </div>
+
+        </div>
+    </section>
+
+
+</main>
+
+<footer class="footer" dir="rtl">
+    <div class="footer-top">
+        <div class="col brand">
+            <img src="img.png" class="logo" height="80" width="80" alt="logo">
+            <p>رزرو آسان و مطمئن اقامتگاه در سراسر ایران. از شمال تا جنوب، کُجاجا همیشه همراه سفر شماست.</p>
+        </div>
+
+        <div class="col links">
+            <h4>دسترسی سریع</h4>
+            <ul>
+                <li><a href="index.html">خانه</a></li>
+                <li><a href="pages/properties.html">اقامتگاه‌ها</a></li>
+                <li><a href="#faq">پرسش‌های متداول</a></li>
+                <li><a href="add-property.html">میزبان شوید</a></li>
+            </ul>
+        </div>
+
+        <div class="col contact">
+            <h4>ارتباط با ما</h4>
+            <ul>
+                <li>📍 مشهد، بلوار وکیل‌آباد</li>
+                <li>☎ ۰۵۱-۳۷۲۲۲۲۲۲</li>
+                <li>✉ info@kojaja.ir</li>
+            </ul>
+        </div>
+
+        <div class="col social">
+            <h4>دنبال کنید</h4>
+            <div class="icons">
+                <a href="#">🌐</a>
+                <a href="#">📷</a>
+                <a href="#">💬</a>
+                <a href="#">▶️</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>© ۲۰۲۵ کُجاجا — همه حقوق محفوظ است.</p>
+    </div>
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Search functionality
+    function searchProperties(event) {
+        event.preventDefault();
+        const searchTerm = document.getElementById('searchInput').value.trim();
+        if (searchTerm) {
+            window.location.href = `properties.html?search=${encodeURIComponent(searchTerm)}`;
+        } else {
+            window.location.href = 'properties.html';
+        }
+    }
+    
+    function showFilters() {
+        // Redirect to properties page with filters open
+        window.location.href = 'properties.html?filters=open';
+    }
+    
+    // Make all property cards clickable
+    document.addEventListener('DOMContentLoaded', function() {
+        const propertyCards = document.querySelectorAll('.card:not([onclick])');
+        propertyCards.forEach((card, index) => {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', function() {
+                window.location.href = `property-detail.html?id=${index + 2}`;
+            });
+        });
+        
+        // Check if user is logged in and update nav
+        updateNavigation();
+    });
+    
+    function updateNavigation() {
+        const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+        const userName = localStorage.getItem('userName');
+        const loginButton = document.querySelector('a[href="pages/loginup.html"]');
+        
+        if (isLoggedIn && userName) {
+            loginButton.innerHTML = `👤 ${userName}`;
+            loginButton.href = 'profile.html';
+            loginButton.title = 'پروفایل کاربری';
+        }
+    }
+    
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>
