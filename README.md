@@ -204,37 +204,6 @@ Edit the CSS variables in `assets/css/style.css`:
 }
 ```
 
-### Adding New Properties
-Properties can be added through:
-1. The "Add Property" page (for hosts)
-2. Admin panel (for administrators)
-3. Directly in `pages/properties.html` (for developers)
-
-## 🔧 Configuration
-
-### Currency
-The default currency is **USD ($)**. To change it, search and replace the currency symbol in all HTML files.
-
-### Language
-The application is in **English**. All UI text is hardcoded and can be modified directly in the HTML files.
-
-## 📝 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📧 Contact
-
-- **Email**: info@staylocal.com
-- **Phone**: +1-555-123-4567
-- **Address**: 123 Main Street, New York
 
 ---
 
