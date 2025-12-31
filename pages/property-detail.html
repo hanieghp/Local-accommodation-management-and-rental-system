@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>آپارتمان ۱ خوابه مدرن | کُجاجا</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
+    <title>Modern 1BR Apartment | StayLocal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="../assets/css/style.css" />
-    
     <style>
         .detail-container {
             background: #f8f9fa;
@@ -226,6 +224,7 @@
             font-weight: 600;
             margin-top: 20px;
             transition: all 0.3s;
+            cursor: pointer;
         }
         
         .btn-book:hover {
@@ -315,16 +314,15 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="bg-white border-bottom fixed-top">
         <nav class="navbar navbar-expand-lg container">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="homePage.html">
-                <img src="img.png" height="50" width="50">
-                <span class="fw-bold">کُجاجا</span>
+            <a class="navbar-brand d-flex align-items-center gap-2" href="../index.html">
+                <img src="../assets/images/img.png" height="50" width="50">
+                <span class="fw-bold">StayLocal</span>
             </a>
             <div class="d-flex gap-2">
-                <a class="btn btn-outline-secondary" href="properties.html">بازگشت</a>
-                <a class="btn btn-outline-secondary" href="profile.html">پروفایل</a>
+                <a class="btn btn-outline-secondary" href="properties.html">Back</a>
+                <a class="btn btn-outline-secondary" href="profile.html">Profile</a>
             </div>
         </nav>
     </header>
@@ -333,213 +331,205 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-8">
-                    <!-- Gallery -->
                     <div class="property-gallery">
-                        <img src="img_7.png" alt="آپارتمان مدرن" class="main-image" id="mainImage">
+                        <img src="../assets/images/img_7.png" alt="Modern Apartment" class="main-image" id="mainImage">
                         <div class="thumbnail-gallery">
-                            <img src="img_7.png" alt="تصویر ۱" class="thumbnail active" onclick="changeImage(this)">
-                            <img src="img_8.png" alt="تصویر ۲" class="thumbnail" onclick="changeImage(this)">
-                            <img src="img_9.png" alt="تصویر ۳" class="thumbnail" onclick="changeImage(this)">
-                            <img src="img_10.png" alt="تصویر ۴" class="thumbnail" onclick="changeImage(this)">
-                            <img src="img_11.png" alt="تصویر ۵" class="thumbnail" onclick="changeImage(this)">
+                            <img src="../assets/images/img_7.png" alt="Image 1" class="thumbnail active" onclick="changeImage(this)">
+                            <img src="../assets/images/img_8.png" alt="Image 2" class="thumbnail" onclick="changeImage(this)">
+                            <img src="../assets/images/img_9.png" alt="Image 3" class="thumbnail" onclick="changeImage(this)">
+                            <img src="../assets/images/img_10.png" alt="Image 4" class="thumbnail" onclick="changeImage(this)">
+                            <img src="../assets/images/img_11.png" alt="Image 5" class="thumbnail" onclick="changeImage(this)">
                         </div>
                     </div>
                     
-                    <!-- Property Header -->
                     <div class="property-header">
-                        <h1 class="property-title">آپارتمان ۱ خوابه مدرن</h1>
+                        <h1 class="property-title">Modern 1BR Apartment</h1>
                         <div class="property-location">
-                            📍 تهران، سعادت‌آباد، خیابان نواب
+                            New York, Manhattan, 5th Avenue
                         </div>
                         <div class="property-stats">
-                            <div class="stat-item">👥 ۲+۱ نفر</div>
-                            <div class="stat-item">🛏️ ۱ اتاق خواب</div>
-                            <div class="stat-item">🚿 ۱ حمام</div>
-                            <div class="stat-item">📐 ۸۵ متر</div>
+                            <div class="stat-item">2+1 Guests</div>
+                            <div class="stat-item">1 Bedroom</div>
+                            <div class="stat-item">1 Bathroom</div>
+                            <div class="stat-item">850 sq ft</div>
                         </div>
                         <div class="property-rating">
-                            <div class="rating-stars">⭐⭐⭐⭐⭐</div>
-                            <strong>۴.۸</strong>
-                            <span class="rating-text">(۲۴ نظر)</span>
+                            <div class="rating-stars">5.0</div>
+                            <strong>4.8</strong>
+                            <span class="rating-text">(24 reviews)</span>
                         </div>
                         <div class="property-price">
-                            <div class="price-amount">۱,۴۵۰,۰۰۰ تومان</div>
-                            <div class="price-unit">هر شب</div>
+                            <div class="price-amount">$150</div>
+                            <div class="price-unit">per night</div>
                         </div>
                     </div>
                     
-                    <!-- Description -->
                     <div class="info-card">
-                        <h4>📝 توضیحات</h4>
+                        <h4>Description</h4>
                         <p class="text-muted lh-lg">
-                            این آپارتمان مدرن و تمیز در قلب منطقه سعادت‌آباد قرار دارد. با دسترسی آسان به مراکز خرید، رستوران‌ها و حمل‌ونقل عمومی، 
-                            این مکان انتخاب ایده‌آلی برای سفرهای کاری و تفریحی است. آپارتمان دارای تمام امکانات مورد نیاز شما شامل وای‌فای پرسرعت، 
-                            آشپزخانه کامل، تلویزیون هوشمند و پارکینگ اختصاصی می‌باشد. فاصله کمی تا ایستگاه مترو و مراکز مهم شهر دارد.
+                            This modern and clean apartment is located in the heart of Manhattan. With easy access to shopping centers, restaurants, and public transportation, 
+                            this is the ideal choice for business and leisure trips. The apartment has all the amenities you need including high-speed WiFi, 
+                            a full kitchen, smart TV, and private parking. It's just a short walk from the subway station and major city attractions.
                         </p>
                     </div>
                     
-                    <!-- Amenities -->
                     <div class="info-card">
-                        <h4>🎯 امکانات</h4>
+                        <h4>Amenities</h4>
                         <div class="amenities-grid">
                             <div class="amenity-item">
-                                <span>📶</span> وای‌فای پرسرعت
+                                High-Speed WiFi
                             </div>
                             <div class="amenity-item">
-                                <span>🚗</span> پارکینگ اختصاصی
+                                Private Parking
                             </div>
                             <div class="amenity-item">
-                                <span>❄️</span> کولر و گرمایش
+                                AC & Heating
                             </div>
                             <div class="amenity-item">
-                                <span>📺</span> تلویزیون هوشمند
+                                Smart TV
                             </div>
                             <div class="amenity-item">
-                                <span>🍽️</span> آشپزخانه کامل
+                                Full Kitchen
                             </div>
                             <div class="amenity-item">
-                                <span>🧺</span> ماشین لباسشویی
+                                Washer/Dryer
                             </div>
                             <div class="amenity-item">
-                                <span>🔥</span> گاز و فر
+                                Stove & Oven
                             </div>
                             <div class="amenity-item">
-                                <span>🛁</span> حمام مدرن
+                                Modern Bathroom
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Host Info -->
                     <div class="info-card">
-                        <h4>👤 میزبان</h4>
+                        <h4>Host</h4>
                         <div class="host-card">
-                            <img src="https://randomuser.me/api/portraits/men/42.jpg" alt="میزبان" class="host-avatar">
+                            <img src="https://randomuser.me/api/portraits/men/42.jpg" alt="Host" class="host-avatar">
                             <div class="host-info">
-                                <h5>محمد کریمی</h5>
+                                <h5>Michael Johnson</h5>
                                 <div class="host-stats">
-                                    ⭐ ۴.۹ امتیاز • ۵۷ اقامتگاه • میزبان از ۱۴۰۰
+                                    4.9 Rating - 57 Properties - Host since 2020
                                 </div>
                                 <p class="mt-2 mb-0 text-muted">
-                                    میزبانی با تجربه و پاسخ‌گویی سریع. همیشه در خدمت مهمانان عزیز هستم.
+                                    Experienced host with quick response time. Always here to help my guests.
                                 </p>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Location -->
                     <div class="info-card">
-                        <h4>📍 موقعیت مکانی</h4>
-                        <div class="map-container">🗺️ نقشه تعاملی (در حال بارگذاری)</div>
+                        <h4>Location</h4>
+                        <div class="map-container">Interactive Map (Loading...)</div>
                         <div class="mt-3">
                             <p class="text-muted">
-                                📍 آدرس دقیق: تهران، سعادت‌آباد، خیابان نواب، کوچه ۱۲، پلاک ۴۵
+                                Address: 123 5th Avenue, Manhattan, New York, NY 10001
                             </p>
                             <div class="row mt-3">
                                 <div class="col-md-6">
-                                    <strong>مکان‌های نزدیک:</strong>
+                                    <strong>Nearby Places:</strong>
                                     <ul class="mt-2">
-                                        <li>ایستگاه مترو سعادت‌آباد - ۵ دقیقه پیاده</li>
-                                        <li>مجتمع تجاری کورش - ۳ دقیقه پیاده</li>
-                                        <li>پارک ملت - ۱۰ دقیقه پیاده</li>
+                                        <li>Subway Station - 5 min walk</li>
+                                        <li>Central Park - 10 min walk</li>
+                                        <li>Times Square - 15 min walk</li>
                                     </ul>
                                 </div>
                                 <div class="col-md-6">
-                                    <strong>دسترسی‌ها:</strong>
+                                    <strong>Transportation:</strong>
                                     <ul class="mt-2">
-                                        <li>فرودگاه امام - ۴۵ دقیقه</li>
-                                        <li>میدان آزادی - ۲۰ دقیقه</li>
-                                        <li>برج میلاد - ۱۵ دقیقه</li>
+                                        <li>JFK Airport - 45 min</li>
+                                        <li>LaGuardia Airport - 30 min</li>
+                                        <li>Penn Station - 15 min</li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Reviews -->
                     <div class="info-card">
-                        <h4>💬 نظرات مهمانان (۲۴ نظر)</h4>
+                        <h4>Guest Reviews (24 reviews)</h4>
                         
                         <div class="review-card">
                             <div class="review-header">
-                                <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="کاربر" class="review-avatar">
+                                <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="User" class="review-avatar">
                                 <div class="review-info">
-                                    <h6>مریم احمدی</h6>
-                                    <div class="review-date">۱۵ آذر ۱۴۰۳</div>
+                                    <h6>Sarah Williams</h6>
+                                    <div class="review-date">December 15, 2024</div>
                                 </div>
-                                <div class="ms-auto review-rating">⭐⭐⭐⭐⭐</div>
+                                <div class="ms-auto review-rating">5/5</div>
                             </div>
                             <p class="text-muted">
-                                آپارتمان فوق‌العاده تمیز و مرتب بود. میزبان خیلی مهربان و پاسخ‌گو. موقعیت مکانی عالی و دسترسی آسان به همه‌جا. 
-                                حتماً دوباره رزرو می‌کنم.
+                                The apartment was extremely clean and well-organized. The host was very kind and responsive. Great location and easy access to everywhere. 
+                                Will definitely book again.
                             </p>
                         </div>
                         
                         <div class="review-card">
                             <div class="review-header">
-                                <img src="https://randomuser.me/api/portraits/men/28.jpg" alt="کاربر" class="review-avatar">
+                                <img src="https://randomuser.me/api/portraits/men/28.jpg" alt="User" class="review-avatar">
                                 <div class="review-info">
-                                    <h6>علی محمدی</h6>
-                                    <div class="review-date">۸ آذر ۱۴۰۳</div>
+                                    <h6>David Brown</h6>
+                                    <div class="review-date">December 8, 2024</div>
                                 </div>
-                                <div class="ms-auto review-rating">⭐⭐⭐⭐⭐</div>
+                                <div class="ms-auto review-rating">5/5</div>
                             </div>
                             <p class="text-muted">
-                                همه چیز مطابق انتظار بود. آشپزخانه کامل و امکانات عالی. پارکینگ هم داشت که خیلی مهم بود. 
-                                به همه توصیه می‌کنم.
+                                Everything was as expected. Full kitchen and great amenities. Parking was included which was very important. 
+                                Highly recommend to everyone.
                             </p>
                         </div>
                         
-                        <button class="btn btn-outline-secondary">مشاهده همه نظرات</button>
+                        <button class="btn btn-outline-secondary">View All Reviews</button>
                     </div>
                 </div>
                 
-                <!-- Booking Sidebar -->
                 <div class="col-lg-4">
                     <div class="booking-card">
-                        <h5 class="mb-4">📅 رزرو اقامتگاه</h5>
+                        <h5 class="mb-4">Book This Property</h5>
                         
                         <div class="date-input-group">
-                            <input type="date" class="date-input" placeholder="ورود">
-                            <input type="date" class="date-input" placeholder="خروج">
+                            <input type="date" class="date-input" id="checkinDate" placeholder="Check-in">
+                            <input type="date" class="date-input" id="checkoutDate" placeholder="Check-out">
                         </div>
                         
-                        <select class="guest-select">
-                            <option>تعداد نفرات</option>
-                            <option>۱ نفر</option>
-                            <option>۲ نفر</option>
-                            <option>۳ نفر</option>
+                        <select class="guest-select" id="guestCount">
+                            <option value="">Number of Guests</option>
+                            <option value="1">1 Guest</option>
+                            <option value="2">2 Guests</option>
+                            <option value="3">3 Guests</option>
                         </select>
                         
                         <div class="booking-summary">
                             <div class="summary-row">
-                                <span>۱,۴۵۰,۰۰۰ × ۳ شب</span>
-                                <span>۴,۳۵۰,۰۰۰ تومان</span>
+                                <span>$150 × 3 nights</span>
+                                <span>$450</span>
                             </div>
                             <div class="summary-row">
-                                <span>هزینه خدمات</span>
-                                <span>۲۱۷,۵۰۰ تومان</span>
+                                <span>Service Fee</span>
+                                <span>$22.50</span>
                             </div>
                             <div class="summary-row">
-                                <span>مالیات</span>
-                                <span>۴۳,۵۰۰ تومان</span>
+                                <span>Tax</span>
+                                <span>$4.50</span>
                             </div>
                             <div class="summary-row summary-total">
-                                <span>مجموع</span>
-                                <span>۴,۶۱۱,۰۰۰ تومان</span>
+                                <span>Total</span>
+                                <span>$477</span>
                             </div>
                         </div>
                         
-                        <button class="btn-book" onclick="makeReservation()">🎯 رزرو قطعی</button>
+                        <button class="btn-book" onclick="makeReservation()">Book Now</button>
                         
                         <div class="text-center mt-3">
-                            <small class="text-muted">هنوز پرداختی نخواهید داشت</small>
+                            <small class="text-muted">You won't be charged yet</small>
                         </div>
                         
                         <hr>
                         
                         <div class="text-center">
-                            <small class="text-muted">❤️ اضافه به علاقه‌مندی‌ها</small><br>
-                            <small class="text-muted">📤 اشتراک‌گذاری</small>
+                            <small class="text-muted">Add to Favorites</small><br>
+                            <small class="text-muted">Share</small>
                         </div>
                     </div>
                 </div>
@@ -553,80 +543,67 @@
             const mainImage = document.getElementById('mainImage');
             const allThumbnails = document.querySelectorAll('.thumbnail');
             
-            // Remove active class from all thumbnails
             allThumbnails.forEach(thumb => thumb.classList.remove('active'));
-            
-            // Add active class to clicked thumbnail
             thumbnail.classList.add('active');
-            
-            // Change main image
             mainImage.src = thumbnail.src;
         }
         
         function makeReservation() {
-            // Check if user is logged in
             const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
             
             if (!isLoggedIn) {
-                if (confirm('برای رزرو باید وارد حساب کاربری خود شوید. آیا می‌خواهید الان وارد شوید؟')) {
+                if (confirm('Please login to make a reservation. Would you like to login now?')) {
                     window.location.href = 'loginup.html';
                 }
                 return;
             }
             
-            // Validate dates
-            const checkinDate = document.querySelector('.date-input[placeholder="ورود"]').value;
-            const checkoutDate = document.querySelector('.date-input[placeholder="خروج"]').value;
+            const checkinDate = document.getElementById('checkinDate').value;
+            const checkoutDate = document.getElementById('checkoutDate').value;
             
             if (!checkinDate || !checkoutDate) {
-                alert('لطفاً تاریخ ورود و خروج را انتخاب کنید');
+                alert('Please select check-in and check-out dates');
                 return;
             }
             
             if (new Date(checkinDate) >= new Date(checkoutDate)) {
-                alert('تاریخ خروج باید بعد از تاریخ ورود باشد');
+                alert('Check-out date must be after check-in date');
                 return;
             }
             
-            // Calculate nights and total
             const nights = Math.ceil((new Date(checkoutDate) - new Date(checkinDate)) / (1000 * 60 * 60 * 24));
-            const pricePerNight = 1450000;
+            const pricePerNight = 150;
             const subtotal = nights * pricePerNight;
             const serviceFee = Math.round(subtotal * 0.05);
             const tax = Math.round(subtotal * 0.01);
-            const total = subtotal + serviceeFee + tax;
+            const total = subtotal + serviceFee + tax;
             
-            // Save reservation
             const reservation = {
                 id: Date.now(),
                 propertyId: getPropertyIdFromURL(),
-                propertyTitle: "آپارتمان ۱ خوابه مدرن",
+                propertyTitle: "Modern 1BR Apartment",
                 checkin: checkinDate,
                 checkout: checkoutDate,
-                guests: document.querySelector('.guest-select').value,
+                guests: document.getElementById('guestCount').value,
                 nights: nights,
                 total: total,
                 status: 'pending',
                 date: new Date().toISOString()
             };
             
-            // Save to localStorage (simulate database)
             const reservations = JSON.parse(localStorage.getItem('userReservations') || '[]');
             reservations.push(reservation);
             localStorage.setItem('userReservations', JSON.stringify(reservations));
             
-            alert('🎉 درخواست رزرو شما با موفقیت ثبت شد!\nکد رزرو: ' + reservation.id + '\nبعد از تأیید میزبان، اطلاع‌رسانی خواهید شد.');
+            alert('Your booking request has been submitted!\nBooking ID: ' + reservation.id + '\nYou will be notified once the host confirms.');
             
-            // Redirect to profile page
             window.location.href = 'profile.html';
         }
         
-        // Auto-update booking summary when dates change
         document.addEventListener('DOMContentLoaded', function() {
-            const checkinInput = document.querySelector('.date-input[placeholder="ورود"]');
-            const checkoutInput = document.querySelector('.date-input[placeholder="خروج"]');
+            const checkinInput = document.getElementById('checkinDate');
+            const checkoutInput = document.getElementById('checkoutDate');
             
-            // Set minimum dates
             const today = new Date().toISOString().split('T')[0];
             checkinInput.setAttribute('min', today);
             checkoutInput.setAttribute('min', today);
@@ -645,30 +622,29 @@
         });
         
         function updateBookingSummary() {
-            const checkinDate = document.querySelector('.date-input[placeholder="ورود"]').value;
-            const checkoutDate = document.querySelector('.date-input[placeholder="خروج"]').value;
+            const checkinDate = document.getElementById('checkinDate').value;
+            const checkoutDate = document.getElementById('checkoutDate').value;
             
             if (checkinDate && checkoutDate) {
                 const nights = Math.ceil((new Date(checkoutDate) - new Date(checkinDate)) / (1000 * 60 * 60 * 24));
                 
                 if (nights > 0) {
-                    const pricePerNight = 1450000;
+                    const pricePerNight = 150;
                     const subtotal = nights * pricePerNight;
                     const serviceFee = Math.round(subtotal * 0.05);
                     const tax = Math.round(subtotal * 0.01);
                     const total = subtotal + serviceFee + tax;
                     
-                    // Update the summary
                     document.querySelector('.summary-row:first-child span:first-child').textContent = 
-                        `${pricePerNight.toLocaleString()} × ${nights} شب`;
+                        `$${pricePerNight} × ${nights} night${nights > 1 ? 's' : ''}`;
                     document.querySelector('.summary-row:first-child span:last-child').textContent = 
-                        `${subtotal.toLocaleString()} تومان`;
+                        `$${subtotal}`;
                     document.querySelector('.summary-row:nth-child(2) span:last-child').textContent = 
-                        `${serviceFee.toLocaleString()} تومان`;
+                        `$${serviceFee}`;
                     document.querySelector('.summary-row:nth-child(3) span:last-child').textContent = 
-                        `${tax.toLocaleString()} تومان`;
+                        `$${tax}`;
                     document.querySelector('.summary-total span:last-child').textContent = 
-                        `${total.toLocaleString()} تومان`;
+                        `$${total}`;
                 }
             }
         }
@@ -684,7 +660,7 @@
             const profileLink = document.querySelector('a[href="profile.html"]');
             
             if (isLoggedIn && userName && profileLink) {
-                profileLink.innerHTML = `👤 ${userName}`;
+                profileLink.innerHTML = userName;
             }
         }
     </script>

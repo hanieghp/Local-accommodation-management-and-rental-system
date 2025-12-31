@@ -1,121 +1,183 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>افزودن اقامتگاه | کُجاجا</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
+    <title>Add New Property | StayLocal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="../assets/css/style.css" />
-    
     <style>
         .add-property-container {
             background: #f8f9fa;
             min-height: 100vh;
             padding-top: 100px;
+            padding-bottom: 50px;
         }
         
-        .wizard-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            overflow: hidden;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .wizard-header {
-            background: linear-gradient(135deg, var(--brand), var(--brand2));
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-        
-        .wizard-steps {
+        .wizard-progress {
             display: flex;
             justify-content: center;
-            padding: 20px 0;
-            background: #f8f9fa;
-            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 40px;
         }
         
-        .step {
+        .wizard-step {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 20px;
-            border-radius: 25px;
-            transition: all 0.3s;
-            margin: 0 10px;
         }
         
-        .step.active {
+        .step-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #6b7280;
+            transition: all 0.3s;
+        }
+        
+        .step-circle.active {
             background: linear-gradient(135deg, var(--brand), var(--brand2));
             color: white;
         }
         
-        .step.completed {
+        .step-circle.completed {
             background: #10b981;
             color: white;
         }
         
-        .step-number {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
+        .step-line {
+            width: 80px;
+            height: 4px;
+            background: #e5e7eb;
+            margin: 0 10px;
+        }
+        
+        .step-line.active {
+            background: var(--brand);
+        }
+        
+        .step-label {
+            position: absolute;
+            bottom: -25px;
+            white-space: nowrap;
             font-size: 14px;
+            color: #6b7280;
         }
         
-        .wizard-content {
+        .form-card {
+            background: white;
+            border-radius: 20px;
             padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            max-width: 800px;
+            margin: 0 auto;
         }
         
-        .step-content {
-            display: none;
-        }
-        
-        .step-content.active {
-            display: block;
-        }
-        
-        .form-section {
+        .form-card h3 {
+            color: #1f2937;
             margin-bottom: 30px;
+            font-weight: 700;
+            text-align: center;
         }
         
-        .form-section h5 {
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
             color: #374151;
-            margin-bottom: 20px;
+        }
+        
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus, 
+        .form-group select:focus, 
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--brand);
+        }
+        
+        .property-type-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .property-type-option {
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .property-type-option:hover {
+            border-color: var(--brand);
+        }
+        
+        .property-type-option.selected {
+            border-color: var(--brand);
+            background: rgba(24,169,153,0.1);
+        }
+        
+        .property-type-option .icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .amenities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+        
+        .amenity-checkbox {
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-        
-        .form-control, .form-select {
-            padding: 12px 16px;
+            padding: 12px 15px;
             border: 2px solid #e5e7eb;
             border-radius: 10px;
-            font-size: 16px;
+            cursor: pointer;
             transition: all 0.3s;
         }
         
-        .form-control:focus, .form-select:focus {
-            outline: none;
+        .amenity-checkbox:hover {
             border-color: var(--brand);
-            box-shadow: 0 0 0 3px rgba(24,169,153,0.1);
+        }
+        
+        .amenity-checkbox.selected {
+            border-color: var(--brand);
+            background: rgba(24,169,153,0.1);
+        }
+        
+        .amenity-checkbox input {
+            display: none;
         }
         
         .image-upload-area {
-            border: 2px dashed #d1d5db;
+            border: 3px dashed #e5e7eb;
             border-radius: 15px;
-            padding: 40px 20px;
+            padding: 50px;
             text-align: center;
-            transition: all 0.3s;
             cursor: pointer;
+            transition: all 0.3s;
         }
         
         .image-upload-area:hover {
@@ -123,99 +185,65 @@
             background: rgba(24,169,153,0.05);
         }
         
-        .image-upload-area.dragover {
-            border-color: var(--brand);
-            background: rgba(24,169,153,0.1);
+        .image-upload-area .icon {
+            font-size: 48px;
+            color: #9ca3af;
+            margin-bottom: 15px;
         }
         
-        .uploaded-images {
+        .image-preview-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             gap: 15px;
             margin-top: 20px;
         }
         
-        .uploaded-image {
+        .image-preview {
             position: relative;
             border-radius: 10px;
             overflow: hidden;
         }
         
-        .uploaded-image img {
+        .image-preview img {
             width: 100%;
-            height: 120px;
+            height: 100px;
             object-fit: cover;
         }
         
-        .remove-image {
+        .image-preview .remove-btn {
             position: absolute;
             top: 5px;
-            left: 5px;
-            background: rgba(255,255,255,0.9);
-            border: none;
-            border-radius: 50%;
+            right: 5px;
             width: 25px;
             height: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-radius: 50%;
+            background: rgba(220,38,38,0.9);
+            color: white;
+            border: none;
             cursor: pointer;
+            font-size: 12px;
         }
         
-        .amenity-checkbox {
+        .button-group {
             display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px;
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
+            gap: 15px;
+            margin-top: 30px;
         }
         
-        .amenity-checkbox:hover {
-            background: #f9fafb;
-        }
-        
-        .amenity-checkbox input:checked + span {
-            background: rgba(24,169,153,0.1);
-        }
-        
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-        
-        .pricing-card {
-            border: 2px solid #e5e7eb;
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-        
-        .pricing-card.selected {
-            border-color: var(--brand);
-            background: rgba(24,169,153,0.05);
-        }
-        
-        .wizard-navigation {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 30px 40px;
-            border-top: 1px solid #e5e7eb;
-            background: #f9fafb;
-        }
-        
-        .btn-wizard {
-            padding: 12px 30px;
-            border-radius: 10px;
+        .btn-prev, .btn-next, .btn-submit {
+            flex: 1;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 16px;
             font-weight: 600;
+            cursor: pointer;
             transition: all 0.3s;
+        }
+        
+        .btn-prev {
+            background: #f3f4f6;
+            color: #4b5563;
+            border: none;
         }
         
         .btn-next, .btn-submit {
@@ -226,309 +254,378 @@
         
         .btn-next:hover, .btn-submit:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(24,169,153,0.3);
-            color: white;
+            box-shadow: 0 10px 25px rgba(24,169,153,0.3);
         }
         
-        .btn-prev {
-            background: #6b7280;
-            color: white;
-            border: none;
+        .step-panel {
+            display: none;
         }
         
-        .progress-bar-container {
-            height: 6px;
-            background: #e5e7eb;
-            border-radius: 3px;
-            overflow: hidden;
+        .step-panel.active {
+            display: block;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .summary-section {
+            background: #f9fafb;
+            border-radius: 15px;
+            padding: 25px;
             margin-bottom: 20px;
         }
         
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(135deg, var(--brand), var(--brand2));
-            border-radius: 3px;
-            transition: width 0.5s ease;
+        .summary-section h5 {
+            color: #1f2937;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+        
+        @media (max-width: 768px) {
+            .wizard-step .step-line {
+                width: 40px;
+            }
+            
+            .form-card {
+                padding: 25px;
+            }
+            
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="bg-white border-bottom fixed-top">
         <nav class="navbar navbar-expand-lg container">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="homePage.html">
-                <img src="img.png" height="50" width="50">
-                <span class="fw-bold">کُجاجا</span>
+            <a class="navbar-brand d-flex align-items-center gap-2" href="../index.html">
+                <img src="../assets/images/img.png" height="50" width="50">
+                <span class="fw-bold">StayLocal</span>
             </a>
             <div class="d-flex gap-2">
-                <a class="btn btn-outline-secondary" href="profile.html">پروفایل</a>
+                <a class="btn btn-outline-secondary" href="profile.html">Profile</a>
             </div>
         </nav>
     </header>
 
     <div class="add-property-container">
         <div class="container">
-            <div class="wizard-container">
-                <!-- Header -->
-                <div class="wizard-header">
-                    <h2 class="mb-2">🏠 اقامتگاه خود را ثبت کنید</h2>
-                    <p class="mb-0">در چند مرحله ساده، اقامتگاه خود را معرفی کنید</p>
+            <div class="wizard-progress">
+                <div class="wizard-step">
+                    <div class="step-circle active" id="step1Circle">1</div>
                 </div>
-                
-                <!-- Progress Bar -->
-                <div class="px-4 pt-3">
-                    <div class="progress-bar-container">
-                        <div class="progress-bar" id="progressBar" style="width: 25%"></div>
-                    </div>
+                <div class="step-line" id="line1"></div>
+                <div class="wizard-step">
+                    <div class="step-circle" id="step2Circle">2</div>
                 </div>
-                
-                <!-- Steps -->
-                <div class="wizard-steps">
-                    <div class="step active" id="step1">
-                        <div class="step-number">1</div>
-                        <span>اطلاعات کلی</span>
-                    </div>
-                    <div class="step" id="step2">
-                        <div class="step-number">2</div>
-                        <span>تصاویر</span>
-                    </div>
-                    <div class="step" id="step3">
-                        <div class="step-number">3</div>
-                        <span>امکانات</span>
-                    </div>
-                    <div class="step" id="step4">
-                        <div class="step-number">4</div>
-                        <span>قیمت‌گذاری</span>
-                    </div>
+                <div class="step-line" id="line2"></div>
+                <div class="wizard-step">
+                    <div class="step-circle" id="step3Circle">3</div>
                 </div>
-                
-                <!-- Content -->
-                <div class="wizard-content">
-                    <!-- Step 1: Basic Info -->
-                    <div class="step-content active" id="content1">
-                        <div class="form-section">
-                            <h5>🏷️ اطلاعات اصلی</h5>
-                            <div class="row">
-                                <div class="col-md-8 mb-3">
-                                    <label class="form-label">نام اقامتگاه *</label>
-                                    <input type="text" class="form-control" placeholder="مثال: ویلا دریایی زیبا">
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label">نوع اقامتگاه *</label>
-                                    <select class="form-select">
-                                        <option>انتخاب کنید</option>
-                                        <option>ویلا</option>
-                                        <option>آپارتمان</option>
-                                        <option>سوئیت</option>
-                                        <option>بوم‌گردی</option>
-                                        <option>کلبه</option>
-                                    </select>
-                                </div>
+                <div class="step-line" id="line3"></div>
+                <div class="wizard-step">
+                    <div class="step-circle" id="step4Circle">4</div>
+                </div>
+            </div>
+            
+            <div class="form-card">
+                <div id="step1" class="step-panel active">
+                    <h3>Basic Information</h3>
+                    
+                    <div class="form-group">
+                        <label>Property Title</label>
+                        <input type="text" id="propertyTitle" placeholder="e.g., Modern Apartment in Downtown">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Property Type</label>
+                        <div class="property-type-grid">
+                            <div class="property-type-option" onclick="selectType(this, 'apartment')">
+                                <div class="icon">A</div>
+                                <div>Apartment</div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">توضیحات *</label>
-                                <textarea class="form-control" rows="4" placeholder="اقامتگاه خود را معرفی کنید..."></textarea>
+                            <div class="property-type-option" onclick="selectType(this, 'villa')">
+                                <div class="icon">V</div>
+                                <div>Villa</div>
                             </div>
-                        </div>
-                        
-                        <div class="form-section">
-                            <h5>📍 موقعیت مکانی</h5>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">استان *</label>
-                                    <select class="form-select">
-                                        <option>انتخاب استان</option>
-                                        <option>تهران</option>
-                                        <option>مازندران</option>
-                                        <option>گیلان</option>
-                                        <option>اصفهان</option>
-                                        <option>فارس</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">شهر *</label>
-                                    <select class="form-select">
-                                        <option>انتخاب شهر</option>
-                                        <option>تهران</option>
-                                        <option>رامسر</option>
-                                        <option>چالوس</option>
-                                    </select>
-                                </div>
+                            <div class="property-type-option" onclick="selectType(this, 'house')">
+                                <div class="icon">H</div>
+                                <div>House</div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">آدرس کامل *</label>
-                                <textarea class="form-control" rows="2" placeholder="آدرس دقیق اقامتگاه"></textarea>
-                            </div>
-                        </div>
-                        
-                        <div class="form-section">
-                            <h5>🏠 مشخصات فیزیکی</h5>
-                            <div class="row">
-                                <div class="col-md-3 mb-3">
-                                    <label class="form-label">ظرفیت *</label>
-                                    <select class="form-select">
-                                        <option>۱ نفر</option>
-                                        <option>۲ نفر</option>
-                                        <option>۳ نفر</option>
-                                        <option>۴ نفر</option>
-                                        <option>۵ نفر</option>
-                                        <option>۶+ نفر</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <label class="form-label">تعداد اتاق</label>
-                                    <select class="form-select">
-                                        <option>۱ اتاق</option>
-                                        <option>۲ اتاق</option>
-                                        <option>۳ اتاق</option>
-                                        <option>۴+ اتاق</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <label class="form-label">تعداد حمام</label>
-                                    <select class="form-select">
-                                        <option>۱ حمام</option>
-                                        <option>۲ حمام</option>
-                                        <option>۳+ حمام</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <label class="form-label">متراژ (متر)</label>
-                                    <input type="number" class="form-control" placeholder="85">
-                                </div>
+                            <div class="property-type-option" onclick="selectType(this, 'cottage')">
+                                <div class="icon">C</div>
+                                <div>Cottage</div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Step 2: Images -->
-                    <div class="step-content" id="content2">
-                        <div class="form-section">
-                            <h5>📸 تصاویر اقامتگاه</h5>
-                            <p class="text-muted mb-4">حداقل ۵ تصویر با کیفیت از اقامتگاه خود آپلود کنید</p>
-                            
-                            <div class="image-upload-area" onclick="document.getElementById('imageInput').click()">
-                                <div style="font-size: 3rem; margin-bottom: 15px;">📷</div>
-                                <h6>تصاویر خود را اینجا بکشید یا کلیک کنید</h6>
-                                <p class="text-muted">JPG, PNG تا ۵ مگابایت</p>
-                                <input type="file" id="imageInput" multiple accept="image/*" style="display: none;">
-                            </div>
-                            
-                            <div class="uploaded-images" id="uploadedImages">
-                                <!-- Uploaded images will appear here -->
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="propertyDescription" rows="4" placeholder="Describe your property..."></textarea>
                     </div>
                     
-                    <!-- Step 3: Amenities -->
-                    <div class="step-content" id="content3">
-                        <div class="form-section">
-                            <h5>🎯 امکانات و تجهیزات</h5>
-                            <p class="text-muted mb-4">امکاناتی که در اقامتگاه شما موجود است را انتخاب کنید</p>
-                            
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="amenity-checkbox">
-                                        <input type="checkbox" id="wifi">
-                                        <span>📶 وای‌فای</span>
-                                    </div>
-                                    <div class="amenity-checkbox">
-                                        <input type="checkbox" id="parking">
-                                        <span>🚗 پارکینگ</span>
-                                    </div>
-                                    <div class="amenity-checkbox">
-                                        <input type="checkbox" id="kitchen">
-                                        <span>🍽️ آشپزخانه</span>
-                                    </div>
-                                    <div class="amenity-checkbox">
-                                        <input type="checkbox" id="tv">
-                                        <span>📺 تلویزیون</span>
-                                    </div>
-                                    <div class="amenity-checkbox">
-                                        <input type="checkbox" id="ac">
-                                        <span>❄️ کولر/گرمایش</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="amenity-checkbox">
-                                        <input type="checkbox" id="pool">
-                                        <span>🏊 استخر</span>
-                                    </div>
-                                    <div class="amenity-checkbox">
-                                        <input type="checkbox" id="gym">
-                                        <span>🏋️ سالن ورزش</span>
-                                    </div>
-                                    <div class="amenity-checkbox">
-                                        <input type="checkbox" id="balcony">
-                                        <span>🌅 بالکن/تراس</span>
-                                    </div>
-                                    <div class="amenity-checkbox">
-                                        <input type="checkbox" id="garden">
-                                        <span>🌳 باغ/حیاط</span>
-                                    </div>
-                                    <div class="amenity-checkbox">
-                                        <input type="checkbox" id="fireplace">
-                                        <span>🔥 شومینه</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Step 4: Pricing -->
-                    <div class="step-content" id="content4">
-                        <div class="form-section">
-                            <h5>💰 قیمت‌گذاری</h5>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">قیمت هر شب (تومان) *</label>
-                                    <input type="number" class="form-control" placeholder="1500000">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">حداقل اقامت (شب)</label>
-                                    <select class="form-select">
-                                        <option>۱ شب</option>
-                                        <option>۲ شب</option>
-                                        <option>۳ شب</option>
-                                        <option>۷ شب</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="form-section">
-                            <h5>📋 قوانین اقامت</h5>
-                            <div class="mb-3">
-                                <label class="form-label">ساعت ورود</label>
-                                <select class="form-select">
-                                    <option>۱۴:۰۰</option>
-                                    <option>۱۵:۰۰</option>
-                                    <option>۱۶:۰۰</option>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Bedrooms</label>
+                                <select id="bedrooms">
+                                    <option value="1">1 Bedroom</option>
+                                    <option value="2">2 Bedrooms</option>
+                                    <option value="3">3 Bedrooms</option>
+                                    <option value="4">4 Bedrooms</option>
+                                    <option value="5">5+ Bedrooms</option>
                                 </select>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">ساعت خروج</label>
-                                <select class="form-select">
-                                    <option>۱۲:۰۰</option>
-                                    <option>۱۳:۰۰</option>
-                                    <option>۱۴:۰۰</option>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Bathrooms</label>
+                                <select id="bathrooms">
+                                    <option value="1">1 Bathroom</option>
+                                    <option value="2">2 Bathrooms</option>
+                                    <option value="3">3 Bathrooms</option>
+                                    <option value="4">4+ Bathrooms</option>
                                 </select>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">قوانین خاص</label>
-                                <textarea class="form-control" rows="3" placeholder="قوانین اضافی (اختیاری)"></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Max Guests</label>
+                                <select id="maxGuests">
+                                    <option value="2">2 Guests</option>
+                                    <option value="4">4 Guests</option>
+                                    <option value="6">6 Guests</option>
+                                    <option value="8">8 Guests</option>
+                                    <option value="10">10+ Guests</option>
+                                </select>
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="button-group">
+                        <button class="btn-next" onclick="nextStep(2)">Next Step →</button>
+                    </div>
                 </div>
                 
-                <!-- Navigation -->
-                <div class="wizard-navigation">
-                    <button class="btn btn-prev btn-wizard" id="prevBtn" onclick="changeStep(-1)" style="display: none;">⬅️ قبلی</button>
-                    <div>
-                        <span id="stepInfo">مرحله ۱ از ۴</span>
+                <div id="step2" class="step-panel">
+                    <h3>Location & Address</h3>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Country</label>
+                                <select id="country">
+                                    <option value="">Select Country</option>
+                                    <option value="usa">United States</option>
+                                    <option value="canada">Canada</option>
+                                    <option value="uk">United Kingdom</option>
+                                    <option value="australia">Australia</option>
+                                    <option value="germany">Germany</option>
+                                    <option value="france">France</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>City</label>
+                                <input type="text" id="city" placeholder="e.g., New York">
+                            </div>
+                        </div>
                     </div>
-                    <button class="btn btn-next btn-wizard" id="nextBtn" onclick="changeStep(1)">بعدی ➡️</button>
-                    <button class="btn btn-submit btn-wizard" id="submitBtn" onclick="submitProperty()" style="display: none;">🎯 ثبت اقامتگاه</button>
+                    
+                    <div class="form-group">
+                        <label>Street Address</label>
+                        <input type="text" id="address" placeholder="e.g., 123 Main Street">
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>ZIP/Postal Code</label>
+                                <input type="text" id="zipCode" placeholder="e.g., 10001">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Neighborhood</label>
+                                <input type="text" id="neighborhood" placeholder="e.g., Downtown">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Nearby Landmarks (Optional)</label>
+                        <textarea id="landmarks" rows="2" placeholder="e.g., 5 min walk from Central Park, Near subway station"></textarea>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="btn-prev" onclick="prevStep(1)">← Previous</button>
+                        <button class="btn-next" onclick="nextStep(3)">Next Step →</button>
+                    </div>
+                </div>
+                
+                <div id="step3" class="step-panel">
+                    <h3>Amenities & Photos</h3>
+                    
+                    <div class="form-group">
+                        <label>Amenities</label>
+                        <div class="amenities-grid">
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                                <input type="checkbox" value="wifi">
+                                High-Speed WiFi
+                            </label>
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                                <input type="checkbox" value="parking">
+                                Parking
+                            </label>
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                                <input type="checkbox" value="ac">
+                                Air Conditioning
+                            </label>
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                                <input type="checkbox" value="heating">
+                                Heating
+                            </label>
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                                <input type="checkbox" value="tv">
+                                Smart TV
+                            </label>
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                                <input type="checkbox" value="kitchen">
+                                Full Kitchen
+                            </label>
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                                <input type="checkbox" value="washer">
+                                Washer/Dryer
+                            </label>
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                                <input type="checkbox" value="pool">
+                                Pool
+                            </label>
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                                <input type="checkbox" value="gym">
+                                Gym
+                            </label>
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                                <input type="checkbox" value="pets">
+                                Pet Friendly
+                            </label>
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                                <input type="checkbox" value="balcony">
+                                Balcony
+                            </label>
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                                <input type="checkbox" value="workspace">
+                                Workspace
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Property Photos</label>
+                        <div class="image-upload-area" onclick="document.getElementById('imageInput').click()">
+                            <div class="icon">+</div>
+                            <p>Click to upload photos</p>
+                            <small class="text-muted">Upload up to 10 photos (JPG, PNG)</small>
+                        </div>
+                        <input type="file" id="imageInput" multiple accept="image/*" style="display: none;" onchange="handleImageUpload(this)">
+                        <div class="image-preview-grid" id="imagePreviewGrid"></div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="btn-prev" onclick="prevStep(2)">← Previous</button>
+                        <button class="btn-next" onclick="nextStep(4)">Next Step →</button>
+                    </div>
+                </div>
+                
+                <div id="step4" class="step-panel">
+                    <h3>Pricing & Review</h3>
+                    
+                    <div class="pricing-grid">
+                        <div class="form-group">
+                            <label>Price Per Night ($)</label>
+                            <input type="number" id="pricePerNight" placeholder="e.g., 150">
+                        </div>
+                        <div class="form-group">
+                            <label>Cleaning Fee ($)</label>
+                            <input type="number" id="cleaningFee" placeholder="e.g., 50">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Minimum Stay (nights)</label>
+                                <select id="minStay">
+                                    <option value="1">1 Night</option>
+                                    <option value="2">2 Nights</option>
+                                    <option value="3">3 Nights</option>
+                                    <option value="7">1 Week</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Cancellation Policy</label>
+                                <select id="cancellationPolicy">
+                                    <option value="flexible">Flexible (Full refund 24h before)</option>
+                                    <option value="moderate">Moderate (Full refund 5 days before)</option>
+                                    <option value="strict">Strict (50% refund 7 days before)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-section">
+                        <h5>📋 Property Summary</h5>
+                        <div class="summary-item">
+                            <span>Title</span>
+                            <span id="summaryTitle">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Type</span>
+                            <span id="summaryType">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Location</span>
+                            <span id="summaryLocation">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Capacity</span>
+                            <span id="summaryCapacity">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Price</span>
+                            <span id="summaryPrice">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="d-flex align-items-center gap-2">
+                            <input type="checkbox" id="termsAgree">
+                            I agree to the <a href="#">Terms of Service</a> and <a href="#">Host Guidelines</a>
+                        </label>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="btn-prev" onclick="prevStep(3)">← Previous</button>
+                        <button class="btn-submit" onclick="submitProperty()">🚀 Submit Property</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -537,170 +634,215 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let currentStep = 1;
-        const totalSteps = 4;
+        let selectedType = '';
+        let selectedAmenities = [];
+        let uploadedImages = [];
         
-        function changeStep(direction) {
-            const newStep = currentStep + direction;
+        function nextStep(step) {
+            if (!validateStep(currentStep)) return;
             
-            if (newStep < 1 || newStep > totalSteps) return;
+            document.getElementById('step' + currentStep).classList.remove('active');
+            document.getElementById('step' + step).classList.add('active');
             
-            // Hide current step
-            document.getElementById(`content${currentStep}`).classList.remove('active');
-            document.getElementById(`step${currentStep}`).classList.remove('active');
-            if (direction > 0) {
-                document.getElementById(`step${currentStep}`).classList.add('completed');
+            document.getElementById('step' + currentStep + 'Circle').classList.remove('active');
+            document.getElementById('step' + currentStep + 'Circle').classList.add('completed');
+            document.getElementById('step' + step + 'Circle').classList.add('active');
+            
+            if (currentStep < step) {
+                document.getElementById('line' + currentStep).classList.add('active');
             }
             
-            // Show new step
-            currentStep = newStep;
-            document.getElementById(`content${currentStep}`).classList.add('active');
-            document.getElementById(`step${currentStep}`).classList.add('active');
+            currentStep = step;
             
-            // Update navigation
-            updateNavigation();
-            updateProgressBar();
+            if (step === 4) {
+                updateSummary();
+            }
         }
         
-        function updateNavigation() {
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            const submitBtn = document.getElementById('submitBtn');
-            const stepInfo = document.getElementById('stepInfo');
+        function prevStep(step) {
+            document.getElementById('step' + currentStep).classList.remove('active');
+            document.getElementById('step' + step).classList.add('active');
             
-            prevBtn.style.display = currentStep === 1 ? 'none' : 'block';
-            nextBtn.style.display = currentStep === totalSteps ? 'none' : 'block';
-            submitBtn.style.display = currentStep === totalSteps ? 'block' : 'none';
-            stepInfo.textContent = `مرحله ${currentStep} از ${totalSteps}`;
+            document.getElementById('step' + currentStep + 'Circle').classList.remove('active');
+            document.getElementById('step' + step + 'Circle').classList.remove('completed');
+            document.getElementById('step' + step + 'Circle').classList.add('active');
+            
+            if (currentStep > step) {
+                document.getElementById('line' + step).classList.remove('active');
+            }
+            
+            currentStep = step;
         }
         
-        function updateProgressBar() {
-            const progressBar = document.getElementById('progressBar');
-            const progress = (currentStep / totalSteps) * 100;
-            progressBar.style.width = progress + '%';
-        }
-        
-        // Image upload handling
-        document.getElementById('imageInput').addEventListener('change', function(e) {
-            const files = e.target.files;
-            const uploadedImages = document.getElementById('uploadedImages');
-            
-            for (let file of files) {
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const imageContainer = document.createElement('div');
-                        imageContainer.className = 'uploaded-image';
-                        imageContainer.innerHTML = `
-                            <img src="${e.target.result}" alt="تصویر اقامتگاه">
-                            <button class="remove-image" onclick="this.parentElement.remove()">✕</button>
-                        `;
-                        uploadedImages.appendChild(imageContainer);
-                    };
-                    reader.readAsDataURL(file);
+        function validateStep(step) {
+            if (step === 1) {
+                const title = document.getElementById('propertyTitle').value;
+                const description = document.getElementById('propertyDescription').value;
+                
+                if (!title) {
+                    alert('Please enter a property title');
+                    return false;
+                }
+                if (!selectedType) {
+                    alert('Please select a property type');
+                    return false;
+                }
+                if (!description) {
+                    alert('Please enter a description');
+                    return false;
                 }
             }
-        });
-        
-        // Drag and drop functionality
-        const uploadArea = document.querySelector('.image-upload-area');
-        
-        uploadArea.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            this.classList.add('dragover');
-        });
-        
-        uploadArea.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            this.classList.remove('dragover');
-        });
-        
-        uploadArea.addEventListener('drop', function(e) {
-            e.preventDefault();
-            this.classList.remove('dragover');
             
-            const files = e.dataTransfer.files;
-            document.getElementById('imageInput').files = files;
-            document.getElementById('imageInput').dispatchEvent(new Event('change'));
-        });
+            if (step === 2) {
+                const country = document.getElementById('country').value;
+                const city = document.getElementById('city').value;
+                const address = document.getElementById('address').value;
+                
+                if (!country) {
+                    alert('Please select a country');
+                    return false;
+                }
+                if (!city) {
+                    alert('Please enter a city');
+                    return false;
+                }
+                if (!address) {
+                    alert('Please enter an address');
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        function selectType(element, type) {
+            document.querySelectorAll('.property-type-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            selectedType = type;
+        }
+        
+        function toggleAmenity(element) {
+            element.classList.toggle('selected');
+            const checkbox = element.querySelector('input');
+            checkbox.checked = !checkbox.checked;
+            
+            if (checkbox.checked) {
+                selectedAmenities.push(checkbox.value);
+            } else {
+                selectedAmenities = selectedAmenities.filter(a => a !== checkbox.value);
+            }
+        }
+        
+        function handleImageUpload(input) {
+            const files = Array.from(input.files);
+            const previewGrid = document.getElementById('imagePreviewGrid');
+            
+            files.forEach((file, index) => {
+                if (uploadedImages.length >= 10) {
+                    alert('Maximum 10 images allowed');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImages.push(e.target.result);
+                    
+                    const preview = document.createElement('div');
+                    preview.className = 'image-preview';
+                    preview.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview">
+                        <button class="remove-btn" onclick="removeImage(${uploadedImages.length - 1}, this)">×</button>
+                    `;
+                    previewGrid.appendChild(preview);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        function removeImage(index, btn) {
+            uploadedImages.splice(index, 1);
+            btn.parentElement.remove();
+        }
+        
+        function updateSummary() {
+            document.getElementById('summaryTitle').textContent = document.getElementById('propertyTitle').value;
+            document.getElementById('summaryType').textContent = selectedType.charAt(0).toUpperCase() + selectedType.slice(1);
+            document.getElementById('summaryLocation').textContent = 
+                document.getElementById('city').value + ', ' + 
+                document.getElementById('country').options[document.getElementById('country').selectedIndex].text;
+            document.getElementById('summaryCapacity').textContent = 
+                document.getElementById('bedrooms').value + ' BR, ' +
+                document.getElementById('bathrooms').value + ' BA, ' +
+                document.getElementById('maxGuests').value + ' Guests';
+            document.getElementById('summaryPrice').textContent = '$' + (document.getElementById('pricePerNight').value || '0') + '/night';
+        }
         
         function submitProperty() {
-            // Validate required fields
-            const requiredFields = [
-                { selector: 'input[placeholder="مثال: ویلا دریایی زیبا"]', name: 'نام اقامتگاه' },
-                { selector: 'select', name: 'نوع اقامتگاه' },
-                { selector: 'textarea[placeholder="اقامتگاه خود را معرفی کنید..."]', name: 'توضیحات' },
-                { selector: 'select[class*="form-select"]:nth-of-type(1)', name: 'استان' },
-                { selector: 'textarea[placeholder="آدرس دقیق اقامتگاه"]', name: 'آدرس' },
-                { selector: 'input[type="number"][placeholder="1500000"]', name: 'قیمت' }
-            ];
+            const termsAgree = document.getElementById('termsAgree').checked;
+            const pricePerNight = document.getElementById('pricePerNight').value;
             
-            let isValid = true;
-            const missingFields = [];
-            
-            requiredFields.forEach(field => {
-                const element = document.querySelector(field.selector);
-                if (!element || !element.value.trim()) {
-                    isValid = false;
-                    missingFields.push(field.name);
-                }
-            });
-            
-            // Check if at least 3 images are uploaded
-            const uploadedImages = document.querySelectorAll('#uploadedImages .uploaded-image');
-            if (uploadedImages.length < 3) {
-                isValid = false;
-                missingFields.push('حداقل ۳ تصویر');
-            }
-            
-            if (!isValid) {
-                alert('❌ لطفاً فیلدهای زیر را تکمیل کنید:\n' + missingFields.join('\n'));
+            if (!pricePerNight) {
+                alert('Please enter a price per night');
                 return;
             }
             
-            // Collect form data
-            const propertyData = {
+            if (!termsAgree) {
+                alert('Please agree to the Terms of Service');
+                return;
+            }
+            
+            const property = {
                 id: Date.now(),
-                name: document.querySelector('input[placeholder="مثال: ویلا دریایی زیبا"]').value,
-                type: document.querySelector('select').value,
-                description: document.querySelector('textarea[placeholder="اقامتگاه خود را معرفی کنید..."]').value,
-                province: document.querySelectorAll('select')[1].value,
-                city: document.querySelectorAll('select')[2].value,
-                address: document.querySelector('textarea[placeholder="آدرس دقیق اقامتگاه"]').value,
-                capacity: document.querySelector('select[class*="form-select"]:nth-of-type(3)').value,
-                rooms: document.querySelector('select[class*="form-select"]:nth-of-type(4)').value,
-                bathrooms: document.querySelector('select[class*="form-select"]:nth-of-type(5)').value,
-                area: document.querySelector('input[placeholder="85"]').value,
-                price: document.querySelector('input[placeholder="1500000"]').value,
-                minStay: document.querySelector('select[class*="form-select"]:nth-of-type(6)').value,
-                checkin: document.querySelector('select[class*="form-select"]:nth-of-type(7)').value,
-                checkout: document.querySelector('select[class*="form-select"]:nth-of-type(8)').value,
-                rules: document.querySelector('textarea[placeholder="قوانین اضافی (اختیاری)"]').value,
-                amenities: getSelectedAmenities(),
-                images: uploadedImages.length,
+                title: document.getElementById('propertyTitle').value,
+                type: selectedType,
+                description: document.getElementById('propertyDescription').value,
+                bedrooms: document.getElementById('bedrooms').value,
+                bathrooms: document.getElementById('bathrooms').value,
+                maxGuests: document.getElementById('maxGuests').value,
+                country: document.getElementById('country').value,
+                city: document.getElementById('city').value,
+                address: document.getElementById('address').value,
+                zipCode: document.getElementById('zipCode').value,
+                neighborhood: document.getElementById('neighborhood').value,
+                landmarks: document.getElementById('landmarks').value,
+                amenities: selectedAmenities,
+                images: uploadedImages,
+                pricePerNight: pricePerNight,
+                cleaningFee: document.getElementById('cleaningFee').value || 0,
+                minStay: document.getElementById('minStay').value,
+                cancellationPolicy: document.getElementById('cancellationPolicy').value,
                 status: 'pending',
-                owner: localStorage.getItem('userName') || 'کاربر',
-                dateAdded: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                hostId: localStorage.getItem('userId')
             };
             
-            // Save to localStorage (simulate database)
-            const userProperties = JSON.parse(localStorage.getItem('userProperties') || '[]');
-            userProperties.push(propertyData);
-            localStorage.setItem('userProperties', JSON.stringify(userProperties));
+            const properties = JSON.parse(localStorage.getItem('hostProperties') || '[]');
+            properties.push(property);
+            localStorage.setItem('hostProperties', JSON.stringify(properties));
             
-            // Show success message
-            alert(`🎉 اقامتگاه "${propertyData.name}" با موفقیت ثبت شد!\n\nکد اقامتگاه: ${propertyData.id}\nوضعیت: در انتظار تأیید\n\nپس از بررسی توسط تیم ما، در سایت نمایش داده خواهد شد.`);
+            alert('Property submitted successfully!\n\nYour property is pending approval and will be listed once reviewed by our team.');
             
-            // Redirect to profile
             window.location.href = 'profile.html';
         }
         
-        function getSelectedAmenities() {
-            const selectedAmenities = [];
-            document.querySelectorAll('.amenity-checkbox input:checked').forEach(checkbox => {
-                selectedAmenities.push(checkbox.id);
-            });
-            return selectedAmenities;
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            const userRole = localStorage.getItem('userRole');
+            
+            if (!isLoggedIn) {
+                alert('Please login to add a property');
+                window.location.href = 'loginup.html';
+                return;
+            }
+            
+            if (userRole !== 'host') {
+                alert('Only hosts can add properties. Please register as a host.');
+                window.location.href = 'profile.html';
+                return;
+            }
+        });
     </script>
 </body>
 </html>

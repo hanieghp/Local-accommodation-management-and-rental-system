@@ -1,80 +1,49 @@
-/**
- * Kojaja Utilities
- * Common JavaScript functions and utilities for the accommodation management system
- */
-
-// Configuration
 const CONFIG = {
-    APP_NAME: 'کُجاجا',
+    APP_NAME: 'StayLocal',
     VERSION: '1.0.0',
     API_BASE_URL: '/api/v1',
-    STORAGE_PREFIX: 'kojaja_',
-    CURRENCY: 'تومان'
+    STORAGE_PREFIX: 'staylocal_',
+    CURRENCY: 'USD'
 };
 
-// Utility Functions
 const Utils = {
-    // Format numbers to persian with commas
     formatPrice: function(price) {
-        return parseInt(price).toLocaleString('fa-IR');
+        return parseInt(price).toLocaleString('en-US');
     },
 
-    // Convert english numbers to persian
-    toPersianNumbers: function(str) {
-        const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-        return str.toString().replace(/[0-9]/g, function(w) {
-            return persianNumbers[+w];
-        });
+    formatCurrency: function(amount) {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+        }).format(amount);
     },
 
-    // Convert persian numbers to english
-    toEnglishNumbers: function(str) {
-        const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-        const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-        
-        let result = str;
-        for (let i = 0; i < persianNumbers.length; i++) {
-            result = result.replace(new RegExp(persianNumbers[i], 'g'), englishNumbers[i]);
-        }
-        return result;
+    formatDate: function(date) {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(date).toLocaleDateString('en-US', options);
     },
 
-    // Format date to persian
-    formatPersianDate: function(date) {
-        const persianMonths = [
-            'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
-            'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'
-        ];
-        
-        const d = new Date(date);
-        return `${d.getDate()} ${persianMonths[d.getMonth()]} ${d.getFullYear()}`;
-    },
-
-    // Show toast notification
     showToast: function(message, type = 'success', duration = 3000) {
-        // Remove existing toast
-        const existingToast = document.querySelector('.kojaja-toast');
+        const existingToast = document.querySelector('.staylocal-toast');
         if (existingToast) {
             existingToast.remove();
         }
 
-        // Create toast element
         const toast = document.createElement('div');
-        toast.className = `kojaja-toast kojaja-toast-${type}`;
+        toast.className = `staylocal-toast staylocal-toast-${type}`;
         toast.innerHTML = `
-            <div class="kojaja-toast-content">
-                <span class="kojaja-toast-icon">${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
-                <span class="kojaja-toast-message">${message}</span>
-                <button class="kojaja-toast-close" onclick="this.parentElement.parentElement.remove()">×</button>
+            <div class="staylocal-toast-content">
+                <span class="staylocal-toast-icon">${type === 'success' ? 'OK' : type === 'error' ? 'X' : 'i'}</span>
+                <span class="staylocal-toast-message">${message}</span>
+                <button class="staylocal-toast-close" onclick="this.parentElement.parentElement.remove()">×</button>
             </div>
         `;
 
-        // Add styles if not exists
-        if (!document.querySelector('#kojaja-toast-styles')) {
+        if (!document.querySelector('#staylocal-toast-styles')) {
             const styles = document.createElement('style');
-            styles.id = 'kojaja-toast-styles';
+            styles.id = 'staylocal-toast-styles';
             styles.textContent = `
-                .kojaja-toast {
+                .staylocal-toast {
                     position: fixed;
                     top: 20px;
                     right: 20px;
@@ -83,42 +52,42 @@ const Utils = {
                     padding: 0;
                     border-radius: 12px;
                     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-                    animation: kojaja-slide-in 0.3s ease-out;
-                    font-family: 'Vazir', sans-serif;
+                    animation: staylocal-slide-in 0.3s ease-out;
+                    font-family: 'Inter', sans-serif;
                 }
                 
-                .kojaja-toast-success {
+                .staylocal-toast-success {
                     background: linear-gradient(135deg, #10b981, #059669);
                     color: white;
                 }
                 
-                .kojaja-toast-error {
+                .staylocal-toast-error {
                     background: linear-gradient(135deg, #ef4444, #dc2626);
                     color: white;
                 }
                 
-                .kojaja-toast-info {
+                .staylocal-toast-info {
                     background: linear-gradient(135deg, #3b82f6, #2563eb);
                     color: white;
                 }
                 
-                .kojaja-toast-content {
+                .staylocal-toast-content {
                     display: flex;
                     align-items: center;
                     padding: 16px 20px;
                     gap: 12px;
                 }
                 
-                .kojaja-toast-icon {
+                .staylocal-toast-icon {
                     font-size: 18px;
                 }
                 
-                .kojaja-toast-message {
+                .staylocal-toast-message {
                     flex: 1;
                     font-weight: 600;
                 }
                 
-                .kojaja-toast-close {
+                .staylocal-toast-close {
                     background: rgba(255,255,255,0.2);
                     border: none;
                     color: white;
@@ -131,11 +100,11 @@ const Utils = {
                     transition: background 0.3s;
                 }
                 
-                .kojaja-toast-close:hover {
+                .staylocal-toast-close:hover {
                     background: rgba(255,255,255,0.3);
                 }
                 
-                @keyframes kojaja-slide-in {
+                @keyframes staylocal-slide-in {
                     from {
                         transform: translateX(100%);
                         opacity: 0;
@@ -147,7 +116,7 @@ const Utils = {
                 }
                 
                 @media (max-width: 480px) {
-                    .kojaja-toast {
+                    .staylocal-toast {
                         right: 10px;
                         left: 10px;
                         min-width: auto;
@@ -157,10 +126,8 @@ const Utils = {
             document.head.appendChild(styles);
         }
 
-        // Add to document
         document.body.appendChild(toast);
 
-        // Auto remove
         setTimeout(() => {
             if (toast.parentElement) {
                 toast.remove();
@@ -168,7 +135,6 @@ const Utils = {
         }, duration);
     },
 
-    // Local storage helpers
     storage: {
         set: function(key, value) {
             try {
@@ -215,24 +181,20 @@ const Utils = {
         }
     },
 
-    // Validate email
     isValidEmail: function(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     },
 
-    // Validate iranian phone number
     isValidPhone: function(phone) {
-        const phoneRegex = /^(\+98|0)?9\d{9}$/;
+        const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
         return phoneRegex.test(phone.replace(/[\s-]/g, ''));
     },
 
-    // Generate unique ID
     generateId: function() {
         return Date.now().toString(36) + Math.random().toString(36).substr(2);
     },
 
-    // Debounce function
     debounce: function(func, wait, immediate) {
         let timeout;
         return function executedFunction(...args) {
@@ -247,7 +209,6 @@ const Utils = {
         };
     },
 
-    // Get URL parameters
     getUrlParams: function() {
         const params = {};
         const searchParams = new URLSearchParams(window.location.search);
@@ -257,7 +218,6 @@ const Utils = {
         return params;
     },
 
-    // Update URL without reload
     updateUrl: function(params) {
         const url = new URL(window.location);
         Object.keys(params).forEach(key => {
@@ -270,12 +230,11 @@ const Utils = {
         window.history.pushState({}, '', url);
     },
 
-    // Loading indicator
     showLoading: function(element) {
         if (element) {
             const originalContent = element.innerHTML;
             element.setAttribute('data-original-content', originalContent);
-            element.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>در حال بارگذاری...';
+            element.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
             element.disabled = true;
         }
     },
@@ -289,116 +248,154 @@ const Utils = {
     }
 };
 
-// User management
 const UserManager = {
-    // Check if user is logged in
     isLoggedIn: function() {
-        return Utils.storage.get('userLoggedIn') === true;
+        return Utils.storage.get('userLoggedIn') === true || localStorage.getItem('userLoggedIn') === 'true';
     },
 
-    // Get current user data
     getCurrentUser: function() {
         if (this.isLoggedIn()) {
             return {
-                name: Utils.storage.get('userName'),
-                email: Utils.storage.get('userEmail'),
+                name: Utils.storage.get('userName') || localStorage.getItem('userName'),
+                email: Utils.storage.get('userEmail') || localStorage.getItem('userEmail'),
+                role: Utils.storage.get('userRole') || localStorage.getItem('userRole') || 'traveler',
                 profile: Utils.storage.get('userProfile', {})
             };
         }
         return null;
     },
 
-    // Login user
     login: function(userData) {
         Utils.storage.set('userLoggedIn', true);
         Utils.storage.set('userName', userData.name);
         Utils.storage.set('userEmail', userData.email);
+        Utils.storage.set('userRole', userData.role || 'traveler');
         Utils.storage.set('userProfile', userData.profile || {});
-        Utils.showToast(`خوش آمدید ${userData.name}!`, 'success');
+        localStorage.setItem('userLoggedIn', 'true');
+        localStorage.setItem('userName', userData.name);
+        localStorage.setItem('userEmail', userData.email);
+        localStorage.setItem('userRole', userData.role || 'traveler');
+        Utils.showToast(`Welcome ${userData.name}!`, 'success');
     },
 
-    // Logout user
     logout: function() {
         Utils.storage.remove('userLoggedIn');
         Utils.storage.remove('userName');
         Utils.storage.remove('userEmail');
+        Utils.storage.remove('userRole');
         Utils.storage.remove('userProfile');
-        Utils.showToast('با موفقیت خارج شدید', 'info');
+        localStorage.removeItem('userLoggedIn');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('userRole');
+        Utils.showToast('Successfully logged out', 'info');
         setTimeout(() => {
             window.location.href = 'index.html';
         }, 1000);
     },
 
-    // Require login
     requireLogin: function() {
         if (!this.isLoggedIn()) {
-            Utils.showToast('برای دسترسی به این بخش ابتدا وارد شوید', 'error');
+            Utils.showToast('Please login to access this section', 'error');
             setTimeout(() => {
                 window.location.href = 'pages/loginup.html';
             }, 2000);
             return false;
         }
         return true;
+    },
+
+    isAdmin: function() {
+        return this.getCurrentUser()?.role === 'admin';
+    },
+
+    isHost: function() {
+        const role = this.getCurrentUser()?.role;
+        return role === 'host' || role === 'admin';
     }
 };
 
-// Navigation helper
 const Navigation = {
-    // Update navigation based on user status
     updateNavigation: function() {
         const loginButton = document.querySelector('a[href*="loginup"], a[href*="login"]');
         
         if (UserManager.isLoggedIn()) {
             const user = UserManager.getCurrentUser();
             if (loginButton && user) {
-                loginButton.innerHTML = `👤 ${user.name}`;
-                loginButton.href = 'pages/profile.html';
-                loginButton.title = 'پروفایل کاربری';
+                loginButton.innerHTML = user.name;
+                loginButton.href = loginButton.href.includes('pages/') ? 'profile.html' : 'pages/profile.html';
+                loginButton.title = 'User Profile';
             }
         }
     },
 
-    // Fix relative paths based on current location
     fixPaths: function() {
         const isInSubfolder = window.location.pathname.includes('/pages/');
         const prefix = isInSubfolder ? '../' : '';
         
-        // Update CSS paths
         document.querySelectorAll('link[href*="style.css"]').forEach(link => {
             link.href = prefix + 'assets/css/style.css';
         });
         
-        // Update image paths
         document.querySelectorAll('img[src*="img"]').forEach(img => {
             if (!img.src.includes('http') && !img.src.includes('assets/')) {
                 const imageName = img.src.split('/').pop();
                 img.src = prefix + 'assets/images/' + imageName;
             }
         });
-        
-        // Update navigation links
-        document.querySelectorAll('a[href$=".html"]').forEach(link => {
-            const href = link.getAttribute('href');
-            if (!href.includes('http') && !href.includes('../')) {
-                if (href === 'homePage.html' || href === 'index.html') {
-                    link.href = prefix + 'index.html';
-                } else {
-                    link.href = prefix + 'pages/' + href;
-                }
-            }
-        });
     }
 };
 
-// Initialize when DOM is loaded
+const NotificationManager = {
+    notifications: [],
+    
+    add: function(notification) {
+        notification.id = Utils.generateId();
+        notification.timestamp = new Date().toISOString();
+        notification.read = false;
+        this.notifications.unshift(notification);
+        this.save();
+        this.updateBadge();
+        return notification;
+    },
+    
+    markAsRead: function(id) {
+        const notification = this.notifications.find(n => n.id === id);
+        if (notification) {
+            notification.read = true;
+            this.save();
+            this.updateBadge();
+        }
+    },
+    
+    getUnreadCount: function() {
+        return this.notifications.filter(n => !n.read).length;
+    },
+    
+    save: function() {
+        Utils.storage.set('notifications', this.notifications);
+    },
+    
+    load: function() {
+        this.notifications = Utils.storage.get('notifications', []);
+    },
+    
+    updateBadge: function() {
+        const badge = document.querySelector('.notification-badge');
+        if (badge) {
+            const count = this.getUnreadCount();
+            badge.textContent = count;
+            badge.style.display = count > 0 ? 'flex' : 'none';
+        }
+    }
+};
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Fix paths for current page
     Navigation.fixPaths();
-    
-    // Update navigation
     Navigation.updateNavigation();
+    NotificationManager.load();
+    NotificationManager.updateBadge();
     
-    // Add smooth scrolling to all anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
@@ -413,8 +410,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Export for global access
 window.Utils = Utils;
 window.UserManager = UserManager;
 window.Navigation = Navigation;
+window.NotificationManager = NotificationManager;
 window.CONFIG = CONFIG;

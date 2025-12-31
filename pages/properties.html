@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>اقامتگاه‌ها | کُجاجا</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
+    <title>Properties | StayLocal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="../assets/css/style.css" />
-    
     <style>
         .properties-container {
             background: #f8f9fa;
@@ -67,7 +65,7 @@
         .property-badge {
             position: absolute;
             top: 15px;
-            right: 15px;
+            left: 15px;
             background: linear-gradient(135deg, var(--brand), var(--brand2));
             color: white;
             padding: 5px 12px;
@@ -79,7 +77,7 @@
         .property-favorite {
             position: absolute;
             top: 15px;
-            left: 15px;
+            right: 15px;
             width: 40px;
             height: 40px;
             background: rgba(255,255,255,0.9);
@@ -161,14 +159,19 @@
             display: flex;
             gap: 10px;
             align-items: center;
+            max-width: 100%;
+            overflow: hidden;
         }
         
         .price-input {
             flex: 1;
-            padding: 8px 12px;
+            min-width: 0;
+            max-width: 80px;
+            padding: 8px 10px;
             border: 1px solid #d1d5db;
             border-radius: 8px;
             font-size: 14px;
+            box-sizing: border-box;
         }
         
         .filter-checkbox {
@@ -176,7 +179,7 @@
         }
         
         .filter-checkbox input[type="checkbox"] {
-            margin-left: 8px;
+            margin-right: 8px;
         }
         
         .btn-filter {
@@ -224,261 +227,254 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="bg-white border-bottom fixed-top">
         <nav class="navbar navbar-expand-lg container">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="homePage.html">
-                <img src="img.png" height="50" width="50">
-                <span class="fw-bold">کُجاجا</span>
+            <a class="navbar-brand d-flex align-items-center gap-2" href="../index.html">
+                <img src="../assets/images/img.png" height="50" width="50">
+                <span class="fw-bold">StayLocal</span>
             </a>
             <div class="d-flex gap-2">
-                <a class="btn btn-outline-secondary" href="profile.html">پروفایل</a>
-                <a class="btn btn-outline-secondary" href="loginup.html">ورود / ثبت‌نام</a>
+                <a class="btn btn-outline-secondary" href="profile.html">Profile</a>
+                <a class="btn btn-outline-secondary" href="loginup.html">Login / Register</a>
             </div>
         </nav>
     </header>
 
     <div class="properties-container">
         <div class="container">
-            <!-- Search Section -->
             <div class="search-section">
-                <h4 class="mb-4">🔍 جستجوی اقامتگاه</h4>
+                <h4 class="mb-4">Search Properties</h4>
                 <form id="searchForm" onsubmit="performSearch(event)">
                     <div class="row g-3">
                         <div class="col-md-4">
-                            <label class="form-label">مقصد</label>
-                            <input type="text" class="form-control" id="destinationInput" placeholder="شهر، منطقه یا نام اقامتگاه">
+                            <label class="form-label">Destination</label>
+                            <input type="text" class="form-control" id="destinationInput" placeholder="City, region or property name">
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">تاریخ ورود</label>
+                            <label class="form-label">Check-in Date</label>
                             <input type="date" class="form-control" id="checkinDate">
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">تاریخ خروج</label>
+                            <label class="form-label">Check-out Date</label>
                             <input type="date" class="form-control" id="checkoutDate">
                         </div>
                         <div class="col-md-2">
-                            <label class="form-label">تعداد نفرات</label>
+                            <label class="form-label">Guests</label>
                             <select class="form-control" id="guestCount">
-                                <option value="1">۱ نفر</option>
-                                <option value="2" selected>۲ نفر</option>
-                                <option value="3">۳ نفر</option>
-                                <option value="4">۴ نفر</option>
-                                <option value="5">۵+ نفر</option>
+                                <option value="1">1 Guest</option>
+                                <option value="2" selected>2 Guests</option>
+                                <option value="3">3 Guests</option>
+                                <option value="4">4 Guests</option>
+                                <option value="5">5+ Guests</option>
                             </select>
                         </div>
                     </div>
                     <div class="row mt-3">
                         <div class="col-12">
-                            <button type="submit" class="btn btn-filter" style="width: auto; padding: 12px 40px;">🔎 جستجو</button>
+                            <button type="submit" class="btn btn-filter" style="width: auto; padding: 12px 40px;">Search</button>
                         </div>
                     </div>
                 </form>
             </div>
 
             <div class="row">
-                <!-- Filters Sidebar -->
                 <div class="col-lg-3">
                     <div class="filter-card">
-                        <h5 class="mb-4">🎛️ فیلترها</h5>
+                        <h5 class="mb-4">Filters</h5>
                         
-                        <!-- Price Range -->
                         <div class="filter-section">
-                            <h6>💰 محدوده قیمت (تومان)</h6>
+                            <h6>Price Range (USD)</h6>
                             <div class="price-range">
-                                <input type="number" class="price-input" placeholder="از" value="500000">
-                                <span>تا</span>
-                                <input type="number" class="price-input" placeholder="تا" value="5000000">
+                                <input type="number" class="price-input" placeholder="Min" value="50">
+                                <span>to</span>
+                                <input type="number" class="price-input" placeholder="Max" value="500">
                             </div>
                         </div>
                         
-                        <!-- Property Type -->
                         <div class="filter-section">
-                            <h6>🏠 نوع اقامتگاه</h6>
+                            <h6>Property Type</h6>
                             <div class="filter-checkbox">
                                 <input type="checkbox" id="villa" checked>
-                                <label for="villa">ویلا</label>
+                                <label for="villa">Villa</label>
                             </div>
                             <div class="filter-checkbox">
                                 <input type="checkbox" id="apartment">
-                                <label for="apartment">آپارتمان</label>
+                                <label for="apartment">Apartment</label>
                             </div>
                             <div class="filter-checkbox">
                                 <input type="checkbox" id="suite">
-                                <label for="suite">سوئیت</label>
+                                <label for="suite">Suite</label>
                             </div>
                             <div class="filter-checkbox">
                                 <input type="checkbox" id="eco">
-                                <label for="eco">بوم‌گردی</label>
+                                <label for="eco">Eco-Lodge</label>
                             </div>
                         </div>
                         
-                        <!-- Amenities -->
                         <div class="filter-section">
-                            <h6>🎯 امکانات</h6>
+                            <h6>Amenities</h6>
                             <div class="filter-checkbox">
                                 <input type="checkbox" id="wifi">
-                                <label for="wifi">وای‌فای</label>
+                                <label for="wifi">WiFi</label>
                             </div>
                             <div class="filter-checkbox">
                                 <input type="checkbox" id="parking">
-                                <label for="parking">پارکینگ</label>
+                                <label for="parking">Parking</label>
                             </div>
                             <div class="filter-checkbox">
                                 <input type="checkbox" id="pool">
-                                <label for="pool">استخر</label>
+                                <label for="pool">Pool</label>
                             </div>
                             <div class="filter-checkbox">
                                 <input type="checkbox" id="kitchen">
-                                <label for="kitchen">آشپزخانه</label>
+                                <label for="kitchen">Kitchen</label>
                             </div>
                             <div class="filter-checkbox">
                                 <input type="checkbox" id="ac">
-                                <label for="ac">کولر/بخاری</label>
+                                <label for="ac">AC/Heating</label>
                             </div>
                         </div>
                         
-                        <button class="btn-filter">اعمال فیلتر</button>
+                        <button class="btn-filter" onclick="filterProperties()">Apply Filters</button>
                     </div>
                 </div>
                 
-                <!-- Properties List -->
                 <div class="col-lg-9">
                     <div class="results-header">
-                        <h5>۱۲۴ اقامتگاه یافت شد</h5>
-                        <select class="sort-select">
-                            <option>مرتب‌سازی بر اساس</option>
-                            <option>قیمت: کم به زیاد</option>
-                            <option>قیمت: زیاد به کم</option>
-                            <option>امتیاز</option>
-                            <option>محبوبیت</option>
+                        <h5 id="resultsCount">124 Properties Found</h5>
+                        <select class="sort-select" onchange="sortProperties(this.value)">
+                            <option value="">Sort By</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="rating">Rating</option>
+                            <option value="popularity">Popularity</option>
                         </select>
                     </div>
                     
-                    <!-- Property Cards -->
-                    <div class="property-card" onclick="window.location.href='property-detail.html'">
-                        <div class="property-image">
-                            <img src="img_7.png" alt="آپارتمان مدرن">
-                            <div class="property-badge">ویژه</div>
-                            <div class="property-favorite">❤️</div>
-                        </div>
-                        <div class="property-info">
-                            <div class="property-location">📍 تهران، سعادت‌آباد</div>
-                            <h3 class="property-title">آپارتمان ۱ خوابه مدرن</h3>
-                            <div class="property-features">
-                                <span>👥 ۲+۱ نفر</span>
-                                <span>🛏️ ۱ خواب</span>
-                                <span>📶 وای‌فای</span>
-                                <span>🚗 پارکینگ</span>
+                    <div id="propertiesContainer">
+                        <div class="property-card" onclick="window.location.href='property-detail.html?id=1'">
+                            <div class="property-image">
+                                <img src="../assets/images/img_7.png" alt="Modern Apartment">
+                                <div class="property-badge">Featured</div>
+                                <div class="property-favorite">+</div>
                             </div>
-                            <div class="property-price">
-                                <div>
-                                    <span class="price-amount">۱,۴۵۰,۰۰۰</span>
-                                    <span class="price-unit">تومان / شب</span>
+                            <div class="property-info">
+                                <div class="property-location">New York, Manhattan</div>
+                                <h3 class="property-title">Modern 1BR Apartment</h3>
+                                <div class="property-features">
+                                    <span>2+1 Guests</span>
+                                    <span>1 Bed</span>
+                                    <span>WiFi</span>
+                                    <span>Parking</span>
                                 </div>
-                                <div class="property-rating">
-                                    ⭐ ۴.۸ <span class="text-muted">(۲۴ نظر)</span>
+                                <div class="property-price">
+                                    <div>
+                                        <span class="price-amount">$150</span>
+                                        <span class="price-unit">/ night</span>
+                                    </div>
+                                    <div class="property-rating">
+                                        4.8 <span class="text-muted">(24 reviews)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="property-card" onclick="window.location.href='property-detail.html?id=2'">
+                            <div class="property-image">
+                                <img src="../assets/images/img_8.png" alt="Historic Suite">
+                                <div class="property-favorite">-</div>
+                            </div>
+                            <div class="property-info">
+                                <div class="property-location">Boston, Downtown</div>
+                                <h3 class="property-title">Historic Suite Near Park</h3>
+                                <div class="property-features">
+                                    <span>2+1 Guests</span>
+                                    <span>1 Bed</span>
+                                    <span>WiFi</span>
+                                    <span>AC</span>
+                                </div>
+                                <div class="property-price">
+                                    <div>
+                                        <span class="price-amount">$120</span>
+                                        <span class="price-unit">/ night</span>
+                                    </div>
+                                    <div class="property-rating">
+                                        4.6 <span class="text-muted">(18 reviews)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="property-card" onclick="window.location.href='property-detail.html?id=3'">
+                            <div class="property-image">
+                                <img src="../assets/images/img_10.png" alt="Beach Villa">
+                                <div class="property-badge">Popular</div>
+                                <div class="property-favorite">-</div>
+                            </div>
+                            <div class="property-info">
+                                <div class="property-location">Malibu, Beachfront</div>
+                                <h3 class="property-title">Luxury Beach Villa</h3>
+                                <div class="property-features">
+                                    <span>6+2 Guests</span>
+                                    <span>3 Beds</span>
+                                    <span>Pool</span>
+                                    <span>Beach Access</span>
+                                </div>
+                                <div class="property-price">
+                                    <div>
+                                        <span class="price-amount">$350</span>
+                                        <span class="price-unit">/ night</span>
+                                    </div>
+                                    <div class="property-rating">
+                                        4.9 <span class="text-muted">(37 reviews)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="property-card" onclick="window.location.href='property-detail.html?id=4'">
+                            <div class="property-image">
+                                <img src="../assets/images/img_9.png" alt="Eco-Lodge">
+                                <div class="property-favorite">-</div>
+                            </div>
+                            <div class="property-info">
+                                <div class="property-location">San Francisco, Bay Area</div>
+                                <h3 class="property-title">Eco-Lodge with Garden</h3>
+                                <div class="property-features">
+                                    <span>3+1 Guests</span>
+                                    <span>2 Beds</span>
+                                    <span>Garden</span>
+                                    <span>Kitchen</span>
+                                </div>
+                                <div class="property-price">
+                                    <div>
+                                        <span class="price-amount">$95</span>
+                                        <span class="price-unit">/ night</span>
+                                    </div>
+                                    <div class="property-rating">
+                                        4.7 <span class="text-muted">(15 reviews)</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="property-card" onclick="window.location.href='property-detail.html'">
-                        <div class="property-image">
-                            <img src="img_8.png" alt="سوئیت سنتی">
-                            <div class="property-favorite">🤍</div>
-                        </div>
-                        <div class="property-info">
-                            <div class="property-location">📍 اصفهان، چهارباغ</div>
-                            <h3 class="property-title">سوئیت سنتی نزدیک سی‌وسه‌پل</h3>
-                            <div class="property-features">
-                                <span>👥 ۲+۱ نفر</span>
-                                <span>🛏️ ۱ خواب</span>
-                                <span>📶 وای‌فای</span>
-                                <span>❄️ کولر</span>
-                            </div>
-                            <div class="property-price">
-                                <div>
-                                    <span class="price-amount">۹۹۰,۰۰۰</span>
-                                    <span class="price-unit">تومان / شب</span>
-                                </div>
-                                <div class="property-rating">
-                                    ⭐ ۴.۶ <span class="text-muted">(۱۸ نظر)</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="property-card" onclick="window.location.href='property-detail.html'">
-                        <div class="property-image">
-                            <img src="img_10.png" alt="ویلا ساحلی">
-                            <div class="property-badge">محبوب</div>
-                            <div class="property-favorite">🤍</div>
-                        </div>
-                        <div class="property-info">
-                            <div class="property-location">📍 رامسر، ساحلی</div>
-                            <h3 class="property-title">ویلا لوکس ساحلی</h3>
-                            <div class="property-features">
-                                <span>👥 ۶+۲ نفر</span>
-                                <span>🛏️ ۳ خواب</span>
-                                <span>🏊 استخر</span>
-                                <span>🏖️ دسترسی ساحل</span>
-                            </div>
-                            <div class="property-price">
-                                <div>
-                                    <span class="price-amount">۳,۲۰۰,۰۰۰</span>
-                                    <span class="price-unit">تومان / شب</span>
-                                </div>
-                                <div class="property-rating">
-                                    ⭐ ۴.۹ <span class="text-muted">(۳۷ نظر)</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="property-card" onclick="window.location.href='property-detail.html'">
-                        <div class="property-image">
-                            <img src="img_9.png" alt="بوم‌گردی">
-                            <div class="property-favorite">🤍</div>
-                        </div>
-                        <div class="property-info">
-                            <div class="property-location">📍 شیراز، زند</div>
-                            <h3 class="property-title">خانه بوم‌گردی حیاط‌دار</h3>
-                            <div class="property-features">
-                                <span>👥 ۳+۱ نفر</span>
-                                <span>🛏️ ۲ خواب</span>
-                                <span>🌳 حیاط</span>
-                                <span>🍽️ آشپزخانه</span>
-                            </div>
-                            <div class="property-price">
-                                <div>
-                                    <span class="price-amount">۸۵۰,۰۰۰</span>
-                                    <span class="price-unit">تومان / شب</span>
-                                </div>
-                                <div class="property-rating">
-                                    ⭐ ۴.۷ <span class="text-muted">(۱۵ نظر)</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Pagination -->
                     <nav class="mt-4">
                         <ul class="pagination justify-content-center">
                             <li class="page-item disabled">
-                                <span class="page-link">قبلی</span>
+                                <span class="page-link">Previous</span>
                             </li>
                             <li class="page-item active">
-                                <span class="page-link">۱</span>
+                                <span class="page-link">1</span>
                             </li>
                             <li class="page-item">
-                                <a class="page-link" href="#">۲</a>
+                                <a class="page-link" href="#">2</a>
                             </li>
                             <li class="page-item">
-                                <a class="page-link" href="#">۳</a>
+                                <a class="page-link" href="#">3</a>
                             </li>
                             <li class="page-item">
-                                <a class="page-link" href="#">بعدی</a>
+                                <a class="page-link" href="#">Next</a>
                             </li>
                         </ul>
                     </nav>
@@ -489,74 +485,154 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Sample property data
         const properties = [
             {
                 id: 1,
-                title: "آپارتمان ۱ خوابه مدرن",
-                city: "تهران",
-                area: "سعادت‌آباد",
+                title: "Modern 1BR Apartment",
+                city: "New York",
+                area: "Manhattan",
                 type: "apartment",
-                price: 1450000,
+                price: 150,
                 capacity: 3,
                 bedrooms: 1,
                 rating: 4.8,
                 reviews: 24,
-                image: "img_7.png",
+                image: "../assets/images/img_7.png",
                 features: ["wifi", "parking", "ac", "tv"]
             },
             {
                 id: 2,
-                title: "سوئیت سنتی نزدیک سی‌وسه‌پل",
-                city: "اصفهان",
-                area: "چهارباغ",
+                title: "Historic Suite Near Park",
+                city: "Boston",
+                area: "Downtown",
                 type: "suite",
-                price: 990000,
+                price: 120,
                 capacity: 3,
                 bedrooms: 1,
                 rating: 4.6,
                 reviews: 18,
-                image: "img_8.png",
+                image: "../assets/images/img_8.png",
                 features: ["wifi", "ac"]
             },
             {
                 id: 3,
-                title: "ویلا لوکس ساحلی",
-                city: "رامسر",
-                area: "ساحلی",
+                title: "Luxury Beach Villa",
+                city: "Malibu",
+                area: "Beachfront",
                 type: "villa",
-                price: 3200000,
+                price: 350,
                 capacity: 8,
                 bedrooms: 3,
                 rating: 4.9,
                 reviews: 37,
-                image: "img_10.png",
+                image: "../assets/images/img_10.png",
                 features: ["pool", "beach", "wifi", "parking"]
             },
             {
                 id: 4,
-                title: "خانه بوم‌گردی حیاط‌دار",
-                city: "شیراز",
-                area: "زند",
+                title: "Eco-Lodge with Garden",
+                city: "San Francisco",
+                area: "Bay Area",
                 type: "eco",
-                price: 850000,
+                price: 95,
                 capacity: 4,
                 bedrooms: 2,
                 rating: 4.7,
                 reviews: 15,
-                image: "img_9.png",
+                image: "../assets/images/img_9.png",
                 features: ["garden", "kitchen"]
+            },
+            {
+                id: 5,
+                title: "Downtown LA Loft",
+                city: "Los Angeles",
+                area: "Downtown LA",
+                type: "apartment",
+                price: 180,
+                capacity: 4,
+                bedrooms: 2,
+                rating: 4.5,
+                reviews: 31,
+                image: "../assets/images/img_7.png",
+                features: ["wifi", "parking", "ac", "kitchen"]
+            },
+            {
+                id: 6,
+                title: "Hollywood Hills Suite",
+                city: "Los Angeles",
+                area: "Hollywood",
+                type: "suite",
+                price: 275,
+                capacity: 5,
+                bedrooms: 2,
+                rating: 4.8,
+                reviews: 42,
+                image: "../assets/images/img_10.png",
+                features: ["pool", "wifi", "parking", "ac"]
+            },
+            {
+                id: 7,
+                title: "Magnificent Mile Apartment",
+                city: "Chicago",
+                area: "Magnificent Mile",
+                type: "apartment",
+                price: 165,
+                capacity: 3,
+                bedrooms: 1,
+                rating: 4.6,
+                reviews: 28,
+                image: "../assets/images/img_8.png",
+                features: ["wifi", "ac", "kitchen"]
+            },
+            {
+                id: 8,
+                title: "Lake View Condo",
+                city: "Chicago",
+                area: "Lincoln Park",
+                type: "apartment",
+                price: 195,
+                capacity: 4,
+                bedrooms: 2,
+                rating: 4.7,
+                reviews: 19,
+                image: "../assets/images/img_9.png",
+                features: ["wifi", "parking", "kitchen", "garden"]
+            },
+            {
+                id: 9,
+                title: "Miami Beach Villa",
+                city: "Miami",
+                area: "South Beach",
+                type: "villa",
+                price: 420,
+                capacity: 10,
+                bedrooms: 4,
+                rating: 4.9,
+                reviews: 53,
+                image: "../assets/images/img_10.png",
+                features: ["pool", "beach", "wifi", "parking", "ac"]
+            },
+            {
+                id: 10,
+                title: "Santa Monica Studio",
+                city: "Los Angeles",
+                area: "Santa Monica",
+                type: "apartment",
+                price: 135,
+                capacity: 2,
+                bedrooms: 1,
+                rating: 4.4,
+                reviews: 22,
+                image: "../assets/images/img_7.png",
+                features: ["wifi", "beach", "ac"]
             }
         ];
 
-        // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
-            // Set today's date as minimum for date inputs
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('checkinDate').setAttribute('min', today);
             document.getElementById('checkoutDate').setAttribute('min', today);
             
-            // Update checkout date when checkin changes
             document.getElementById('checkinDate').addEventListener('change', function() {
                 const checkinDate = new Date(this.value);
                 checkinDate.setDate(checkinDate.getDate() + 1);
@@ -564,13 +640,7 @@
                 document.getElementById('checkoutDate').setAttribute('min', minCheckout);
             });
             
-            // Parse URL parameters
             parseURLParams();
-            
-            // Initialize filters
-            initializeFilters();
-            
-            // Update navigation
             updateNavigation();
         });
 
@@ -578,7 +648,6 @@
             const urlParams = new URLSearchParams(window.location.search);
             const search = urlParams.get('search');
             const city = urlParams.get('city');
-            const type = urlParams.get('type');
             const filters = urlParams.get('filters');
             
             if (search) {
@@ -589,16 +658,7 @@
                 document.getElementById('destinationInput').value = city;
             }
             
-            if (type) {
-                // Check the appropriate type filter
-                const typeCheckbox = document.getElementById(type);
-                if (typeCheckbox) {
-                    typeCheckbox.checked = true;
-                }
-            }
-            
             if (filters === 'open') {
-                // Highlight filters section
                 document.querySelector('.filter-card').style.border = '2px solid var(--brand)';
                 setTimeout(() => {
                     document.querySelector('.filter-card').style.border = '';
@@ -609,14 +669,11 @@
         function performSearch(event) {
             event.preventDefault();
             
-            const destination = document.getElementById('destinationInput').value;
             const checkin = document.getElementById('checkinDate').value;
             const checkout = document.getElementById('checkoutDate').value;
-            const guests = document.getElementById('guestCount').value;
             
-            // Validate dates
             if (checkin && checkout && new Date(checkin) >= new Date(checkout)) {
-                alert('تاریخ خروج باید بعد از تاریخ ورود باشد');
+                alert('Check-out date must be after check-in date');
                 return;
             }
             
@@ -624,23 +681,35 @@
         }
 
         function filterProperties() {
-            const destination = document.getElementById('destinationInput').value.toLowerCase();
+            const destination = document.getElementById('destinationInput').value.toLowerCase().trim();
             const guests = parseInt(document.getElementById('guestCount').value);
-            const minPrice = parseInt(document.querySelector('.price-input[placeholder="از"]').value) || 0;
-            const maxPrice = parseInt(document.querySelector('.price-input[placeholder="تا"]').value) || Infinity;
+            const minPrice = parseInt(document.querySelector('.price-input[placeholder="Min"]').value) || 0;
+            const maxPrice = parseInt(document.querySelector('.price-input[placeholder="Max"]').value) || Infinity;
             
-            // Get selected types
             const selectedTypes = [];
             document.querySelectorAll('.filter-checkbox input[type="checkbox"]:checked').forEach(checkbox => {
                 selectedTypes.push(checkbox.id);
             });
             
-            // Filter properties
+            const cityAliases = {
+                'la': 'los angeles',
+                'sf': 'san francisco',
+                'nyc': 'new york',
+                'ny': 'new york',
+                'chi': 'chicago'
+            };
+            const searchTerm = cityAliases[destination] || destination;
+            
             let filteredProperties = properties.filter(property => {
-                const matchesDestination = !destination || 
-                    property.city.toLowerCase().includes(destination) || 
-                    property.area.toLowerCase().includes(destination) ||
-                    property.title.toLowerCase().includes(destination);
+                const cityLower = property.city.toLowerCase();
+                const areaLower = property.area.toLowerCase();
+                const titleLower = property.title.toLowerCase();
+                
+                const matchesDestination = !searchTerm || 
+                    cityLower.includes(searchTerm) || 
+                    areaLower.includes(searchTerm) ||
+                    titleLower.includes(searchTerm) ||
+                    searchTerm.includes(cityLower.split(' ')[0]);
                 
                 const matchesCapacity = property.capacity >= guests;
                 const matchesPrice = property.price >= minPrice && property.price <= maxPrice;
@@ -653,101 +722,78 @@
         }
 
         function displayProperties(propertiesToShow) {
-            const container = document.querySelector('.col-lg-9');
-            const resultsHeader = container.querySelector('.results-header h5');
+            const container = document.getElementById('propertiesContainer');
+            const resultsHeader = document.getElementById('resultsCount');
             
-            resultsHeader.textContent = `${propertiesToShow.length} اقامتگاه یافت شد`;
-            
-            // Remove existing property cards
-            const existingCards = container.querySelectorAll('.property-card');
-            existingCards.forEach(card => card.remove());
-            
-            // Add filtered properties
-            propertiesToShow.forEach(property => {
-                const propertyCard = createPropertyCard(property);
-                container.insertBefore(propertyCard, container.querySelector('nav'));
-            });
+            resultsHeader.textContent = `${propertiesToShow.length} Properties Found`;
+            container.innerHTML = '';
             
             if (propertiesToShow.length === 0) {
-                const noResults = document.createElement('div');
-                noResults.className = 'no-results';
-                noResults.innerHTML = `
-                    <div style="font-size: 4rem; margin-bottom: 20px;">😔</div>
-                    <h4>متأسفانه اقامتگاهی یافت نشد</h4>
-                    <p>لطفاً فیلترهای خود را تغییر دهید و دوباره تلاش کنید</p>
+                container.innerHTML = `
+                    <div class="no-results">
+                        <h4>No properties found</h4>
+                        <p>Please adjust your search criteria and try again</p>
+                    </div>
                 `;
-                container.insertBefore(noResults, container.querySelector('nav'));
+                return;
             }
-        }
-
-        function createPropertyCard(property) {
-            const card = document.createElement('div');
-            card.className = 'property-card';
-            card.onclick = () => window.location.href = `property-detail.html?id=${property.id}`;
             
-            card.innerHTML = `
-                <div class="property-image">
-                    <img src="${property.image}" alt="${property.title}">
-                    <div class="property-badge">ویژه</div>
-                    <div class="property-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">🤍</div>
-                </div>
-                <div class="property-info">
-                    <div class="property-location">📍 ${property.city}، ${property.area}</div>
-                    <h3 class="property-title">${property.title}</h3>
-                    <div class="property-features">
-                        <span>👥 ${property.capacity} نفر</span>
-                        <span>🛏️ ${property.bedrooms} خواب</span>
-                        ${property.features.includes('wifi') ? '<span>📶 وای‌فای</span>' : ''}
-                        ${property.features.includes('parking') ? '<span>🚗 پارکینگ</span>' : ''}
-                    </div>
-                    <div class="property-price">
-                        <div>
-                            <span class="price-amount">${property.price.toLocaleString()}</span>
-                            <span class="price-unit">تومان / شب</span>
+            propertiesToShow.forEach(property => {
+                const propertyCard = `
+                    <div class="property-card" onclick="window.location.href='property-detail.html?id=${property.id}'">
+                        <div class="property-image">
+                            <img src="${property.image}" alt="${property.title}">
+                            <div class="property-badge">Featured</div>
+                            <div class="property-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">+</div>
                         </div>
-                        <div class="property-rating">
-                            ⭐ ${property.rating} <span class="text-muted">(${property.reviews} نظر)</span>
+                        <div class="property-info">
+                            <div class="property-location">${property.city}, ${property.area}</div>
+                            <h3 class="property-title">${property.title}</h3>
+                            <div class="property-features">
+                                <span>${property.capacity} Guests</span>
+                                <span>${property.bedrooms} Bed${property.bedrooms > 1 ? 's' : ''}</span>
+                                ${property.features.includes('wifi') ? '<span>WiFi</span>' : ''}
+                                ${property.features.includes('parking') ? '<span>Parking</span>' : ''}
+                            </div>
+                            <div class="property-price">
+                                <div>
+                                    <span class="price-amount">$${property.price}</span>
+                                    <span class="price-unit">/ night</span>
+                                </div>
+                                <div class="property-rating">
+                                    ${property.rating} <span class="text-muted">(${property.reviews} reviews)</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `;
-            
-            return card;
+                `;
+                container.innerHTML += propertyCard;
+            });
         }
 
         function toggleFavorite(element) {
-            element.innerHTML = element.innerHTML === '🤍' ? '❤️' : '🤍';
-            
-            // Save to localStorage (simulate user favorites)
-            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-            const propertyId = element.closest('.property-card').onclick.toString().match(/id=(\d+)/)[1];
-            
-            if (element.innerHTML === '❤️') {
-                if (!favorites.includes(propertyId)) {
-                    favorites.push(propertyId);
-                }
-            } else {
-                const index = favorites.indexOf(propertyId);
-                if (index > -1) {
-                    favorites.splice(index, 1);
-                }
-            }
-            
-            localStorage.setItem('favorites', JSON.stringify(favorites));
+            element.innerHTML = element.innerHTML === '+' ? '-' : '+';
         }
 
-        function initializeFilters() {
-            // Add event listeners to filter inputs
-            document.querySelectorAll('.filter-checkbox input, .price-input').forEach(input => {
-                input.addEventListener('change', filterProperties);
-            });
+        function sortProperties(sortBy) {
+            let sorted = [...properties];
             
-            // Apply filters button
-            document.querySelector('.btn-filter').addEventListener('click', filterProperties);
+            switch(sortBy) {
+                case 'price-asc':
+                    sorted.sort((a, b) => a.price - b.price);
+                    break;
+                case 'price-desc':
+                    sorted.sort((a, b) => b.price - a.price);
+                    break;
+                case 'rating':
+                    sorted.sort((a, b) => b.rating - a.rating);
+                    break;
+                case 'popularity':
+                    sorted.sort((a, b) => b.reviews - a.reviews);
+                    break;
+            }
             
-            // Load favorites
-            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-            // This would be implemented when properties are displayed
+            displayProperties(sorted);
         }
 
         function updateNavigation() {
@@ -756,15 +802,10 @@
             const loginLink = document.querySelector('a[href="loginup.html"]');
             
             if (isLoggedIn && userName) {
-                loginLink.innerHTML = `👤 ${userName}`;
+                loginLink.innerHTML = userName;
                 loginLink.href = 'profile.html';
             }
         }
-
-        // Initialize with all properties
-        window.addEventListener('load', function() {
-            displayProperties(properties);
-        });
     </script>
 </body>
 </html>

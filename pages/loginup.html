@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ورود / ثبت‌نام | کُجاجا</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
+    <title>Login / Register | StayLocal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="../assets/css/style.css" />
-    
     <style>
         .auth-container {
             min-height: 100vh;
@@ -48,7 +46,7 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: url('img_2.png') center/cover;
+            background: url('../assets/images/img_2.png') center/cover;
             opacity: 0.1;
             z-index: 0;
         }
@@ -213,6 +211,35 @@
             display: none;
         }
         
+        .role-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .role-option {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .role-option:hover {
+            border-color: var(--brand);
+        }
+        
+        .role-option.selected {
+            border-color: var(--brand);
+            background: rgba(24,169,153,0.1);
+        }
+        
+        .role-option input {
+            display: none;
+        }
+        
         @media (max-width: 768px) {
             .auth-card {
                 margin: 10px;
@@ -239,132 +266,144 @@
     <div class="auth-container">
         <div class="auth-card">
             <div class="row g-0 h-100">
-                <!-- Side Panel -->
                 <div class="col-lg-5">
                     <div class="auth-side">
                         <div class="auth-side-content">
-                            <img src="img.png" alt="کُجاجا" class="auth-logo">
-                            <h2 class="mb-4 fw-bold">به کُجاجا خوش آمدید</h2>
-                            <p class="lead mb-4">رزرو آسان و مطمئن اقامتگاه در سراسر ایران</p>
+                            <img src="../assets/images/img.png" alt="StayLocal" class="auth-logo">
+                            <h2 class="mb-4 fw-bold">Welcome to StayLocal</h2>
+                            <p class="lead mb-4">Easy and secure accommodation booking across the country</p>
                             
                             <div class="d-flex flex-column gap-3">
                                 <div class="d-flex align-items-center gap-3">
                                     <div style="width: 50px; height: 50px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px;">🏠</div>
-                                    <div>
-                                        <div class="fw-bold">هزاران اقامتگاه</div>
-                                        <small class="opacity-75">از شمال تا جنوب</small>
+                                    <div class="text-start">
+                                        <div class="fw-bold">Thousands of Properties</div>
+                                        <small class="opacity-75">From coast to coast</small>
                                     </div>
                                 </div>
                                 
                                 <div class="d-flex align-items-center gap-3">
                                     <div style="width: 50px; height: 50px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px;">✅</div>
-                                    <div>
-                                        <div class="fw-bold">رزرو امن</div>
-                                        <small class="opacity-75">ضمانت بازگشت وجه</small>
+                                    <div class="text-start">
+                                        <div class="fw-bold">Secure Booking</div>
+                                        <small class="opacity-75">Money-back guarantee</small>
                                     </div>
                                 </div>
                                 
                                 <div class="d-flex align-items-center gap-3">
                                     <div style="width: 50px; height: 50px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px;">📞</div>
-                                    <div>
-                                        <div class="fw-bold">پشتیبانی ۲۴ساعته</div>
-                                        <small class="opacity-75">همیشه در کنار شما</small>
+                                    <div class="text-start">
+                                        <div class="fw-bold">24/7 Support</div>
+                                        <small class="opacity-75">Always here for you</small>
                                     </div>
                                 </div>
                             </div>
                             
-                            <a href="../index.html" class="back-home">🏠 بازگشت به خانه</a>
+                            <a href="../index.html" class="back-home">🏠 Back to Home</a>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Form Panel -->
                 <div class="col-lg-7">
                     <div class="auth-form-side">
                         <div class="form-container">
-                            <!-- Tab Buttons -->
                             <div class="auth-tabs">
-                                <button class="auth-tab active" onclick="showLogin()">ورود</button>
-                                <button class="auth-tab" onclick="showRegister()">ثبت‌نام</button>
+                                <button class="auth-tab active" onclick="showLogin()">Login</button>
+                                <button class="auth-tab" onclick="showRegister()">Register</button>
                             </div>
                             
-                            <!-- Login Form -->
                             <form id="loginForm" class="auth-form">
-                                <h3 class="mb-4 fw-bold text-center">ورود به حساب کاربری</h3>
+                                <h3 class="mb-4 fw-bold text-center">Login to Your Account</h3>
                                 
                                 <div class="form-group">
-                                    <label class="form-label">ایمیل یا شماره موبایل</label>
-                                    <input type="text" class="form-input" placeholder="example@email.com یا ۰۹۱۲۳۴۵۶۷۸۹" required>
+                                    <label class="form-label">Email or Phone</label>
+                                    <input type="text" class="form-input" id="loginEmail" placeholder="example@email.com or +1234567890" required>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="form-label">رمز عبور</label>
-                                    <input type="password" class="form-input" placeholder="رمز عبور خود را وارد کنید" required>
+                                    <label class="form-label">Password</label>
+                                    <input type="password" class="form-input" id="loginPassword" placeholder="Enter your password" required>
                                 </div>
                                 
-                                <button type="submit" class="btn-auth">ورود به کُجاجا</button>
+                                <button type="submit" class="btn-auth">Login to StayLocal</button>
                                 
                                 <div class="forgot-password">
-                                    <a href="#" onclick="showForgotPassword()">فراموشی رمز عبور؟</a>
+                                    <a href="#" onclick="showForgotPassword()">Forgot your password?</a>
                                 </div>
                             </form>
                             
-                            <!-- Register Form -->
                             <form id="registerForm" class="auth-form hidden">
-                                <h3 class="mb-4 fw-bold text-center">ثبت‌نام در کُجاجا</h3>
+                                <h3 class="mb-4 fw-bold text-center">Create Your Account</h3>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">I want to be a:</label>
+                                    <div class="role-selector">
+                                        <label class="role-option selected">
+                                            <input type="radio" name="role" value="traveler" checked>
+                                            <div>🧳</div>
+                                            <div class="fw-bold">Traveler</div>
+                                            <small class="text-muted">Book stays</small>
+                                        </label>
+                                        <label class="role-option">
+                                            <input type="radio" name="role" value="host">
+                                            <div>🏠</div>
+                                            <div class="fw-bold">Host</div>
+                                            <small class="text-muted">List properties</small>
+                                        </label>
+                                    </div>
+                                </div>
                                 
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label">نام</label>
-                                            <input type="text" class="form-input" placeholder="نام خود را وارد کنید" required>
+                                            <label class="form-label">First Name</label>
+                                            <input type="text" class="form-input" id="regFirstName" placeholder="John" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label">نام خانوادگی</label>
-                                            <input type="text" class="form-input" placeholder="نام خانوادگی خود را وارد کنید" required>
+                                            <label class="form-label">Last Name</label>
+                                            <input type="text" class="form-input" id="regLastName" placeholder="Smith" required>
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="form-label">ایمیل</label>
-                                    <input type="email" class="form-input" placeholder="example@email.com" required>
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-input" id="regEmail" placeholder="example@email.com" required>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="form-label">شماره موبایل</label>
-                                    <input type="tel" class="form-input" placeholder="۰۹۱۲۳۴۵۶۷۸۹" required>
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-input" id="regPhone" placeholder="+1 234 567 8900" required>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="form-label">رمز عبور</label>
-                                    <input type="password" class="form-input" placeholder="حداقل ۸ کاراکتر" required>
+                                    <label class="form-label">Password</label>
+                                    <input type="password" class="form-input" id="regPassword" placeholder="Minimum 8 characters" required>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="form-label">تکرار رمز عبور</label>
-                                    <input type="password" class="form-input" placeholder="رمز عبور را مجدداً وارد کنید" required>
+                                    <label class="form-label">Confirm Password</label>
+                                    <input type="password" class="form-input" id="regConfirmPassword" placeholder="Re-enter your password" required>
                                 </div>
                                 
-                                <button type="submit" class="btn-auth">ثبت‌نام در کُجاجا</button>
+                                <button type="submit" class="btn-auth">Create Account</button>
                             </form>
                             
-                            <!-- Forgot Password Form -->
                             <form id="forgotForm" class="auth-form hidden">
-                                <h3 class="mb-4 fw-bold text-center">بازیابی رمز عبور</h3>
-                                <p class="text-muted text-center mb-4">ایمیل یا شماره موبایل خود را وارد کنید</p>
+                                <h3 class="mb-4 fw-bold text-center">Reset Password</h3>
+                                <p class="text-muted text-center mb-4">Enter your email or phone number</p>
                                 
                                 <div class="form-group">
-                                    <label class="form-label">ایمیل یا شماره موبایل</label>
-                                    <input type="text" class="form-input" placeholder="example@email.com یا ۰۹۱۲۳۴۵۶۷۸۹" required>
+                                    <label class="form-label">Email or Phone</label>
+                                    <input type="text" class="form-input" placeholder="example@email.com or +1234567890" required>
                                 </div>
                                 
-                                <button type="submit" class="btn-auth">ارسال لینک بازیابی</button>
+                                <button type="submit" class="btn-auth">Send Reset Link</button>
                                 
                                 <div class="forgot-password">
-                                    <a href="#" onclick="showLogin()">بازگشت به ورود</a>
+                                    <a href="#" onclick="showLogin()">Back to Login</a>
                                 </div>
                             </form>
                         </div>
@@ -381,7 +420,6 @@
             document.getElementById('registerForm').classList.add('hidden');
             document.getElementById('forgotForm').classList.add('hidden');
             
-            // Update tabs
             document.querySelectorAll('.auth-tab').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.auth-tab')[0].classList.add('active');
         }
@@ -391,7 +429,6 @@
             document.getElementById('registerForm').classList.remove('hidden');
             document.getElementById('forgotForm').classList.add('hidden');
             
-            // Update tabs
             document.querySelectorAll('.auth-tab').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.auth-tab')[1].classList.add('active');
         }
@@ -401,40 +438,86 @@
             document.getElementById('registerForm').classList.add('hidden');
             document.getElementById('forgotForm').classList.remove('hidden');
             
-            // Remove active from tabs
             document.querySelectorAll('.auth-tab').forEach(tab => tab.classList.remove('active'));
         }
         
-        // Form submission handlers
+        document.querySelectorAll('.role-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.role-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                this.querySelector('input').checked = true;
+            });
+        });
+        
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            // Simulate successful login
-            localStorage.setItem('userLoggedIn', 'true');
-            localStorage.setItem('userName', 'امیرعلی احمدی');
-            window.location.href = 'profile.html';
+            const email = document.getElementById('loginEmail').value;
+            
+            if (email === 'admin@staylocal.com') {
+                localStorage.setItem('userLoggedIn', 'true');
+                localStorage.setItem('userName', 'Admin');
+                localStorage.setItem('userEmail', email);
+                localStorage.setItem('userRole', 'admin');
+                window.location.href = 'admin.html';
+            } else {
+                const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                const user = registeredUsers.find(u => u.email === email);
+                
+                localStorage.setItem('userLoggedIn', 'true');
+                localStorage.setItem('userEmail', email);
+                
+                if (user) {
+                    localStorage.setItem('userName', user.name);
+                    localStorage.setItem('userRole', user.role);
+                } else {
+                    localStorage.setItem('userName', 'Guest');
+                    localStorage.setItem('userRole', 'traveler');
+                }
+                window.location.href = 'profile.html';
+            }
         });
         
         document.getElementById('registerForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const password = this.querySelector('input[type="password"]').value;
-            const confirmPassword = this.querySelectorAll('input[type="password"]')[1].value;
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
             
             if (password !== confirmPassword) {
-                alert('رمز عبور و تکرار آن یکسان نیستند!');
+                alert('Passwords do not match!');
                 return;
             }
             
-            // Simulate successful registration
+            if (password.length < 8) {
+                alert('Password must be at least 8 characters!');
+                return;
+            }
+            
+            const firstName = document.getElementById('regFirstName').value;
+            const lastName = document.getElementById('regLastName').value;
+            const email = document.getElementById('regEmail').value;
+            const role = document.querySelector('input[name="role"]:checked').value;
+            const fullName = `${firstName} ${lastName}`;
+            
+            const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            if (registeredUsers.find(u => u.email === email)) {
+                alert('This email is already registered. Please login.');
+                return;
+            }
+            registeredUsers.push({ email: email, name: fullName, role: role });
+            localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+            
             localStorage.setItem('userLoggedIn', 'true');
-            localStorage.setItem('userName', this.querySelector('input[type="text"]').value);
-            alert('🎉 ثبت‌نام موفقیت‌آمیز بود! به کُجاجا خوش آمدید');
+            localStorage.setItem('userName', fullName);
+            localStorage.setItem('userEmail', email);
+            localStorage.setItem('userRole', role);
+            
+            alert('🎉 Registration successful! Welcome to StayLocal');
             window.location.href = 'profile.html';
         });
         
         document.getElementById('forgotForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            alert('لینک بازیابی برای شما ارسال شد! (این یک نمونه است)');
-            // Here you would typically send the data to your backend
+            alert('Password reset link has been sent! (This is a demo)');
         });
     </script>
 </body>
