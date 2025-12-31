@@ -192,19 +192,4 @@ This demo application uses **localStorage** for data persistence. The following 
 | `adminUsers` | Admin panel user data |
 | `adminProperties` | Admin panel property data |
 | `adminReservations` | Admin panel reservation data |
-
-## 🎨 Customization
-
-### Changing Brand Colors
-Edit the CSS variables in `assets/css/style.css`:
-```css
-:root {
-    --primary-color: #your-color;
-    --secondary-color: #your-color;
-}
-```
-
-
 ---
-
-Made with ❤️ by the StayLocal Team
