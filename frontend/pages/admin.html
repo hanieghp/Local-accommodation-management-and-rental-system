@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | StayLocal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <style>
+        .admin-container { display: flex; min-height: 100vh; }
+        .admin-sidebar { width: 240px; background: linear-gradient(180deg, #1f2937 0%, #111827 100%); color: white; padding: 20px 12px; position: fixed; height: 100vh; overflow-y: auto; }
+        .admin-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .admin-logo img { width: 36px; height: 36px; }
+        .admin-logo span { font-size: 1.1rem; font-weight: 700; }
+        .admin-nav-item { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: 8px; cursor: pointer; transition: all 0.3s; margin-bottom: 4px; color: rgba(255,255,255,0.7); font-size: 14px; }
+        .admin-nav-item:hover, .admin-nav-item.active { background: rgba(24,169,153,0.2); color: white; }
+        .admin-nav-item.active { background: linear-gradient(135deg, var(--brand), var(--brand2)); }
+        .admin-nav-section { font-size: 10px; text-transform: uppercase; color: rgba(255,255,255,0.4); margin: 18px 0 8px; padding-left: 14px; letter-spacing: 1px; }
+        .admin-content { flex: 1; margin-left: 240px; background: #f8f9fa; min-height: 100vh; }
+        .admin-header { background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
+        .admin-header h2 { margin: 0; font-weight: 700; color: #1f2937; font-size: 1.25rem; }
+        .admin-user { display: flex; align-items: center; gap: 10px; }
+        .admin-user img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+        .admin-main { padding: 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px; }
+        .stat-card { background: white; border-radius: 12px; padding: 18px; box-shadow: 0 3px 10px rgba(0,0,0,0.05); }
+        .stat-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .stat-card-icon { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; }
+        .stat-card-value { font-size: 1.6rem; font-weight: 800; color: #1f2937; }
+        .stat-card-label { color: #6b7280; font-size: 12px; }
+        .stat-card-change { font-size: 11px; font-weight: 600; }
+        .stat-card-change.positive { color: #10b981; }
+        .data-card { background: white; border-radius: 12px; padding: 18px; box-shadow: 0 3px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .data-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+        .data-card-header h5 { margin: 0; font-weight: 700; color: #1f2937; font-size: 0.95rem; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { text-align: left; padding: 10px 12px; background: #f9fafb; color: #6b7280; font-weight: 600; font-size: 12px; white-space: nowrap; }
+        .data-table td { padding: 10px 12px; border-bottom: 1px solid #f3f4f6; font-size: 13px; }
+        .data-table tr:hover { background: #f9fafb; }
+        .user-cell { display: flex; align-items: center; gap: 8px; }
+        .user-cell img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+        .status-badge { padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; }
+        .status-active { background: #d1fae5; color: #059669; }
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-banned, .status-cancelled, .status-rejected { background: #fee2e2; color: #dc2626; }
+        .status-confirmed, .status-completed { background: #d1fae5; color: #059669; }
+        .action-btn { padding: 5px 8px; border-radius: 5px; border: none; cursor: pointer; font-size: 11px; margin-right: 3px; transition: all 0.2s; }
+        .action-btn-view { background: #e0e7ff; color: #4f46e5; }
+        .action-btn-edit { background: #d1fae5; color: #059669; }
+        .action-btn-delete { background: #fee2e2; color: #dc2626; }
+        .action-btn:hover { opacity: 0.8; }
+        .search-box { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+        .search-box input { flex: 1; min-width: 180px; padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 13px; }
+        .search-box input:focus { outline: none; border-color: var(--brand); }
+        .search-box select { padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 13px; background: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .btn-primary-custom { background: linear-gradient(135deg, var(--brand), var(--brand2)); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.3s; }
+        .btn-primary-custom:hover { box-shadow: 0 4px 10px rgba(24,169,153,0.3); }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background: white; border-radius: 12px; padding: 20px; max-width: 450px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e5e7eb; }
+        .modal-header h4 { margin: 0; font-weight: 700; font-size: 1rem; }
+        .modal-close { width: 28px; height: 28px; border-radius: 50%; border: none; background: #f3f4f6; cursor: pointer; font-size: 14px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; margin-bottom: 4px; font-weight: 600; color: #374151; font-size: 13px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 13px; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--brand); }
+        .table-responsive { overflow-x: auto; }
+        @media (max-width: 992px) {
+            .admin-sidebar { width: 60px; padding: 15px 8px; }
+            .admin-logo span, .admin-nav-item span, .admin-nav-section { display: none; }
+            .admin-nav-item { justify-content: center; padding: 10px; }
+            .admin-content { margin-left: 60px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <img src="../assets/images/img.png" alt="StayLocal">
+                <span>StayLocal</span>
+            </div>
+            <div class="admin-nav-section">Main</div>
+            <div class="admin-nav-item active" onclick="showTab('dashboard')"><span>Dashboard</span></div>
+            <div class="admin-nav-section">Management</div>
+            <div class="admin-nav-item" onclick="showTab('users')"><span>Users</span></div>
+            <div class="admin-nav-item" onclick="showTab('properties')"><span>Properties</span></div>
+            <div class="admin-nav-item" onclick="showTab('reservations')"><span>Reservations</span></div>
+            <div class="admin-nav-section">Reports</div>
+            <div class="admin-nav-item" onclick="showTab('reports')"><span>Analytics</span></div>
+            <div class="admin-nav-section">System</div>
+            <div class="admin-nav-item" onclick="showTab('settings')"><span>Settings</span></div>
+            <div class="admin-nav-item" onclick="logout()"><span>Logout</span></div>
+        </aside>
+        
+        <main class="admin-content">
+            <header class="admin-header">
+                <h2 id="pageTitle">Dashboard</h2>
+                <div class="admin-user">
+                    <div class="text-end">
+                        <div class="fw-bold" style="font-size: 13px;" id="adminName">Admin</div>
+                        <small class="text-muted">Administrator</small>
+                    </div>
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=18a999&color=fff" alt="Admin">
+                </div>
+            </header>
+            
+            <div class="admin-main">
+                <div id="dashboard" class="tab-content active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-card-header">
+                                <div>
+                                    <div class="stat-card-value" id="statUsers">0</div>
+                                    <div class="stat-card-label">Total Users</div>
+                                </div>
+                                <div class="stat-card-icon" style="background: #dbeafe; color: #3b82f6;">U</div>
+                            </div>
+                            <div class="stat-card-change positive">Active accounts</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-header">
+                                <div>
+                                    <div class="stat-card-value" id="statProperties">0</div>
+                                    <div class="stat-card-label">Properties</div>
+                                </div>
+                                <div class="stat-card-icon" style="background: #d1fae5; color: #10b981;">P</div>
+                            </div>
+                            <div class="stat-card-change positive">Listed</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-header">
+                                <div>
+                                    <div class="stat-card-value" id="statReservations">0</div>
+                                    <div class="stat-card-label">Reservations</div>
+                                </div>
+                                <div class="stat-card-icon" style="background: #fef3c7; color: #f59e0b;">R</div>
+                            </div>
+                            <div class="stat-card-change positive">Bookings</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-header">
+                                <div>
+                                    <div class="stat-card-value" id="statRevenue">$0</div>
+                                    <div class="stat-card-label">Revenue</div>
+                                </div>
+                                <div class="stat-card-icon" style="background: #e0e7ff; color: #6366f1;">$</div>
+                            </div>
+                            <div class="stat-card-change positive">Total</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="data-card">
+                                <div class="data-card-header"><h5>Recent Reservations</h5></div>
+                                <div class="table-responsive">
+                                    <table class="data-table">
+                                        <thead><tr><th>ID</th><th>Guest</th><th>Property</th><th>Status</th><th>Amount</th></tr></thead>
+                                        <tbody id="recentReservationsTable"><tr><td colspan="5" class="text-center text-muted">No reservations</td></tr></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="data-card">
+                                <div class="data-card-header"><h5>Quick Stats</h5></div>
+                                <div class="d-flex justify-content-between py-2 border-bottom"><span class="text-muted">Travelers</span><strong id="travelerCount">0</strong></div>
+                                <div class="d-flex justify-content-between py-2 border-bottom"><span class="text-muted">Hosts</span><strong id="hostCount">0</strong></div>
+                                <div class="d-flex justify-content-between py-2 border-bottom"><span class="text-muted">Pending Properties</span><strong id="pendingProperties">0</strong></div>
+                                <div class="d-flex justify-content-between py-2"><span class="text-muted">Pending Reservations</span><strong id="pendingReservations">0</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="users" class="tab-content">
+                    <div class="data-card">
+                        <div class="data-card-header">
+                            <h5>User Management</h5>
+                            <button class="btn-primary-custom" onclick="openUserModal()">+ Add User</button>
+                        </div>
+                        <div class="search-box">
+                            <input type="text" placeholder="Search users..." id="userSearch" oninput="renderUsers()">
+                            <select id="userRoleFilter" onchange="renderUsers()">
+                                <option value="">All Roles</option>
+                                <option value="traveler">Traveler</option>
+                                <option value="host">Host</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                            <select id="userStatusFilter" onchange="renderUsers()">
+                                <option value="">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="banned">Banned</option>
+                            </select>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead><tr><th>User</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+                                <tbody id="usersTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="properties" class="tab-content">
+                    <div class="data-card">
+                        <div class="data-card-header"><h5>Property Management</h5></div>
+                        <div class="search-box">
+                            <input type="text" placeholder="Search properties..." id="propertySearch" oninput="renderProperties()">
+                            <select id="propertyStatusFilter" onchange="renderProperties()">
+                                <option value="">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="pending">Pending</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                            <select id="propertyLocationFilter" onchange="renderProperties()">
+                                <option value="">All Locations</option>
+                            </select>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead><tr><th>Property</th><th>Host</th><th>Location</th><th>Capacity</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead>
+                                <tbody id="propertiesTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="reservations" class="tab-content">
+                    <div class="data-card">
+                        <div class="data-card-header"><h5>Reservation Management</h5></div>
+                        <div class="search-box">
+                            <input type="text" placeholder="Search reservations..." id="reservationSearch" oninput="renderReservations()">
+                            <select id="reservationStatusFilter" onchange="renderReservations()">
+                                <option value="">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead><tr><th>ID</th><th>Guest</th><th>Property</th><th>Check-in</th><th>Check-out</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead>
+                                <tbody id="reservationsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="reports" class="tab-content">
+                    <div class="stats-grid">
+                        <div class="data-card text-center">
+                            <h6 class="text-muted mb-2">Registered Properties</h6>
+                            <div class="display-5 fw-bold" style="color: var(--brand);" id="reportProperties">0</div>
+                        </div>
+                        <div class="data-card text-center">
+                            <h6 class="text-muted mb-2">Total Reservations</h6>
+                            <div class="display-5 fw-bold text-success" id="reportReservations">0</div>
+                        </div>
+                        <div class="data-card text-center">
+                            <h6 class="text-muted mb-2">Active Users</h6>
+                            <div class="display-5 fw-bold text-primary" id="reportUsers">0</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="data-card">
+                                <h6 class="mb-3">Users by Role</h6>
+                                <div class="d-flex justify-content-between py-2 border-bottom"><span>Travelers</span><span class="badge bg-primary" id="reportTravelers">0</span></div>
+                                <div class="d-flex justify-content-between py-2 border-bottom"><span>Hosts</span><span class="badge bg-success" id="reportHosts">0</span></div>
+                                <div class="d-flex justify-content-between py-2"><span>Admins</span><span class="badge bg-danger" id="reportAdmins">0</span></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="data-card">
+                                <h6 class="mb-3">Reservations by Status</h6>
+                                <div class="d-flex justify-content-between py-2 border-bottom"><span>Pending</span><span class="badge bg-warning" id="reportPending">0</span></div>
+                                <div class="d-flex justify-content-between py-2 border-bottom"><span>Confirmed</span><span class="badge bg-success" id="reportConfirmed">0</span></div>
+                                <div class="d-flex justify-content-between py-2 border-bottom"><span>Completed</span><span class="badge bg-info" id="reportCompleted">0</span></div>
+                                <div class="d-flex justify-content-between py-2"><span>Cancelled</span><span class="badge bg-danger" id="reportCancelled">0</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="settings" class="tab-content">
+                    <div class="data-card">
+                        <h5 class="mb-4">System Settings</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group"><label>Site Name</label><input type="text" value="StayLocal" id="siteName"></div>
+                                <div class="form-group"><label>Contact Email</label><input type="email" value="admin@staylocal.com" id="contactEmail"></div>
+                                <div class="form-group"><label>Currency</label><select id="currency"><option value="USD">USD ($)</option><option value="EUR">EUR</option></select></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group"><label>Service Fee (%)</label><input type="number" value="5" id="serviceFee"></div>
+                                <div class="form-group"><label>Auto-approve Properties</label><select id="autoApprove"><option value="no">No</option><option value="yes">Yes</option></select></div>
+                            </div>
+                        </div>
+                        <button class="btn-primary-custom mt-3" onclick="saveSettings()">Save Settings</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <div class="modal-overlay" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="userModalTitle">Add User</h4>
+                <button class="modal-close" onclick="closeUserModal()">x</button>
+            </div>
+            <form id="userForm" onsubmit="saveUser(event)">
+                <input type="hidden" id="editUserId">
+                <div class="form-group"><label>First Name</label><input type="text" id="userFirstName" required></div>
+                <div class="form-group"><label>Last Name</label><input type="text" id="userLastName" required></div>
+                <div class="form-group"><label>Email</label><input type="email" id="userEmailInput" required></div>
+                <div class="form-group"><label>Phone</label><input type="tel" id="userPhone"></div>
+                <div class="form-group"><label>Role</label><select id="userRoleInput" required><option value="traveler">Traveler</option><option value="host">Host</option><option value="admin">Admin</option></select></div>
+                <div class="form-group"><label>Status</label><select id="userStatusInput"><option value="active">Active</option><option value="banned">Banned</option></select></div>
+                <div class="d-flex gap-2 mt-3">
+                    <button type="button" class="btn btn-secondary flex-fill" onclick="closeUserModal()">Cancel</button>
+                    <button type="submit" class="btn-primary-custom flex-fill">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let allUsers = [], allProperties = [], allReservations = [];
+        let dashboardStats = {};
+        
+        function getToken() {
+            return localStorage.getItem('authToken');
+        }
+        
+        function getHeaders() {
+            return {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`
+            };
+        }
+        
+        // Fetch all data from API
+        async function initializeData() {
+            try {
+                await Promise.all([
+                    fetchUsers(),
+                    fetchProperties(),
+                    fetchReservations(),
+                    fetchDashboardStats()
+                ]);
+                updateDashboard();
+            } catch (error) {
+                console.error('Error initializing data:', error);
+                alert('Error loading data. Please check if the server is running.');
+            }
+        }
+        
+        async function fetchUsers() {
+            try {
+                const response = await fetch(`${API_URL}/users?limit=100`, {
+                    headers: getHeaders()
+                });
+                const data = await response.json();
+                if (data.success) {
+                    allUsers = data.data.map(u => ({
+                        id: u._id,
+                        firstName: u.name.split(' ')[0] || u.name,
+                        lastName: u.name.split(' ').slice(1).join(' ') || '',
+                        name: u.name,
+                        email: u.email,
+                        phone: u.phone || '',
+                        role: u.role,
+                        status: u.isActive ? 'active' : 'banned',
+                        isActive: u.isActive,
+                        joinedAt: u.createdAt
+                    }));
+                }
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            }
+        }
+        
+        async function fetchProperties() {
+            try {
+                const response = await fetch(`${API_URL}/properties?limit=100&all=true`, {
+                    headers: getHeaders()
+                });
+                const data = await response.json();
+                if (data.success) {
+                    allProperties = data.data.map(p => ({
+                        id: p._id,
+                        title: p.title,
+                        host: p.host?.name || 'Unknown',
+                        hostId: p.host?._id,
+                        city: p.location?.city || '',
+                        area: p.location?.area || p.location?.address || '',
+                        capacity: p.capacity?.guests || p.capacity || 1,
+                        price: p.price,
+                        status: p.isApproved ? 'active' : 'pending',
+                        isApproved: p.isApproved,
+                        createdAt: p.createdAt
+                    }));
+                }
+            } catch (error) {
+                console.error('Error fetching properties:', error);
+            }
+        }
+        
+        async function fetchReservations() {
+            try {
+                const response = await fetch(`${API_URL}/reservations?limit=100`, {
+                    headers: getHeaders()
+                });
+                const data = await response.json();
+                if (data.success) {
+                    allReservations = data.data.map(r => ({
+                        id: r._id,
+                        guestName: r.guest?.name || 'Unknown',
+                        guestId: r.guest?._id,
+                        propertyTitle: r.property?.title || 'Unknown Property',
+                        propertyId: r.property?._id,
+                        checkin: r.checkIn,
+                        checkout: r.checkOut,
+                        total: r.pricing?.total || 0,
+                        status: r.status,
+                        createdAt: r.createdAt
+                    }));
+                }
+            } catch (error) {
+                console.error('Error fetching reservations:', error);
+            }
+        }
+        
+        async function fetchDashboardStats() {
+            try {
+                const response = await fetch(`${API_URL}/reports/dashboard`, {
+                    headers: getHeaders()
+                });
+                const data = await response.json();
+                if (data.success) {
+                    dashboardStats = data.data;
+                }
+            } catch (error) {
+                console.error('Error fetching dashboard stats:', error);
+            }
+        }
+        
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.admin-nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.closest('.admin-nav-item').classList.add('active');
+            const titles = { 'dashboard': 'Dashboard', 'users': 'User Management', 'properties': 'Property Management', 'reservations': 'Reservation Management', 'reports': 'Analytics & Reports', 'settings': 'System Settings' };
+            document.getElementById('pageTitle').textContent = titles[tabId] || 'Dashboard';
+            if (tabId === 'users') renderUsers();
+            if (tabId === 'properties') renderProperties();
+            if (tabId === 'reservations') renderReservations();
+            if (tabId === 'reports') updateReports();
+        }
+        
+        function updateDashboard() {
+            document.getElementById('statUsers').textContent = dashboardStats.totalUsers || allUsers.length;
+            document.getElementById('statProperties').textContent = dashboardStats.totalProperties || allProperties.length;
+            document.getElementById('statReservations').textContent = dashboardStats.totalReservations || allReservations.length;
+            
+            // Calculate revenue
+            let totalRevenue = 0;
+            if (dashboardStats.reservationStats) {
+                dashboardStats.reservationStats.forEach(stat => {
+                    if (stat._id === 'confirmed' || stat._id === 'completed') {
+                        totalRevenue += stat.totalRevenue || 0;
+                    }
+                });
+            } else {
+                totalRevenue = allReservations.filter(r => r.status === 'confirmed' || r.status === 'completed').reduce((sum, r) => sum + (r.total || 0), 0);
+            }
+            document.getElementById('statRevenue').textContent = '$' + totalRevenue.toLocaleString();
+            
+            document.getElementById('travelerCount').textContent = dashboardStats.totalTravelers || allUsers.filter(u => u.role === 'traveler').length;
+            document.getElementById('hostCount').textContent = dashboardStats.totalHosts || allUsers.filter(u => u.role === 'host').length;
+            document.getElementById('pendingProperties').textContent = dashboardStats.pendingProperties || allProperties.filter(p => p.status === 'pending').length;
+            document.getElementById('pendingReservations').textContent = allReservations.filter(r => r.status === 'pending').length;
+            
+            const recentRes = allReservations.slice(0, 5);
+            const tbody = document.getElementById('recentReservationsTable');
+            tbody.innerHTML = recentRes.length > 0 ? recentRes.map(r => `<tr><td>#${r.id.slice(-6)}</td><td>${r.guestName}</td><td>${r.propertyTitle}</td><td><span class="status-badge status-${r.status}">${r.status}</span></td><td>$${r.total}</td></tr>`).join('') : '<tr><td colspan="5" class="text-center text-muted">No reservations</td></tr>';
+        }
+        
+        function renderUsers() {
+            const search = document.getElementById('userSearch').value.toLowerCase();
+            const roleFilter = document.getElementById('userRoleFilter').value;
+            const statusFilter = document.getElementById('userStatusFilter').value;
+            let filtered = allUsers.filter(u => {
+                const fullName = (u.firstName + ' ' + u.lastName).toLowerCase();
+                const matchSearch = !search || fullName.includes(search) || u.email.toLowerCase().includes(search);
+                const matchRole = !roleFilter || u.role === roleFilter;
+                const matchStatus = !statusFilter || u.status === statusFilter;
+                return matchSearch && matchRole && matchStatus;
+            });
+            document.getElementById('usersTable').innerHTML = filtered.map(u => `<tr><td><div class="user-cell"><img src="https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=18a999&color=fff" alt=""><strong>${u.name}</strong></div></td><td>${u.email}</td><td><span class="badge bg-${u.role === 'admin' ? 'danger' : u.role === 'host' ? 'success' : 'primary'}">${u.role}</span></td><td><span class="status-badge status-${u.status}">${u.status}</span></td><td>${formatDate(u.joinedAt)}</td><td><button class="action-btn action-btn-edit" onclick="editUser('${u.id}')">Edit</button><button class="action-btn action-btn-delete" onclick="toggleUserStatus('${u.id}')">${u.status === 'banned' ? 'Activate' : 'Ban'}</button></td></tr>`).join('') || '<tr><td colspan="6" class="text-center text-muted">No users found</td></tr>';
+        }
+        
+        function openUserModal(userId = null) {
+            document.getElementById('userModal').classList.add('active');
+            document.getElementById('userModalTitle').textContent = userId ? 'Edit User' : 'Add User';
+            document.getElementById('editUserId').value = userId || '';
+            if (userId) {
+                const user = allUsers.find(u => u.id === userId);
+                if (user) {
+                    document.getElementById('userFirstName').value = user.firstName;
+                    document.getElementById('userLastName').value = user.lastName;
+                    document.getElementById('userEmailInput').value = user.email;
+                    document.getElementById('userPhone').value = user.phone || '';
+                    document.getElementById('userRoleInput').value = user.role;
+                    document.getElementById('userStatusInput').value = user.status;
+                }
+            } else { 
+                document.getElementById('userForm').reset(); 
+            }
+        }
+        
+        function closeUserModal() { document.getElementById('userModal').classList.remove('active'); }
+        
+        async function saveUser(e) {
+            e.preventDefault();
+            const userId = document.getElementById('editUserId').value;
+            const firstName = document.getElementById('userFirstName').value;
+            const lastName = document.getElementById('userLastName').value;
+            const role = document.getElementById('userRoleInput').value;
+            const isActive = document.getElementById('userStatusInput').value === 'active';
+            
+            try {
+                if (userId) {
+                    // Update role
+                    await fetch(`${API_URL}/users/${userId}/role`, {
+                        method: 'PUT',
+                        headers: getHeaders(),
+                        body: JSON.stringify({ role })
+                    });
+                    
+                    // Update status
+                    await fetch(`${API_URL}/users/${userId}/status`, {
+                        method: 'PUT',
+                        headers: getHeaders(),
+                        body: JSON.stringify({ isActive })
+                    });
+                    
+                    alert('User updated successfully!');
+                } else {
+                    // For new users, they should register themselves
+                    alert('Users should register through the registration form.');
+                }
+                
+                closeUserModal();
+                await fetchUsers();
+                renderUsers();
+                updateDashboard();
+            } catch (error) {
+                console.error('Error saving user:', error);
+                alert('Error saving user');
+            }
+        }
+        
+        function editUser(id) { openUserModal(id); }
+        
+        async function toggleUserStatus(id) {
+            const user = allUsers.find(u => u.id === id);
+            if (!user) return;
+            
+            const newStatus = !user.isActive;
+            if (confirm(`${newStatus ? 'Activate' : 'Ban'} this user?`)) {
+                try {
+                    const response = await fetch(`${API_URL}/users/${id}/status`, {
+                        method: 'PUT',
+                        headers: getHeaders(),
+                        body: JSON.stringify({ isActive: newStatus })
+                    });
+                    
+                    const data = await response.json();
+                    if (data.success) {
+                        await fetchUsers();
+                        renderUsers();
+                        updateDashboard();
+                        alert(newStatus ? 'User activated!' : 'User banned!');
+                    } else {
+                        alert(data.message || 'Error updating user status');
+                    }
+                } catch (error) {
+                    console.error('Error toggling user status:', error);
+                    alert('Error updating user status');
+                }
+            }
+        }
+        
+        function renderProperties() {
+            const search = document.getElementById('propertySearch').value.toLowerCase();
+            const statusFilter = document.getElementById('propertyStatusFilter').value;
+            const locationFilter = document.getElementById('propertyLocationFilter').value;
+            
+            // Update location filter options
+            const locations = [...new Set(allProperties.map(p => p.city).filter(Boolean))];
+            const locSelect = document.getElementById('propertyLocationFilter');
+            if (locSelect.options.length <= 1) { 
+                locations.forEach(loc => { 
+                    const opt = document.createElement('option'); 
+                    opt.value = loc; 
+                    opt.textContent = loc; 
+                    locSelect.appendChild(opt); 
+                }); 
+            }
+            
+            let filtered = allProperties.filter(p => {
+                const matchSearch = !search || p.title.toLowerCase().includes(search) || (p.host && p.host.toLowerCase().includes(search));
+                const matchStatus = !statusFilter || p.status === statusFilter;
+                const matchLocation = !locationFilter || p.city === locationFilter;
+                return matchSearch && matchStatus && matchLocation;
+            });
+            
+            document.getElementById('propertiesTable').innerHTML = filtered.map(p => `<tr><td><strong>${p.title}</strong></td><td>${p.host}</td><td>${p.city}${p.area ? ', ' + p.area : ''}</td><td>${p.capacity} guests</td><td>$${p.price}/night</td><td><span class="status-badge status-${p.status}">${p.status}</span></td><td>${p.status === 'pending' ? `<button class="action-btn action-btn-edit" onclick="approveProperty('${p.id}')">Approve</button><button class="action-btn action-btn-delete" onclick="rejectProperty('${p.id}')">Reject</button>` : `<button class="action-btn action-btn-view" onclick="viewProperty('${p.id}')">View</button><button class="action-btn action-btn-delete" onclick="deleteProperty('${p.id}')">Remove</button>`}</td></tr>`).join('') || '<tr><td colspan="7" class="text-center text-muted">No properties found</td></tr>';
+        }
+        
+        async function approveProperty(id) {
+            try {
+                const response = await fetch(`${API_URL}/properties/${id}/approve`, {
+                    method: 'PUT',
+                    headers: getHeaders()
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Property approved!');
+                    await fetchProperties();
+                    renderProperties();
+                    updateDashboard();
+                } else {
+                    alert(data.message || 'Error approving property');
+                }
+            } catch (error) {
+                console.error('Error approving property:', error);
+                alert('Error approving property');
+            }
+        }
+        
+        async function rejectProperty(id) {
+            if (confirm('Reject this property?')) {
+                try {
+                    const response = await fetch(`${API_URL}/properties/${id}`, {
+                        method: 'DELETE',
+                        headers: getHeaders()
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('Property rejected!');
+                        await fetchProperties();
+                        renderProperties();
+                        updateDashboard();
+                    }
+                } catch (error) {
+                    console.error('Error rejecting property:', error);
+                }
+            }
+        }
+        
+        function viewProperty(id) {
+            window.open(`property-detail.html?id=${id}`, '_blank');
+        }
+        
+        async function deleteProperty(id) {
+            if (confirm('Remove this property?')) {
+                try {
+                    const response = await fetch(`${API_URL}/properties/${id}`, {
+                        method: 'DELETE',
+                        headers: getHeaders()
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('Property removed!');
+                        await fetchProperties();
+                        renderProperties();
+                        updateDashboard();
+                    }
+                } catch (error) {
+                    console.error('Error deleting property:', error);
+                }
+            }
+        }
+        
+        function renderReservations() {
+            const search = document.getElementById('reservationSearch').value.toLowerCase();
+            const statusFilter = document.getElementById('reservationStatusFilter').value;
+            let filtered = allReservations.filter(r => {
+                const matchSearch = !search || r.guestName.toLowerCase().includes(search) || r.propertyTitle.toLowerCase().includes(search) || r.id.toString().includes(search);
+                const matchStatus = !statusFilter || r.status === statusFilter;
+                return matchSearch && matchStatus;
+            });
+            document.getElementById('reservationsTable').innerHTML = filtered.map(r => `<tr><td>#${r.id.slice(-6)}</td><td>${r.guestName}</td><td>${r.propertyTitle}</td><td>${formatDate(r.checkin)}</td><td>${formatDate(r.checkout)}</td><td>$${r.total}</td><td><span class="status-badge status-${r.status}">${r.status}</span></td><td>${r.status === 'pending' ? `<button class="action-btn action-btn-edit" onclick="confirmReservation('${r.id}')">Confirm</button><button class="action-btn action-btn-delete" onclick="cancelReservation('${r.id}')">Cancel</button>` : r.status === 'confirmed' ? `<button class="action-btn action-btn-delete" onclick="cancelReservation('${r.id}')">Cancel</button>` : ''}</td></tr>`).join('') || '<tr><td colspan="8" class="text-center text-muted">No reservations found</td></tr>';
+        }
+        
+        async function confirmReservation(id) {
+            try {
+                const response = await fetch(`${API_URL}/reservations/${id}/status`, {
+                    method: 'PUT',
+                    headers: getHeaders(),
+                    body: JSON.stringify({ status: 'confirmed' })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Reservation confirmed!');
+                    await fetchReservations();
+                    renderReservations();
+                    updateDashboard();
+                } else {
+                    alert(data.message || 'Error confirming reservation');
+                }
+            } catch (error) {
+                console.error('Error confirming reservation:', error);
+                alert('Error confirming reservation');
+            }
+        }
+        
+        async function cancelReservation(id) {
+            if (confirm('Cancel this reservation?')) {
+                try {
+                    const response = await fetch(`${API_URL}/reservations/${id}/status`, {
+                        method: 'PUT',
+                        headers: getHeaders(),
+                        body: JSON.stringify({ status: 'cancelled' })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('Reservation cancelled!');
+                        await fetchReservations();
+                        renderReservations();
+                        updateDashboard();
+                    }
+                } catch (error) {
+                    console.error('Error cancelling reservation:', error);
+                }
+            }
+        }
+        
+        function updateReports() {
+            document.getElementById('reportProperties').textContent = dashboardStats.totalProperties || allProperties.length;
+            document.getElementById('reportReservations').textContent = dashboardStats.totalReservations || allReservations.length;
+            document.getElementById('reportUsers').textContent = allUsers.filter(u => u.status === 'active').length;
+            document.getElementById('reportTravelers').textContent = dashboardStats.totalTravelers || allUsers.filter(u => u.role === 'traveler').length;
+            document.getElementById('reportHosts').textContent = dashboardStats.totalHosts || allUsers.filter(u => u.role === 'host').length;
+            document.getElementById('reportAdmins').textContent = allUsers.filter(u => u.role === 'admin').length;
+            
+            // Reservation stats
+            const pending = allReservations.filter(r => r.status === 'pending').length;
+            const confirmed = allReservations.filter(r => r.status === 'confirmed').length;
+            const completed = allReservations.filter(r => r.status === 'completed').length;
+            const cancelled = allReservations.filter(r => r.status === 'cancelled').length;
+            
+            document.getElementById('reportPending').textContent = pending;
+            document.getElementById('reportConfirmed').textContent = confirmed;
+            document.getElementById('reportCompleted').textContent = completed;
+            document.getElementById('reportCancelled').textContent = cancelled;
+        }
+        
+        function saveSettings() { 
+            localStorage.setItem('siteSettings', JSON.stringify({ 
+                siteName: document.getElementById('siteName').value, 
+                contactEmail: document.getElementById('contactEmail').value, 
+                currency: document.getElementById('currency').value, 
+                serviceFee: document.getElementById('serviceFee').value, 
+                autoApprove: document.getElementById('autoApprove').value 
+            })); 
+            alert('Settings saved!'); 
+        }
+        
+        function formatDate(d) { 
+            if (!d) return '-'; 
+            return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); 
+        }
+        
+        function logout() { 
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userData');
+            localStorage.setItem('userLoggedIn', 'false'); 
+            localStorage.removeItem('userName'); 
+            localStorage.removeItem('userRole'); 
+            window.location.href = 'loginup.html'; 
+        }
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            const token = getToken();
+            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+            
+            if (!token || userData.role !== 'admin') { 
+                alert('Access Denied. Admin privileges required.'); 
+                window.location.href = 'loginup.html'; 
+                return; 
+            }
+            
+            document.getElementById('adminName').textContent = userData.name || 'Admin';
+            
+            // Show loading
+            document.getElementById('statUsers').textContent = '...';
+            document.getElementById('statProperties').textContent = '...';
+            document.getElementById('statReservations').textContent = '...';
+            document.getElementById('statRevenue').textContent = '...';
+            
+            await initializeData();
+        });
+    </script>
+</body>
+</html>
