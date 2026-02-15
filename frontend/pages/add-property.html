@@ -779,7 +779,7 @@
             document.getElementById('summaryPrice').textContent = '$' + (document.getElementById('pricePerNight').value || '0') + '/night';
         }
         
-        function submitProperty() {
+        async function submitProperty() {
             const termsAgree = document.getElementById('termsAgree').checked;
             const pricePerNight = document.getElementById('pricePerNight').value;
             
@@ -793,51 +793,88 @@
                 return;
             }
             
+            const title = document.getElementById('propertyTitle').value;
+            const description = document.getElementById('propertyDescription').value;
+            
+            if (!title || !description) {
+                alert('Please fill in title and description');
+                return;
+            }
+            
+            if (!selectedType) {
+                alert('Please select a property type');
+                return;
+            }
+            
             const property = {
-                id: Date.now(),
-                title: document.getElementById('propertyTitle').value,
+                title: title,
                 type: selectedType,
-                description: document.getElementById('propertyDescription').value,
-                bedrooms: document.getElementById('bedrooms').value,
-                bathrooms: document.getElementById('bathrooms').value,
-                maxGuests: document.getElementById('maxGuests').value,
-                country: document.getElementById('country').value,
-                city: document.getElementById('city').value,
-                address: document.getElementById('address').value,
-                zipCode: document.getElementById('zipCode').value,
-                neighborhood: document.getElementById('neighborhood').value,
-                landmarks: document.getElementById('landmarks').value,
+                description: description,
+                address: {
+                    street: document.getElementById('address').value,
+                    city: document.getElementById('city').value,
+                    state: document.getElementById('neighborhood').value,
+                    country: document.getElementById('country').value,
+                    zipCode: document.getElementById('zipCode').value
+                },
+                capacity: {
+                    guests: parseInt(document.getElementById('maxGuests').value) || 2,
+                    bedrooms: parseInt(document.getElementById('bedrooms').value) || 1,
+                    bathrooms: parseInt(document.getElementById('bathrooms').value) || 1,
+                    beds: parseInt(document.getElementById('bedrooms').value) || 1
+                },
                 amenities: selectedAmenities,
-                images: uploadedImages,
-                pricePerNight: pricePerNight,
-                cleaningFee: document.getElementById('cleaningFee').value || 0,
-                minStay: document.getElementById('minStay').value,
-                cancellationPolicy: document.getElementById('cancellationPolicy').value,
-                status: 'pending',
-                createdAt: new Date().toISOString(),
-                hostId: localStorage.getItem('userId')
+                images: uploadedImages.map(img => ({ url: img, caption: '' })),
+                price: {
+                    perNight: parseInt(pricePerNight),
+                    cleaningFee: parseInt(document.getElementById('cleaningFee').value) || 0,
+                    currency: 'USD'
+                },
+                rules: {
+                    minStay: parseInt(document.getElementById('minStay').value) || 1,
+                    cancellationPolicy: document.getElementById('cancellationPolicy').value || 'flexible'
+                }
             };
             
-            const properties = JSON.parse(localStorage.getItem('hostProperties') || '[]');
-            properties.push(property);
-            localStorage.setItem('hostProperties', JSON.stringify(properties));
+            const token = localStorage.getItem('authToken');
             
-            alert('Property submitted successfully!\n\nYour property is pending approval and will be listed once reviewed by our team.');
-            
-            window.location.href = 'profile.html';
+            try {
+                const response = await fetch('http://localhost:5000/api/properties', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(property)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Property created successfully!\n\nYour property is now live and visible to guests.');
+                    window.location.href = 'profile.html';
+                } else {
+                    const errorMsg = data.errors ? data.errors.map(e => e.msg).join('\n') : data.message;
+                    alert('❌ Failed to create property:\n' + errorMsg);
+                }
+            } catch (error) {
+                console.error('Submit property error:', error);
+                alert('❌ Connection error. Please make sure the server is running.');
+            }
         }
         
         document.addEventListener('DOMContentLoaded', function() {
             const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
             const userRole = localStorage.getItem('userRole');
+            const token = localStorage.getItem('authToken');
             
-            if (!isLoggedIn) {
+            if (!isLoggedIn || !token) {
                 alert('Please login to add a property');
                 window.location.href = 'loginup.html';
                 return;
             }
             
-            if (userRole !== 'host') {
+            if (userRole !== 'host' && userRole !== 'admin') {
                 alert('Only hosts can add properties. Please register as a host.');
                 window.location.href = 'profile.html';
                 return;

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
+const PDFDocument = require('pdfkit');
 const Reservation = require('../models/Reservation');
 const Property = require('../models/Property');
 const Notification = require('../models/Notification');
@@ -16,26 +17,50 @@ const createNotification = async (data) => {
 };
 
 // @route   GET /api/reservations
-// @desc    Get user's reservations (as guest)
+// @desc    Get user's reservations (as guest) or all for admin
 // @access  Private
 router.get('/', protect, async (req, res) => {
     try {
-        const query = { guest: req.user.id };
+        let query = {};
+        
+        // Admin can see all reservations
+        if (req.user.role === 'admin') {
+            // No filter - see all
+        } else {
+            // Regular users see only their reservations
+            query = { guest: req.user.id };
+        }
 
         if (req.query.status) {
             query.status = req.query.status;
         }
+        
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 100;
+        const skip = (page - 1) * limit;
 
         const reservations = await Reservation.find(query)
             .populate('property', 'title images address price')
             .populate('host', 'name avatar')
+            .populate('guest', 'name email phone avatar')
+            .skip(skip)
+            .limit(limit)
             .sort({ createdAt: -1 });
+
+        const total = await Reservation.countDocuments(query);
 
         res.json({
             success: true,
-            data: reservations
+            data: reservations,
+            pagination: {
+                page,
+                limit,
+                total,
+                pages: Math.ceil(total / limit)
+            }
         });
     } catch (error) {
+        console.error('Reservations fetch error:', error);
         res.status(500).json({
             success: false,
             message: 'Server error'
@@ -119,7 +144,7 @@ router.post('/', protect, [
     body('property').notEmpty().withMessage('Property ID is required'),
     body('checkIn').isISO8601().withMessage('Valid check-in date is required'),
     body('checkOut').isISO8601().withMessage('Valid check-out date is required'),
-    body('guests.adults').isInt({ min: 1 }).withMessage('At least 1 adult required')
+    body('guests').isInt({ min: 1 }).withMessage('At least 1 guest required')
 ], async (req, res) => {
     try {
         const errors = validationResult(req);
@@ -141,15 +166,15 @@ router.post('/', protect, [
             });
         }
 
-        if (!property.isAvailable || !property.isApproved) {
+        if (!property.isAvailable) {
             return res.status(400).json({
                 success: false,
                 message: 'Property is not available'
             });
         }
 
-        // Check capacity
-        const totalGuests = guests.adults + (guests.children || 0);
+        // Check capacity - handle both number and object format
+        const totalGuests = typeof guests === 'object' ? (guests.adults || 0) + (guests.children || 0) : parseInt(guests) || 1;
         if (totalGuests > property.capacity.guests) {
             return res.status(400).json({
                 success: false,
@@ -190,21 +215,24 @@ router.post('/', protect, [
         const taxes = Math.round(subtotal * 0.08); // 8% tax
         const total = subtotal + serviceFee + taxes;
 
+        // Format guests properly
+        const guestsData = typeof guests === 'object' ? guests : { adults: parseInt(guests) || 1, children: 0 };
+
         const reservation = await Reservation.create({
             property: propertyId,
             guest: req.user.id,
             host: property.host,
             checkIn: checkInDate,
             checkOut: checkOutDate,
-            guests,
+            guests: totalGuests,
             pricing: {
-                nightlyRate: property.price.perNight,
+                perNight: property.price.perNight,
                 nights,
                 subtotal,
                 serviceFee,
                 taxes,
                 total,
-                currency: property.price.currency
+                currency: property.price.currency || 'USD'
             },
             specialRequests
         });
@@ -477,6 +505,179 @@ router.get('/admin/all', protect, authorize('admin'), async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Server error'
+        });
+    }
+});
+
+// @route   GET /api/reservations/:id/receipt
+// @desc    Generate PDF receipt for reservation
+// @access  Private
+router.get('/:id/receipt', protect, async (req, res) => {
+    try {
+        const reservation = await Reservation.findById(req.params.id)
+            .populate('property', 'title address price images')
+            .populate('guest', 'name email phone')
+            .populate('host', 'name email phone');
+
+        if (!reservation) {
+            return res.status(404).json({
+                success: false,
+                message: 'Reservation not found'
+            });
+        }
+
+        // Check authorization
+        const isGuest = reservation.guest._id.toString() === req.user.id;
+        const isHost = reservation.host._id.toString() === req.user.id;
+        const isAdmin = req.user.role === 'admin';
+
+        if (!isGuest && !isHost && !isAdmin) {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to view this receipt'
+            });
+        }
+
+        // Create PDF document
+        const doc = new PDFDocument({ margin: 50 });
+
+        // Set response headers
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename=reservation-${reservation._id}.pdf`);
+
+        // Pipe to response
+        doc.pipe(res);
+
+        // Header
+        doc.fontSize(24).font('Helvetica-Bold').text('StayLocal', { align: 'center' });
+        doc.fontSize(12).font('Helvetica').text('Reservation Receipt', { align: 'center' });
+        doc.moveDown();
+
+        // Line
+        doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+        doc.moveDown();
+
+        // Reservation ID
+        doc.fontSize(12).font('Helvetica-Bold').text('Reservation ID: ', { continued: true });
+        doc.font('Helvetica').text(reservation._id.toString());
+        doc.moveDown(0.5);
+
+        // Booking Date
+        doc.font('Helvetica-Bold').text('Booking Date: ', { continued: true });
+        doc.font('Helvetica').text(new Date(reservation.createdAt).toLocaleString());
+        doc.moveDown(1.5);
+
+        // Guest Information Section
+        doc.fontSize(14).font('Helvetica-Bold').fillColor('#18a999').text('Guest Information');
+        doc.fillColor('black');
+        doc.moveDown(0.5);
+        
+        doc.fontSize(11).font('Helvetica-Bold').text('Name: ', { continued: true });
+        doc.font('Helvetica').text(reservation.guest.name);
+        
+        doc.font('Helvetica-Bold').text('Email: ', { continued: true });
+        doc.font('Helvetica').text(reservation.guest.email);
+        
+        if (reservation.guest.phone) {
+            doc.font('Helvetica-Bold').text('Phone: ', { continued: true });
+            doc.font('Helvetica').text(reservation.guest.phone);
+        }
+        doc.moveDown(1.5);
+
+        // Property Information Section
+        doc.fontSize(14).font('Helvetica-Bold').fillColor('#18a999').text('Property Details');
+        doc.fillColor('black');
+        doc.moveDown(0.5);
+        
+        doc.fontSize(11).font('Helvetica-Bold').text('Property: ', { continued: true });
+        doc.font('Helvetica').text(reservation.property.title);
+        
+        if (reservation.property.address) {
+            const addr = reservation.property.address;
+            const fullAddress = [addr.street, addr.city, addr.state, addr.country].filter(Boolean).join(', ');
+            doc.font('Helvetica-Bold').text('Address: ', { continued: true });
+            doc.font('Helvetica').text(fullAddress || 'N/A');
+        }
+        
+        doc.font('Helvetica-Bold').text('Host: ', { continued: true });
+        doc.font('Helvetica').text(reservation.host.name);
+        doc.moveDown(1.5);
+
+        // Stay Details Section
+        doc.fontSize(14).font('Helvetica-Bold').fillColor('#18a999').text('Stay Details');
+        doc.fillColor('black');
+        doc.moveDown(0.5);
+        
+        doc.fontSize(11).font('Helvetica-Bold').text('Check-in: ', { continued: true });
+        doc.font('Helvetica').text(new Date(reservation.checkIn).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
+        
+        doc.font('Helvetica-Bold').text('Check-out: ', { continued: true });
+        doc.font('Helvetica').text(new Date(reservation.checkOut).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
+        
+        doc.font('Helvetica-Bold').text('Number of Guests: ', { continued: true });
+        doc.font('Helvetica').text(reservation.guests.toString());
+        
+        doc.font('Helvetica-Bold').text('Number of Nights: ', { continued: true });
+        doc.font('Helvetica').text(reservation.pricing?.nights?.toString() || 'N/A');
+        
+        doc.font('Helvetica-Bold').text('Status: ', { continued: true });
+        const statusColors = {
+            'pending': '#f59e0b',
+            'confirmed': '#10b981',
+            'cancelled': '#ef4444',
+            'completed': '#3b82f6'
+        };
+        doc.fillColor(statusColors[reservation.status] || 'black')
+           .text(reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1));
+        doc.fillColor('black');
+        doc.moveDown(1.5);
+
+        // Pricing Section
+        doc.fontSize(14).font('Helvetica-Bold').fillColor('#18a999').text('Payment Details');
+        doc.fillColor('black');
+        doc.moveDown(0.5);
+        
+        const pricing = reservation.pricing || {};
+        
+        doc.fontSize(11).font('Helvetica-Bold').text('Price per Night: ', { continued: true });
+        doc.font('Helvetica').text(`$${pricing.perNight || 0}`);
+        
+        doc.font('Helvetica-Bold').text('Subtotal: ', { continued: true });
+        doc.font('Helvetica').text(`$${pricing.subtotal || 0}`);
+        
+        if (pricing.cleaningFee) {
+            doc.font('Helvetica-Bold').text('Cleaning Fee: ', { continued: true });
+            doc.font('Helvetica').text(`$${pricing.cleaningFee}`);
+        }
+        
+        if (pricing.serviceFee) {
+            doc.font('Helvetica-Bold').text('Service Fee: ', { continued: true });
+            doc.font('Helvetica').text(`$${pricing.serviceFee}`);
+        }
+        
+        doc.moveDown(0.5);
+        doc.moveTo(50, doc.y).lineTo(250, doc.y).stroke();
+        doc.moveDown(0.5);
+        
+        doc.fontSize(14).font('Helvetica-Bold').text('Total Amount: ', { continued: true });
+        doc.fillColor('#18a999').text(`$${pricing.total || 0}`);
+        doc.fillColor('black');
+        doc.moveDown(2);
+
+        // Footer
+        doc.fontSize(9).fillColor('gray');
+        doc.text('Thank you for choosing StayLocal!', { align: 'center' });
+        doc.text(`Generated on ${new Date().toLocaleString()}`, { align: 'center' });
+        doc.text('This is an electronically generated receipt.', { align: 'center' });
+
+        // Finalize PDF
+        doc.end();
+
+    } catch (error) {
+        console.error('PDF generation error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error generating receipt'
         });
     }
 });

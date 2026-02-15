@@ -223,6 +223,38 @@
             font-size: 18px;
         }
         
+        .reservation-actions-col {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+        
+        .btn-download-receipt {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: linear-gradient(135deg, var(--brand), var(--brand2));
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-download-receipt:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(24, 169, 153, 0.3);
+        }
+        
+        .btn-download-receipt svg {
+            width: 14px;
+            height: 14px;
+        }
+        
         .property-card-manage {
             border: 1px solid #e5e7eb;
             border-radius: 15px;
@@ -822,7 +854,16 @@
                                     <div class="reservation-dates">${formatDate(res.checkIn)} - ${formatDate(res.checkOut)} (${res.pricing?.nights || 0} nights)</div>
                                     <span class="reservation-status ${statusClass}">${res.status.charAt(0).toUpperCase() + res.status.slice(1)}</span>
                                 </div>
-                                <div class="reservation-price">$${res.pricing?.total || 0}</div>
+                                <div class="reservation-actions-col">
+                                    <div class="reservation-price">$${res.pricing?.total || 0}</div>
+                                    <button class="btn-download-receipt" onclick="downloadReceipt('${res._id}')" title="Download Receipt">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                                        </svg>
+                                        PDF
+                                    </button>
+                                </div>
                             </div>
                         `;
                     }).join('');
@@ -995,6 +1036,41 @@
         
         function editProperty(propertyId) {
             window.location.href = `add-property.html?edit=${propertyId}`;
+        }
+        
+        async function downloadReceipt(reservationId) {
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch(`${API_URL}/reservations/${reservationId}/receipt`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to generate receipt');
+                }
+                
+                // Get the blob from response
+                const blob = await response.blob();
+                
+                // Create download link
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `reservation-${reservationId}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                
+                // Cleanup
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                alert('✅ Receipt downloaded successfully!');
+            } catch (error) {
+                console.error('Download receipt error:', error);
+                alert('❌ Failed to download receipt. Please try again.');
+            }
         }
         
         function formatDate(dateStr) {

@@ -485,146 +485,54 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const properties = [
+        const API_URL = 'http://localhost:5000/api';
+        let allProperties = [];
+        
+        // Fallback demo properties (used when API has no data)
+        const demoProperties = [
             {
-                id: 1,
+                _id: 'demo1',
                 title: "Modern 1BR Apartment",
-                city: "New York",
-                area: "Manhattan",
-                type: "apartment",
-                price: 150,
-                capacity: 3,
-                bedrooms: 1,
-                rating: 4.8,
-                reviews: 24,
-                image: "../assets/images/img_7.png",
-                features: ["wifi", "parking", "ac", "tv"]
+                address: { city: "New York", state: "Manhattan" },
+                propertyType: "apartment",
+                price: { perNight: 150 },
+                capacity: { guests: 3, bedrooms: 1 },
+                rating: { average: 4.8, count: 24 },
+                images: [{ url: "../assets/images/img_7.png" }],
+                amenities: ["wifi", "parking", "ac", "tv"]
             },
             {
-                id: 2,
+                _id: 'demo2',
                 title: "Historic Suite Near Park",
-                city: "Boston",
-                area: "Downtown",
-                type: "suite",
-                price: 120,
-                capacity: 3,
-                bedrooms: 1,
-                rating: 4.6,
-                reviews: 18,
-                image: "../assets/images/img_8.png",
-                features: ["wifi", "ac"]
+                address: { city: "Boston", state: "Downtown" },
+                propertyType: "suite",
+                price: { perNight: 120 },
+                capacity: { guests: 3, bedrooms: 1 },
+                rating: { average: 4.6, count: 18 },
+                images: [{ url: "../assets/images/img_8.png" }],
+                amenities: ["wifi", "ac"]
             },
             {
-                id: 3,
+                _id: 'demo3',
                 title: "Luxury Beach Villa",
-                city: "Malibu",
-                area: "Beachfront",
-                type: "villa",
-                price: 350,
-                capacity: 8,
-                bedrooms: 3,
-                rating: 4.9,
-                reviews: 37,
-                image: "../assets/images/img_10.png",
-                features: ["pool", "beach", "wifi", "parking"]
+                address: { city: "Malibu", state: "California" },
+                propertyType: "villa",
+                price: { perNight: 350 },
+                capacity: { guests: 8, bedrooms: 3 },
+                rating: { average: 4.9, count: 37 },
+                images: [{ url: "../assets/images/img_10.png" }],
+                amenities: ["pool", "beach", "wifi", "parking"]
             },
             {
-                id: 4,
+                _id: 'demo4',
                 title: "Eco-Lodge with Garden",
-                city: "San Francisco",
-                area: "Bay Area",
-                type: "eco",
-                price: 95,
-                capacity: 4,
-                bedrooms: 2,
-                rating: 4.7,
-                reviews: 15,
-                image: "../assets/images/img_9.png",
-                features: ["garden", "kitchen"]
-            },
-            {
-                id: 5,
-                title: "Downtown LA Loft",
-                city: "Los Angeles",
-                area: "Downtown LA",
-                type: "apartment",
-                price: 180,
-                capacity: 4,
-                bedrooms: 2,
-                rating: 4.5,
-                reviews: 31,
-                image: "../assets/images/img_7.png",
-                features: ["wifi", "parking", "ac", "kitchen"]
-            },
-            {
-                id: 6,
-                title: "Hollywood Hills Suite",
-                city: "Los Angeles",
-                area: "Hollywood",
-                type: "suite",
-                price: 275,
-                capacity: 5,
-                bedrooms: 2,
-                rating: 4.8,
-                reviews: 42,
-                image: "../assets/images/img_10.png",
-                features: ["pool", "wifi", "parking", "ac"]
-            },
-            {
-                id: 7,
-                title: "Magnificent Mile Apartment",
-                city: "Chicago",
-                area: "Magnificent Mile",
-                type: "apartment",
-                price: 165,
-                capacity: 3,
-                bedrooms: 1,
-                rating: 4.6,
-                reviews: 28,
-                image: "../assets/images/img_8.png",
-                features: ["wifi", "ac", "kitchen"]
-            },
-            {
-                id: 8,
-                title: "Lake View Condo",
-                city: "Chicago",
-                area: "Lincoln Park",
-                type: "apartment",
-                price: 195,
-                capacity: 4,
-                bedrooms: 2,
-                rating: 4.7,
-                reviews: 19,
-                image: "../assets/images/img_9.png",
-                features: ["wifi", "parking", "kitchen", "garden"]
-            },
-            {
-                id: 9,
-                title: "Miami Beach Villa",
-                city: "Miami",
-                area: "South Beach",
-                type: "villa",
-                price: 420,
-                capacity: 10,
-                bedrooms: 4,
-                rating: 4.9,
-                reviews: 53,
-                image: "../assets/images/img_10.png",
-                features: ["pool", "beach", "wifi", "parking", "ac"]
-            },
-            {
-                id: 10,
-                title: "Santa Monica Studio",
-                city: "Los Angeles",
-                area: "Santa Monica",
-                type: "apartment",
-                price: 135,
-                capacity: 2,
-                bedrooms: 1,
-                rating: 4.4,
-                reviews: 22,
-                image: "../assets/images/img_7.png",
-                features: ["wifi", "beach", "ac"]
+                address: { city: "San Francisco", state: "Bay Area" },
+                propertyType: "eco",
+                price: { perNight: 95 },
+                capacity: { guests: 4, bedrooms: 2 },
+                rating: { average: 4.7, count: 15 },
+                images: [{ url: "../assets/images/img_9.png" }],
+                amenities: ["garden", "kitchen"]
             }
         ];
 
@@ -640,9 +548,31 @@
                 document.getElementById('checkoutDate').setAttribute('min', minCheckout);
             });
             
+            loadProperties();
             parseURLParams();
             updateNavigation();
         });
+
+        async function loadProperties() {
+            try {
+                const response = await fetch(`${API_URL}/properties`);
+                const data = await response.json();
+                
+                if (data.success && data.data.length > 0) {
+                    allProperties = data.data;
+                } else {
+                    // Use demo properties if no data from API
+                    allProperties = demoProperties;
+                }
+                
+                displayProperties(allProperties);
+            } catch (error) {
+                console.error('Load properties error:', error);
+                // Use demo properties on error
+                allProperties = demoProperties;
+                displayProperties(allProperties);
+            }
+        }
 
         function parseURLParams() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -682,7 +612,7 @@
 
         function filterProperties() {
             const destination = document.getElementById('destinationInput').value.toLowerCase().trim();
-            const guests = parseInt(document.getElementById('guestCount').value);
+            const guests = parseInt(document.getElementById('guestCount').value) || 0;
             const minPrice = parseInt(document.querySelector('.price-input[placeholder="Min"]').value) || 0;
             const maxPrice = parseInt(document.querySelector('.price-input[placeholder="Max"]').value) || Infinity;
             
@@ -700,20 +630,23 @@
             };
             const searchTerm = cityAliases[destination] || destination;
             
-            let filteredProperties = properties.filter(property => {
-                const cityLower = property.city.toLowerCase();
-                const areaLower = property.area.toLowerCase();
-                const titleLower = property.title.toLowerCase();
+            let filteredProperties = allProperties.filter(property => {
+                const city = (property.address?.city || '').toLowerCase();
+                const state = (property.address?.state || '').toLowerCase();
+                const title = property.title.toLowerCase();
+                const propertyType = property.propertyType || '';
+                const price = property.price?.perNight || 0;
+                const capacity = property.capacity?.guests || 0;
                 
                 const matchesDestination = !searchTerm || 
-                    cityLower.includes(searchTerm) || 
-                    areaLower.includes(searchTerm) ||
-                    titleLower.includes(searchTerm) ||
-                    searchTerm.includes(cityLower.split(' ')[0]);
+                    city.includes(searchTerm) || 
+                    state.includes(searchTerm) ||
+                    title.includes(searchTerm) ||
+                    searchTerm.includes(city.split(' ')[0]);
                 
-                const matchesCapacity = property.capacity >= guests;
-                const matchesPrice = property.price >= minPrice && property.price <= maxPrice;
-                const matchesType = selectedTypes.length === 0 || selectedTypes.includes(property.type);
+                const matchesCapacity = capacity >= guests;
+                const matchesPrice = price >= minPrice && price <= maxPrice;
+                const matchesType = selectedTypes.length === 0 || selectedTypes.includes(propertyType);
                 
                 return matchesDestination && matchesCapacity && matchesPrice && matchesType;
             });
@@ -739,29 +672,41 @@
             }
             
             propertiesToShow.forEach(property => {
+                const id = property._id;
+                const title = property.title;
+                const city = property.address?.city || 'Unknown';
+                const area = property.address?.state || property.address?.country || '';
+                const price = property.price?.perNight || 0;
+                const capacity = property.capacity?.guests || 2;
+                const bedrooms = property.capacity?.bedrooms || 1;
+                const rating = property.rating?.average || 0;
+                const reviews = property.rating?.count || 0;
+                const image = property.images?.[0]?.url || '../assets/images/img_7.png';
+                const amenities = property.amenities || [];
+                
                 const propertyCard = `
-                    <div class="property-card" onclick="window.location.href='property-detail.html?id=${property.id}'">
+                    <div class="property-card" onclick="window.location.href='property-detail.html?id=${id}'">
                         <div class="property-image">
-                            <img src="${property.image}" alt="${property.title}">
+                            <img src="${image}" alt="${title}">
                             <div class="property-badge">Featured</div>
-                            <div class="property-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">+</div>
+                            <div class="property-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">♡</div>
                         </div>
                         <div class="property-info">
-                            <div class="property-location">${property.city}, ${property.area}</div>
-                            <h3 class="property-title">${property.title}</h3>
+                            <div class="property-location">📍 ${city}${area ? ', ' + area : ''}</div>
+                            <h3 class="property-title">${title}</h3>
                             <div class="property-features">
-                                <span>${property.capacity} Guests</span>
-                                <span>${property.bedrooms} Bed${property.bedrooms > 1 ? 's' : ''}</span>
-                                ${property.features.includes('wifi') ? '<span>WiFi</span>' : ''}
-                                ${property.features.includes('parking') ? '<span>Parking</span>' : ''}
+                                <span>👥 ${capacity} Guests</span>
+                                <span>🛏️ ${bedrooms} Bed${bedrooms > 1 ? 's' : ''}</span>
+                                ${amenities.includes('wifi') || amenities.includes('WiFi') ? '<span>📶 WiFi</span>' : ''}
+                                ${amenities.includes('parking') || amenities.includes('Parking') ? '<span>🅿️ Parking</span>' : ''}
                             </div>
                             <div class="property-price">
                                 <div>
-                                    <span class="price-amount">$${property.price}</span>
+                                    <span class="price-amount">$${price}</span>
                                     <span class="price-unit">/ night</span>
                                 </div>
                                 <div class="property-rating">
-                                    ${property.rating} <span class="text-muted">(${property.reviews} reviews)</span>
+                                    ⭐ ${rating.toFixed(1)} <span class="text-muted">(${reviews} reviews)</span>
                                 </div>
                             </div>
                         </div>
@@ -772,24 +717,25 @@
         }
 
         function toggleFavorite(element) {
-            element.innerHTML = element.innerHTML === '+' ? '-' : '+';
+            element.innerHTML = element.innerHTML === '♡' ? '♥' : '♡';
+            element.style.color = element.innerHTML === '♥' ? '#ef4444' : '';
         }
 
         function sortProperties(sortBy) {
-            let sorted = [...properties];
+            let sorted = [...allProperties];
             
             switch(sortBy) {
                 case 'price-asc':
-                    sorted.sort((a, b) => a.price - b.price);
+                    sorted.sort((a, b) => (a.price?.perNight || 0) - (b.price?.perNight || 0));
                     break;
                 case 'price-desc':
-                    sorted.sort((a, b) => b.price - a.price);
+                    sorted.sort((a, b) => (b.price?.perNight || 0) - (a.price?.perNight || 0));
                     break;
                 case 'rating':
-                    sorted.sort((a, b) => b.rating - a.rating);
+                    sorted.sort((a, b) => (b.rating?.average || 0) - (a.rating?.average || 0));
                     break;
                 case 'popularity':
-                    sorted.sort((a, b) => b.reviews - a.reviews);
+                    sorted.sort((a, b) => (b.rating?.count || 0) - (a.rating?.count || 0));
                     break;
             }
             

@@ -13,8 +13,14 @@ router.get('/', async (req, res) => {
         const limit = parseInt(req.query.limit) || 12;
         const skip = (page - 1) * limit;
 
-        // Build query
-        const query = { isAvailable: true, isApproved: true };
+        // Build query - for admin show all, for public show only approved
+        const query = {};
+        
+        // If not admin request (no all=true param), only show approved and available
+        if (req.query.all !== 'true') {
+            query.isAvailable = true;
+            query.isApproved = true;
+        }
 
         // Search by text
         if (req.query.search) {
@@ -128,7 +134,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', protect, authorize('host', 'admin'), [
     body('title').trim().notEmpty().withMessage('Title is required'),
     body('description').trim().notEmpty().withMessage('Description is required'),
-    body('type').isIn(['villa', 'apartment', 'suite', 'eco-lodge', 'cabin', 'hotel']).withMessage('Invalid property type'),
+    body('type').isIn(['villa', 'apartment', 'suite', 'eco-lodge', 'cabin', 'hotel', 'house', 'cottage', 'eco']).withMessage('Invalid property type'),
     body('address.city').notEmpty().withMessage('City is required'),
     body('price.perNight').isNumeric().withMessage('Price per night is required'),
     body('capacity.guests').isInt({ min: 1 }).withMessage('Guest capacity must be at least 1')
@@ -145,7 +151,7 @@ router.post('/', protect, authorize('host', 'admin'), [
         const propertyData = {
             ...req.body,
             host: req.user.id,
-            isApproved: req.user.role === 'admin' // Auto-approve for admin
+            isApproved: true // Auto-approve all properties
         };
 
         const property = await Property.create(propertyData);

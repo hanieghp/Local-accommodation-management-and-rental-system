@@ -25,18 +25,13 @@ const reservationSchema = new mongoose.Schema({
         required: [true, 'Check-out date is required']
     },
     guests: {
-        adults: {
-            type: Number,
-            required: true,
-            min: 1
-        },
-        children: {
-            type: Number,
-            default: 0
-        }
+        type: Number,
+        required: true,
+        min: 1,
+        default: 1
     },
     pricing: {
-        nightlyRate: {
+        perNight: {
             type: Number,
             required: true
         },
@@ -49,6 +44,10 @@ const reservationSchema = new mongoose.Schema({
             required: true
         },
         serviceFee: {
+            type: Number,
+            default: 0
+        },
+        cleaningFee: {
             type: Number,
             default: 0
         },
