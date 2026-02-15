@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>StayLocal | Rent Villas & Accommodations</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body class="body">
+
+<header class="bg-white border-bottom sticky-top">
+    <nav class="navbar navbar-expand-lg container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+            <img src="assets/images/img.png" height="50" width="50">
+            <span class="fw-bold">StayLocal</span>
+        </a>
+        <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#nav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="nav" class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto gap-lg-3">
+                <li class="nav-item"><a class="nav-link" href="pages/properties.html">Properties</a></li>
+                <li class="nav-item"><a class="nav-link" href="#why">Features</a></li>
+                <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+            </ul>
+            <div class="d-flex gap-2 ms-3">
+                <a class="btn btn-outline-secondary" href="pages/loginup.html">Login / Register</a>
+                <a class="btn1 brand-grad border-0 m-6 p-2" href="pages/add-property.html">Become a Host</a>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main>
+    <section class="hero">
+        <div class="container">
+            <div class="hero-glass shadow-soft">
+                <p class="text-muted mb-1">Featured Accommodations</p>
+                <h1 class="fw-bold display-6 mb-1">Rent Villas, Eco-Lodges, Suites & Apartments</h1>
+                <p class="lead mb-3">Across the Country</p>
+                <form class="search-wrap mx-auto" onsubmit="searchProperties(event)">
+                    <div class="input-group input-group-lg shadow-soft">
+                        <span class="input-group-text bg-white border-0 rounded-start-pill">🔎</span>
+                        <input class="form-control border-0 search-pill" id="searchInput" placeholder="Where are you going?" />
+                        <button type="button" class="btn brand-grad border-0" onclick="showFilters()">Filter</button>
+                        <button type="submit" class="btn brand-grad border-0 rounded-end-pill">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="kojaja-dests curved">
+        <div class="cards"></div>
+        <div class="grid">
+            <article class="k-card">
+                <img src="assets/images/img_3.png" alt="Miami">
+                <div class="k-curtain"></div>
+                <div class="k-panel">
+                    <ul>
+                        <li><a href="pages/properties.html?city=miami&type=suite">Miami Suites</a></li>
+                        <li><a href="pages/properties.html?city=miami&area=beach">Beach Villas</a></li>
+                        <li><a href="pages/properties.html?city=miami">All Miami Properties</a></li>
+                    </ul>
+                </div>
+                <div class="k-arrow"></div>
+                <h3 class="k-cap">Miami Accommodations</h3>
+            </article>
+
+            <article class="k-card">
+                <img src="assets/images/img_5.png" alt="Los Angeles">
+                <div class="k-curtain"></div>
+                <div class="k-panel">
+                    <ul>
+                        <li><a href="pages/properties.html?city=la&type=villa">LA Villas</a></li>
+                        <li><a href="pages/properties.html?city=la&type=apartment">LA Apartments</a></li>
+                        <li><a href="pages/properties.html?city=la&type=suite">LA Suites</a></li>
+                    </ul>
+                </div>
+                <div class="k-arrow"></div>
+                <h3 class="k-cap">Los Angeles Properties</h3>
+            </article>
+
+            <article class="k-card">
+                <img src="assets/images/img_4.png" alt="Hawaii">
+                <div class="k-curtain"></div>
+                <div class="k-panel">
+                    <ul>
+                        <li><a href="pages/properties.html?city=hawaii&type=villa&feature=beach">Beach Villas</a></li>
+                        <li><a href="pages/properties.html?city=hawaii&type=suite&feature=beach">Ocean View Suites</a></li>
+                        <li><a href="pages/properties.html?city=hawaii&type=apartment">Hotel Apartments</a></li>
+                    </ul>
+                </div>
+                <div class="k-arrow"></div>
+                <h3 class="k-cap">Hawaii Getaways</h3>
+            </article>
+
+            <article class="k-card">
+                <img src="assets/images/img_6.png" alt="Mountains">
+                <div class="k-curtain"></div>
+                <div class="k-panel">
+                    <ul>
+                        <li><a href="pages/properties.html?region=mountain&type=villa&feature=forest">Forest Villas</a></li>
+                        <li><a href="pages/properties.html?region=mountain&type=cabin">Wooden Cabins</a></li>
+                        <li><a href="pages/properties.html?region=mountain&type=lodge">Mountain Lodges</a></li>
+                    </ul>
+                </div>
+                <div class="k-arrow"></div>
+                <h3 class="k-cap">Mountain Retreats</h3>
+            </article>
+        </div>
+    </section>
+
+    <section class="suggested">
+        <div class="head">
+            <h2>Most Popular</h2>
+            <a href="pages/properties.html" class="view-all">View All</a>
+        </div>
+
+        <div class="rail-wrap">
+            <div class="rail" id="rail-popular">
+                <article class="card" onclick="window.location.href='pages/property-detail.html?id=1'">
+                    <img src="assets/images/img_7.png" alt="New York">
+                    <div class="meta">
+                        <div class="city">New York, Manhattan</div>
+                        <h3 class="title">Modern 1BR Apartment</h3>
+                        <div class="price">From $150/night</div>
+                        <div class="cap">Capacity: 2+1 guests</div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="assets/images/img_8.png" alt="Boston">
+                    <div class="meta">
+                        <div class="city">Boston, Downtown</div>
+                        <h3 class="title">Historic Suite Near Park</h3>
+                        <div class="price">From $120/night</div>
+                        <div class="cap">Capacity: 2+1 guests</div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="assets/images/img_9.png" alt="San Francisco">
+                    <div class="meta">
+                        <div class="city">San Francisco, Bay Area</div>
+                        <h3 class="title">Eco-Lodge with Garden</h3>
+                        <div class="price">From $95/night</div>
+                        <div class="cap">Capacity: 3+1 guests</div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="assets/images/img_10.png" alt="Malibu">
+                    <div class="meta">
+                        <div class="city">Malibu, Beachfront</div>
+                        <h3 class="title">Luxury Beach Villa</h3>
+                        <div class="price">From $350/night</div>
+                        <div class="cap">Capacity: 6+2 guests</div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="assets/images/img_11.png" alt="Denver">
+                    <div class="meta">
+                        <div class="city">Denver, Downtown</div>
+                        <h3 class="title">2BR Suite Near Center</h3>
+                        <div class="price">From $130/night</div>
+                        <div class="cap">Capacity: 4+2 guests</div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="assets/images/img_12.png" alt="Hawaii">
+                    <div class="meta">
+                        <div class="city">Hawaii, Waikiki</div>
+                        <h3 class="title">Oceanfront Suite</h3>
+                        <div class="price">From $220/night</div>
+                        <div class="cap">Capacity: 3+1 guests</div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="assets/images/img_13.png" alt="Arizona">
+                    <div class="meta">
+                        <div class="city">Arizona, Sedona</div>
+                        <h3 class="title">Desert Adobe House</h3>
+                        <div class="price">From $85/night</div>
+                        <div class="cap">Capacity: 2+1 guests</div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="assets/images/img_14.png" alt="Seattle">
+                    <div class="meta">
+                        <div class="city">Seattle, Capitol Hill</div>
+                        <h3 class="title">New 2BR Apartment</h3>
+                        <div class="price">From $115/night</div>
+                        <div class="cap">Capacity: 4 guests</div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <hr class="kh">
+
+    <section id="why" class="py-5">
+        <div class="container">
+            <h2 class="fw-bold mb-3">Why StayLocal?</h2>
+            <div class="row g-3">
+                <div class="col-12 col-md-6 col-lg-3"><div class="feat shadow-soft d-flex align-items-center gap-3">
+                    <div class="icon brand-grad">1</div><div><div class="fw-bold">24/7 Support</div><div class="text-muted small">Always with you</div></div></div></div>
+                <div class="col-12 col-md-6 col-lg-3"><div class="feat shadow-soft d-flex align-items-center gap-3">
+                    <div class="icon brand-grad">2</div><div><div class="fw-bold">Secure Booking</div><div class="text-muted small">Money-back guarantee</div></div></div></div>
+                <div class="col-12 col-md-6 col-lg-3"><div class="feat shadow-soft d-flex align-items-center gap-3">
+                    <div class="icon brand-grad">3</div><div><div class="fw-bold">Wide Variety</div><div class="text-muted small">From cabins to hotels</div></div></div></div>
+                <div class="col-12 col-md-6 col-lg-3"><div class="feat shadow-soft d-flex align-items-center gap-3">
+                    <div class="icon brand-grad">4</div><div><div class="fw-bold">Smart Filters</div><div class="text-muted small">Price, capacity...</div></div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="py-5 bg-white">
+        <div class="container">
+            <h2 class="fw-bold mb-3">Frequently Asked Questions</h2>
+            <div class="accordion" id="acc">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="h1">
+                        <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#c1" aria-controls="c1">How do I make a reservation?</button>
+                    </h2>
+                    <div id="c1" class="accordion-collapse collapse show" data-bs-parent="#acc" aria-labelledby="h1">
+                        <div class="accordion-body">Select your destination, choose your dates, and submit a booking request. You'll pay after the host confirms your reservation.</div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="h2">
+                        <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#c2" aria-controls="c2">Can I cancel my booking?</button>
+                    </h2>
+                    <div id="c2" class="accordion-collapse collapse" data-bs-parent="#acc" aria-labelledby="h2">
+                        <div class="accordion-body">Yes, according to each property's cancellation policy which is displayed before booking.</div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="h3">
+                        <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#c3" aria-controls="c3">Do I need to pay the full amount upfront?</button>
+                    </h2>
+                    <div id="c3" class="accordion-collapse collapse" data-bs-parent="#acc" aria-labelledby="h3">
+                        <div class="accordion-body">Usually a portion is paid as a deposit, and the rest is due upon check-in or according to each property's policies.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="reviews">
+        <div class="r-overlay"></div>
+        <div class="r-wrap">
+            <aside class="topics">
+                <div class="topic t1"><span>Verified Hosts</span></div>
+                <div class="topic t2"><span>Nationwide Booking</span></div>
+                <div class="topic t3"><span>Money-Back Guarantee</span></div>
+            </aside>
+
+            <div class="slides">
+                <figure class="slide s1">
+                    <blockquote>The host was very professional with verified credentials. I booked with complete peace of mind.</blockquote>
+                    <figcaption>
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="">
+                        <strong>John Smith</strong>
+                    </figcaption>
+                </figure>
+
+                <figure class="slide s2">
+                    <blockquote>For my multi-city trip, I quickly booked in different cities. Everything was available everywhere.</blockquote>
+                    <figcaption>
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="">
+                        <strong>Sarah Johnson</strong>
+                    </figcaption>
+                </figure>
+
+                <figure class="slide s3">
+                    <blockquote>My booking was cancelled and my money was refunded accurately and on time. Excellent support!</blockquote>
+                    <figcaption>
+                        <img src="https://randomuser.me/api/portraits/men/12.jpg" alt="">
+                        <strong>Michael Brown</strong>
+                    </figcaption>
+                </figure>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="footer-top">
+        <div class="col brand">
+            <img src="assets/images/img.png" class="logo" height="80" width="80" alt="logo">
+            <p>Easy and secure accommodation booking across the country. From coast to coast, StayLocal is always your travel companion.</p>
+        </div>
+
+        <div class="col links">
+            <h4>Quick Links</h4>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="pages/properties.html">Properties</a></li>
+                <li><a href="#faq">FAQ</a></li>
+                <li><a href="pages/add-property.html">Become a Host</a></li>
+            </ul>
+        </div>
+
+        <div class="col contact">
+            <h4>Contact Us</h4>
+            <ul>
+                <li>123 Main Street, New York</li>
+                <li>+1-555-123-4567</li>
+                <li>info@staylocal.com</li>
+            </ul>
+        </div>
+
+        <div class="col social">
+            <h4>Follow Us</h4>
+            <div class="icons">
+                <a href="#">Web</a>
+                <a href="#">IG</a>
+                <a href="#">FB</a>
+                <a href="#">YT</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>© 2025 StayLocal — All Rights Reserved.</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function searchProperties(event) {
+        event.preventDefault();
+        const searchTerm = document.getElementById('searchInput').value.trim();
+        if (searchTerm) {
+            window.location.href = `pages/properties.html?search=${encodeURIComponent(searchTerm)}`;
+        } else {
+            window.location.href = 'pages/properties.html';
+        }
+    }
+    
+    function showFilters() {
+        window.location.href = 'pages/properties.html?filters=open';
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const propertyCards = document.querySelectorAll('.card:not([onclick])');
+        propertyCards.forEach((card, index) => {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', function() {
+                window.location.href = `pages/property-detail.html?id=${index + 2}`;
+            });
+        });
+        
+        updateNavigation();
+    });
+    
+    function updateNavigation() {
+        const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+        const userName = localStorage.getItem('userName');
+        const userRole = localStorage.getItem('userRole') || 'traveler';
+        const loginButton = document.querySelector('a[href="pages/loginup.html"]');
+        const becomeHostButtons = document.querySelectorAll('a[href="pages/add-property.html"]');
+        
+        if (isLoggedIn && userName) {
+            loginButton.innerHTML = userName;
+            loginButton.href = 'pages/profile.html';
+            loginButton.title = 'User Profile';
+            
+            // Hide "Become a Host" button for travelers (non-hosts)
+            if (userRole === 'traveler') {
+                becomeHostButtons.forEach(btn => {
+                    btn.style.display = 'none';
+                });
+            }
+        }
+    }
+    
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>
