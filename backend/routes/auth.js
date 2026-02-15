@@ -240,4 +240,55 @@ router.put('/changepassword', protect, [
     }
 });
 
+// @route   POST /api/auth/forgotpassword
+// @desc    Send password reset email (simulated - generates new password)
+// @access  Public
+router.post('/forgotpassword', [
+    body('email').isEmail().withMessage('Please provide a valid email')
+], async (req, res) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                success: false,
+                errors: errors.array()
+            });
+        }
+
+        const { email } = req.body;
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'No user found with this email address'
+            });
+        }
+
+        // Generate a random password
+        const newPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-4).toUpperCase();
+        
+        // Update user's password
+        user.password = newPassword;
+        await user.save();
+
+        // In a real app, you would send this via email
+        // For demo, we'll return it in response (remove in production!)
+        console.log(`Password reset for ${email}: ${newPassword}`);
+
+        res.json({
+            success: true,
+            message: 'Password reset successful! Check the console for the new password (in production, this would be sent via email)',
+            // Remove this in production - only for demo!
+            newPassword: newPassword
+        });
+    } catch (error) {
+        console.error('Forgot password error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error'
+        });
+    }
+});
+
 module.exports = router;

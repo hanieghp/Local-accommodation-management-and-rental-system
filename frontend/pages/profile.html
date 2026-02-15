@@ -26,6 +26,14 @@
         .profile-avatar-container {
             text-align: center;
             margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .avatar-wrapper {
+            position: relative;
+            display: inline-block;
         }
         
         .profile-avatar {
@@ -34,7 +42,44 @@
             border-radius: 50%;
             object-fit: cover;
             border: 4px solid var(--brand);
-            margin-bottom: 15px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+            display: block;
+        }
+        
+        .profile-avatar:hover {
+            opacity: 0.8;
+        }
+        
+        .avatar-upload-btn {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 36px;
+            height: 36px;
+            background: var(--brand);
+            border: 3px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .avatar-upload-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .avatar-upload-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: white;
+        }
+        
+        #avatarInput {
+            display: none;
         }
         
         .profile-name {
@@ -408,7 +453,13 @@
                 <div class="col-lg-3">
                     <div class="profile-sidebar">
                         <div class="profile-avatar-container">
-                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="profile-avatar" id="userAvatar">
+                            <div class="avatar-wrapper">
+                                <img src="https://ui-avatars.com/api/?name=User&background=18a999&color=fff&size=120" alt="Profile" class="profile-avatar" id="userAvatar" onclick="document.getElementById('avatarInput').click()">
+                                <input type="file" id="avatarInput" accept="image/*" onchange="uploadAvatar(event)">
+                                <div class="avatar-upload-btn" onclick="document.getElementById('avatarInput').click()">
+                                    <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                                </div>
+                            </div>
                             <h4 class="profile-name" id="userName">John Doe</h4>
                             <span class="profile-role" id="userRole">Traveler</span>
                         </div>
@@ -443,6 +494,9 @@
                             </div>
                             <div class="profile-nav-item" onclick="showTab('notifications')">
                                 Notifications
+                            </div>
+                            <div class="profile-nav-item" onclick="showTab('support')">
+                                Support Tickets
                             </div>
                             <div class="profile-nav-item" onclick="showTab('security')">
                                 Security
@@ -547,6 +601,81 @@
                         </div>
                     </div>
                     
+                    <div id="support" class="tab-content">
+                        <div class="content-card">
+                            <h4>Submit New Ticket</h4>
+                            <form id="ticketForm">
+                                <div class="form-group">
+                                    <label>Subject</label>
+                                    <input type="text" id="ticketSubject" placeholder="Brief description of your issue" required>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Category</label>
+                                            <select id="ticketCategory" class="form-select">
+                                                <option value="question">Question</option>
+                                                <option value="bug">Bug Report</option>
+                                                <option value="feature">Feature Request</option>
+                                                <option value="complaint">Complaint</option>
+                                                <option value="other">Other</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Priority</label>
+                                            <select id="ticketPriority" class="form-select">
+                                                <option value="low">Low</option>
+                                                <option value="medium" selected>Medium</option>
+                                                <option value="high">High</option>
+                                                <option value="urgent">Urgent</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Message</label>
+                                    <textarea id="ticketMessage" rows="5" placeholder="Describe your issue or request in detail..." required></textarea>
+                                </div>
+                                <button type="button" class="btn-save" onclick="submitTicket()">Submit Ticket</button>
+                            </form>
+                        </div>
+
+                        <div class="content-card">
+                            <h4>My Tickets</h4>
+                            <div id="ticketsList">
+                                <p class="text-center text-muted">Loading tickets...</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Ticket Detail Modal -->
+                        <div class="modal fade" id="ticketModal" tabindex="-1">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="ticketModalTitle">Ticket Details</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div id="ticketDetails"></div>
+                                        <hr>
+                                        <div id="ticketMessages" style="max-height: 300px; overflow-y: auto;"></div>
+                                        <hr>
+                                        <div class="form-group">
+                                            <label>Reply</label>
+                                            <textarea id="ticketReply" class="form-control" rows="3" placeholder="Type your reply..."></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary" onclick="sendTicketReply()">Send Reply</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div id="security" class="tab-content">
                         <div class="content-card">
                             <h4>Security Settings</h4>
@@ -607,6 +736,7 @@
             if (tabId === 'properties') loadMyProperties();
             if (tabId === 'bookings') loadBookingRequests();
             if (tabId === 'notifications') loadNotifications();
+            if (tabId === 'support') loadTickets();
         }
         
         async function saveProfile() {
@@ -720,6 +850,69 @@
             window.location.href = '../index.html';
         }
         
+        async function uploadAvatar(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('❌ Please select an image file.');
+                return;
+            }
+            
+            // Validate file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('❌ Image size should be less than 5MB.');
+                return;
+            }
+            
+            try {
+                // Convert to base64
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const base64 = e.target.result;
+                    
+                    // Update avatar immediately for preview
+                    document.getElementById('userAvatar').src = base64;
+                    
+                    // Send to server
+                    try {
+                        const response = await fetch(`${API_URL}/auth/updateprofile`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                            },
+                            body: JSON.stringify({ avatar: base64 })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            // Update localStorage
+                            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                            userData.avatar = base64;
+                            localStorage.setItem('userData', JSON.stringify(userData));
+                            
+                            alert('✅ Profile photo updated successfully!');
+                        } else {
+                            alert('❌ ' + (data.message || 'Failed to update profile photo.'));
+                            // Revert to old avatar
+                            loadUserData();
+                        }
+                    } catch (error) {
+                        console.error('Avatar upload error:', error);
+                        alert('❌ Failed to upload photo. Please try again.');
+                        loadUserData();
+                    }
+                };
+                reader.readAsDataURL(file);
+            } catch (error) {
+                console.error('File read error:', error);
+                alert('❌ Error reading file.');
+            }
+        }
+        
         async function loadUserData() {
             const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
             const token = localStorage.getItem('authToken');
@@ -746,10 +939,11 @@
                     
                     // Update avatar if available
                     const avatarEl = document.querySelector('.profile-avatar');
-                    if (user.avatar && user.avatar !== 'default-avatar.png') {
+                    if (user.avatar && user.avatar !== 'default-avatar.png' && !user.avatar.includes('default')) {
                         avatarEl.src = user.avatar;
                     } else {
-                        avatarEl.src = '../assets/images/default-avatar.png';
+                        // Use UI Avatars API as fallback
+                        avatarEl.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=18a999&color=fff&size=120`;
                     }
                     
                     // Split name for form
@@ -1096,6 +1290,212 @@
                 }
             }
             return 'Just now';
+        }
+        
+        // ================= TICKET FUNCTIONS =================
+        let currentTicketId = null;
+        
+        async function loadTickets() {
+            const container = document.getElementById('ticketsList');
+            
+            try {
+                const response = await fetch(`${API_URL}/tickets`, {
+                    headers: getAuthHeaders()
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.data.length > 0) {
+                    container.innerHTML = data.data.map(ticket => {
+                        const statusColors = {
+                            'open': '#fbbf24',
+                            'in-progress': '#3b82f6',
+                            'resolved': '#10b981',
+                            'closed': '#6b7280'
+                        };
+                        const priorityColors = {
+                            'low': '#9ca3af',
+                            'medium': '#3b82f6',
+                            'high': '#f97316',
+                            'urgent': '#ef4444'
+                        };
+                        
+                        return `
+                            <div class="ticket-item" style="background: #f8fafc; border-radius: 12px; padding: 16px; margin-bottom: 12px; border-left: 4px solid ${statusColors[ticket.status]};">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 style="margin: 0; font-weight: 600;">${ticket.subject}</h6>
+                                        <small class="text-muted">#${ticket._id.slice(-6).toUpperCase()} • ${formatDate(ticket.createdAt)}</small>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <span class="badge" style="background: ${priorityColors[ticket.priority]};">${ticket.priority}</span>
+                                        <span class="badge" style="background: ${statusColors[ticket.status]};">${ticket.status}</span>
+                                    </div>
+                                </div>
+                                <div class="mt-2 d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-secondary">${ticket.category}</span>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="viewTicket('${ticket._id}')">
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    container.innerHTML = `
+                        <div class="text-center py-4">
+                            <p class="text-muted">No tickets yet. Submit your first ticket above!</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Load tickets error:', error);
+                container.innerHTML = `<p class="text-danger">Failed to load tickets.</p>`;
+            }
+        }
+        
+        async function submitTicket() {
+            const subject = document.getElementById('ticketSubject').value.trim();
+            const category = document.getElementById('ticketCategory').value;
+            const priority = document.getElementById('ticketPriority').value;
+            const message = document.getElementById('ticketMessage').value.trim();
+            
+            if (!subject || !message) {
+                alert('❌ Please fill in subject and message.');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/tickets`, {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({ subject, category, priority, message })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Ticket submitted successfully! We will respond soon.');
+                    document.getElementById('ticketSubject').value = '';
+                    document.getElementById('ticketMessage').value = '';
+                    document.getElementById('ticketCategory').value = 'question';
+                    document.getElementById('ticketPriority').value = 'medium';
+                    loadTickets();
+                } else {
+                    alert('❌ ' + data.message);
+                }
+            } catch (error) {
+                console.error('Submit ticket error:', error);
+                alert('❌ Connection error. Please try again.');
+            }
+        }
+        
+        async function viewTicket(ticketId) {
+            currentTicketId = ticketId;
+            
+            try {
+                const response = await fetch(`${API_URL}/tickets/${ticketId}`, {
+                    headers: getAuthHeaders()
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const ticket = data.data;
+                    
+                    document.getElementById('ticketModalTitle').textContent = ticket.subject;
+                    
+                    const statusColors = {
+                        'open': '#fbbf24',
+                        'in-progress': '#3b82f6',
+                        'resolved': '#10b981',
+                        'closed': '#6b7280'
+                    };
+                    
+                    document.getElementById('ticketDetails').innerHTML = `
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>Ticket ID:</strong> #${ticket._id.slice(-6).toUpperCase()}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Status:</strong> 
+                                <span class="badge" style="background: ${statusColors[ticket.status]};">${ticket.status}</span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>Category:</strong> ${ticket.category}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Priority:</strong> ${ticket.priority}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <strong>Created:</strong> ${formatDate(ticket.createdAt)}
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Render messages
+                    document.getElementById('ticketMessages').innerHTML = ticket.messages.map(msg => {
+                        const isAdmin = msg.senderRole === 'admin';
+                        return `
+                            <div class="mb-3 p-3" style="background: ${isAdmin ? '#e0f2fe' : '#f3f4f6'}; border-radius: 8px; margin-${isAdmin ? 'right' : 'left'}: 20px;">
+                                <div class="d-flex justify-content-between">
+                                    <strong>${isAdmin ? '👨‍💼 Admin' : '👤 You'}</strong>
+                                    <small class="text-muted">${getTimeAgo(new Date(msg.createdAt))}</small>
+                                </div>
+                                <p class="mb-0 mt-2">${msg.message}</p>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    // Show modal
+                    const modal = new bootstrap.Modal(document.getElementById('ticketModal'));
+                    modal.show();
+                } else {
+                    alert('❌ ' + data.message);
+                }
+            } catch (error) {
+                console.error('View ticket error:', error);
+                alert('❌ Failed to load ticket details.');
+            }
+        }
+        
+        async function sendTicketReply() {
+            const message = document.getElementById('ticketReply').value.trim();
+            
+            if (!message) {
+                alert('❌ Please enter a reply message.');
+                return;
+            }
+            
+            if (!currentTicketId) {
+                alert('❌ No ticket selected.');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/tickets/${currentTicketId}/reply`, {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({ message })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('ticketReply').value = '';
+                    viewTicket(currentTicketId); // Reload ticket to show new message
+                    loadTickets(); // Reload list
+                } else {
+                    alert('❌ ' + data.message);
+                }
+            } catch (error) {
+                console.error('Send reply error:', error);
+                alert('❌ Connection error. Please try again.');
+            }
         }
         
         document.addEventListener('DOMContentLoaded', loadUserData);

@@ -393,14 +393,16 @@
                             
                             <form id="forgotForm" class="auth-form hidden">
                                 <h3 class="mb-4 fw-bold text-center">Reset Password</h3>
-                                <p class="text-muted text-center mb-4">Enter your email or phone number</p>
+                                <p class="text-muted text-center mb-4">Enter your email to receive a new password</p>
                                 
                                 <div class="form-group">
-                                    <label class="form-label">Email or Phone</label>
-                                    <input type="text" class="form-input" placeholder="example@email.com or +1234567890" required>
+                                    <label class="form-label">Email Address</label>
+                                    <input type="email" class="form-input" id="forgotEmail" placeholder="example@email.com" required>
                                 </div>
                                 
-                                <button type="submit" class="btn-auth">Send Reset Link</button>
+                                <div id="resetResult" class="mb-3" style="display: none;"></div>
+                                
+                                <button type="submit" class="btn-auth">Reset Password</button>
                                 
                                 <div class="forgot-password">
                                     <a href="#" onclick="showLogin()">Back to Login</a>
@@ -482,6 +484,7 @@
                     localStorage.setItem('userName', data.data.user.name);
                     localStorage.setItem('userEmail', data.data.user.email);
                     localStorage.setItem('userRole', data.data.user.role);
+                    localStorage.setItem('userData', JSON.stringify(data.data.user));
                     
                     // Redirect based on role
                     if (data.data.user.role === 'admin') {
@@ -553,6 +556,7 @@
                     localStorage.setItem('userName', data.data.user.name);
                     localStorage.setItem('userEmail', data.data.user.email);
                     localStorage.setItem('userRole', data.data.user.role);
+                    localStorage.setItem('userData', JSON.stringify(data.data.user));
                     
                     alert('🎉 Registration successful! Welcome to StayLocal');
                     window.location.href = 'profile.html';
@@ -569,9 +573,59 @@
             }
         });
         
-        document.getElementById('forgotForm').addEventListener('submit', function(e) {
+        document.getElementById('forgotForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            alert('Password reset link has been sent! (This feature requires email setup)');
+            
+            const email = document.getElementById('forgotEmail').value;
+            const submitBtn = this.querySelector('.btn-auth');
+            const resultDiv = document.getElementById('resetResult');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+            resultDiv.style.display = 'none';
+            
+            try {
+                const response = await fetch(`${API_URL}/auth/forgotpassword`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Show new password (demo only - in production, send via email)
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-success" style="background: #d1fae5; border: 1px solid #10b981; color: #059669; padding: 15px; border-radius: 8px;">
+                            <strong>✅ Password Reset Successful!</strong><br>
+                            <p class="mb-2">Your new password is:</p>
+                            <code style="background: #f3f4f6; padding: 8px 12px; border-radius: 4px; font-size: 16px; font-weight: bold; display: block; text-align: center;">${data.newPassword}</code>
+                            <p class="mt-2 mb-0" style="font-size: 12px;">Please save this password and change it after login.</p>
+                        </div>
+                    `;
+                    resultDiv.style.display = 'block';
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-danger" style="background: #fee2e2; border: 1px solid #ef4444; color: #dc2626; padding: 15px; border-radius: 8px;">
+                            ❌ ${data.message || 'Failed to reset password'}
+                        </div>
+                    `;
+                    resultDiv.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Forgot password error:', error);
+                resultDiv.innerHTML = `
+                    <div class="alert alert-danger" style="background: #fee2e2; border: 1px solid #ef4444; color: #dc2626; padding: 15px; border-radius: 8px;">
+                        ❌ Connection error. Please try again.
+                    </div>
+                `;
+                resultDiv.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Reset Password';
+            }
         });
     </script>
 </body>

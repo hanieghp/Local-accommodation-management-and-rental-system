@@ -89,6 +89,7 @@
             <div class="admin-nav-item" onclick="showTab('users')"><span>Users</span></div>
             <div class="admin-nav-item" onclick="showTab('properties')"><span>Properties</span></div>
             <div class="admin-nav-item" onclick="showTab('reservations')"><span>Reservations</span></div>
+            <div class="admin-nav-item" onclick="showTab('tickets')"><span>Support Tickets</span></div>
             <div class="admin-nav-section">Reports</div>
             <div class="admin-nav-item" onclick="showTab('reports')"><span>Analytics</span></div>
             <div class="admin-nav-section">System</div>
@@ -219,6 +220,22 @@
                             <select id="propertyLocationFilter" onchange="renderProperties()">
                                 <option value="">All Locations</option>
                             </select>
+                            <select id="propertyCapacityFilter" onchange="renderProperties()">
+                                <option value="">All Capacities</option>
+                                <option value="1-2">1-2 Guests</option>
+                                <option value="3-4">3-4 Guests</option>
+                                <option value="5-6">5-6 Guests</option>
+                                <option value="7-10">7-10 Guests</option>
+                                <option value="10+">10+ Guests</option>
+                            </select>
+                            <select id="propertySortBy" onchange="renderProperties()">
+                                <option value="">Sort By</option>
+                                <option value="price-asc">Price: Low to High</option>
+                                <option value="price-desc">Price: High to Low</option>
+                                <option value="capacity-asc">Capacity: Low to High</option>
+                                <option value="capacity-desc">Capacity: High to Low</option>
+                                <option value="location">Location (A-Z)</option>
+                            </select>
                         </div>
                         <div class="table-responsive">
                             <table class="data-table">
@@ -287,6 +304,35 @@
                     </div>
                 </div>
                 
+                <div id="tickets" class="tab-content">
+                    <div class="data-card">
+                        <div class="data-card-header"><h5>Support Ticket Management</h5></div>
+                        <div class="search-box">
+                            <input type="text" placeholder="Search tickets..." id="ticketSearch" oninput="renderTickets()">
+                            <select id="ticketStatusFilter" onchange="renderTickets()">
+                                <option value="">All Status</option>
+                                <option value="open">Open</option>
+                                <option value="in-progress">In Progress</option>
+                                <option value="resolved">Resolved</option>
+                                <option value="closed">Closed</option>
+                            </select>
+                            <select id="ticketPriorityFilter" onchange="renderTickets()">
+                                <option value="">All Priority</option>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead><tr><th>ID</th><th>User</th><th>Subject</th><th>Category</th><th>Priority</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+                                <tbody id="ticketsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
                 <div id="settings" class="tab-content">
                     <div class="data-card">
                         <h5 class="mb-4">System Settings</h5>
@@ -329,6 +375,43 @@
             </form>
         </div>
     </div>
+    
+    <!-- Ticket Modal -->
+    <div class="modal-overlay" id="ticketModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h4 id="ticketModalTitle">Ticket Details</h4>
+                <button class="modal-close" onclick="closeTicketModal()">x</button>
+            </div>
+            <div id="ticketModalBody">
+                <div class="mb-3">
+                    <div class="row">
+                        <div class="col-6"><strong>ID:</strong> <span id="ticketId"></span></div>
+                        <div class="col-6"><strong>Status:</strong> <select id="ticketStatusSelect" class="form-select form-select-sm"></select></div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-6"><strong>Category:</strong> <span id="ticketCategory"></span></div>
+                        <div class="col-6"><strong>Priority:</strong> <span id="ticketPriority"></span></div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-12"><strong>User:</strong> <span id="ticketUser"></span></div>
+                    </div>
+                </div>
+                <hr>
+                <div id="ticketMessagesContainer" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;"></div>
+                <hr>
+                <div class="form-group">
+                    <label>Admin Reply</label>
+                    <textarea id="adminReply" class="form-control" rows="3" placeholder="Type your reply to the user..."></textarea>
+                </div>
+            </div>
+            <div class="d-flex gap-2 mt-3">
+                <button type="button" class="btn btn-secondary flex-fill" onclick="closeTicketModal()">Close</button>
+                <button type="button" class="btn btn-info flex-fill" onclick="updateTicketStatus()">Update Status</button>
+                <button type="button" class="btn-primary-custom flex-fill" onclick="sendAdminReply()">Send Reply</button>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -354,7 +437,8 @@
                     fetchUsers(),
                     fetchProperties(),
                     fetchReservations(),
-                    fetchDashboardStats()
+                    fetchDashboardStats(),
+                    fetchTickets()
                 ]);
                 updateDashboard();
             } catch (error) {
@@ -458,11 +542,12 @@
             document.querySelectorAll('.admin-nav-item').forEach(i => i.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             event.target.closest('.admin-nav-item').classList.add('active');
-            const titles = { 'dashboard': 'Dashboard', 'users': 'User Management', 'properties': 'Property Management', 'reservations': 'Reservation Management', 'reports': 'Analytics & Reports', 'settings': 'System Settings' };
+            const titles = { 'dashboard': 'Dashboard', 'users': 'User Management', 'properties': 'Property Management', 'reservations': 'Reservation Management', 'tickets': 'Support Tickets', 'reports': 'Analytics & Reports', 'settings': 'System Settings' };
             document.getElementById('pageTitle').textContent = titles[tabId] || 'Dashboard';
             if (tabId === 'users') renderUsers();
             if (tabId === 'properties') renderProperties();
             if (tabId === 'reservations') renderReservations();
+            if (tabId === 'tickets') renderTickets();
             if (tabId === 'reports') updateReports();
         }
         
@@ -604,9 +689,11 @@
             const search = document.getElementById('propertySearch').value.toLowerCase();
             const statusFilter = document.getElementById('propertyStatusFilter').value;
             const locationFilter = document.getElementById('propertyLocationFilter').value;
+            const capacityFilter = document.getElementById('propertyCapacityFilter').value;
+            const sortBy = document.getElementById('propertySortBy').value;
             
             // Update location filter options
-            const locations = [...new Set(allProperties.map(p => p.city).filter(Boolean))];
+            const locations = [...new Set(allProperties.map(p => p.city).filter(Boolean))].sort();
             const locSelect = document.getElementById('propertyLocationFilter');
             if (locSelect.options.length <= 1) { 
                 locations.forEach(loc => { 
@@ -617,12 +704,41 @@
                 }); 
             }
             
+            // Capacity filter helper
+            function matchCapacity(capacity, filter) {
+                if (!filter) return true;
+                const cap = parseInt(capacity) || 0;
+                switch(filter) {
+                    case '1-2': return cap >= 1 && cap <= 2;
+                    case '3-4': return cap >= 3 && cap <= 4;
+                    case '5-6': return cap >= 5 && cap <= 6;
+                    case '7-10': return cap >= 7 && cap <= 10;
+                    case '10+': return cap > 10;
+                    default: return true;
+                }
+            }
+            
             let filtered = allProperties.filter(p => {
                 const matchSearch = !search || p.title.toLowerCase().includes(search) || (p.host && p.host.toLowerCase().includes(search));
                 const matchStatus = !statusFilter || p.status === statusFilter;
                 const matchLocation = !locationFilter || p.city === locationFilter;
-                return matchSearch && matchStatus && matchLocation;
+                const matchCap = matchCapacity(p.capacity, capacityFilter);
+                return matchSearch && matchStatus && matchLocation && matchCap;
             });
+            
+            // Sort
+            if (sortBy) {
+                filtered.sort((a, b) => {
+                    switch(sortBy) {
+                        case 'price-asc': return (a.price || 0) - (b.price || 0);
+                        case 'price-desc': return (b.price || 0) - (a.price || 0);
+                        case 'capacity-asc': return (a.capacity || 0) - (b.capacity || 0);
+                        case 'capacity-desc': return (b.capacity || 0) - (a.capacity || 0);
+                        case 'location': return (a.city || '').localeCompare(b.city || '');
+                        default: return 0;
+                    }
+                });
+            }
             
             document.getElementById('propertiesTable').innerHTML = filtered.map(p => `<tr><td><strong>${p.title}</strong></td><td>${p.host}</td><td>${p.city}${p.area ? ', ' + p.area : ''}</td><td>${p.capacity} guests</td><td>$${p.price}/night</td><td><span class="status-badge status-${p.status}">${p.status}</span></td><td>${p.status === 'pending' ? `<button class="action-btn action-btn-edit" onclick="approveProperty('${p.id}')">Approve</button><button class="action-btn action-btn-delete" onclick="rejectProperty('${p.id}')">Reject</button>` : `<button class="action-btn action-btn-view" onclick="viewProperty('${p.id}')">View</button><button class="action-btn action-btn-delete" onclick="deleteProperty('${p.id}')">Remove</button>`}</td></tr>`).join('') || '<tr><td colspan="7" class="text-center text-muted">No properties found</td></tr>';
         }
@@ -780,6 +896,216 @@
         function formatDate(d) { 
             if (!d) return '-'; 
             return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); 
+        }
+        
+        // ================= TICKET FUNCTIONS =================
+        let allTickets = [];
+        let currentTicketId = null;
+        
+        async function fetchTickets() {
+            try {
+                const response = await fetch(`${API_URL}/tickets`, {
+                    headers: getHeaders()
+                });
+                const data = await response.json();
+                if (data.success) {
+                    allTickets = data.data;
+                }
+            } catch (error) {
+                console.error('Error fetching tickets:', error);
+            }
+        }
+        
+        function renderTickets() {
+            const search = document.getElementById('ticketSearch').value.toLowerCase();
+            const statusFilter = document.getElementById('ticketStatusFilter').value;
+            const priorityFilter = document.getElementById('ticketPriorityFilter').value;
+            
+            let filtered = allTickets.filter(t => {
+                const matchSearch = t.subject.toLowerCase().includes(search) || 
+                                    (t.user?.name || '').toLowerCase().includes(search) ||
+                                    (t.user?.email || '').toLowerCase().includes(search);
+                const matchStatus = !statusFilter || t.status === statusFilter;
+                const matchPriority = !priorityFilter || t.priority === priorityFilter;
+                return matchSearch && matchStatus && matchPriority;
+            });
+            
+            const statusColors = {
+                'open': 'status-pending',
+                'in-progress': 'status-active',
+                'resolved': 'status-confirmed',
+                'closed': 'status-banned'
+            };
+            
+            const priorityColors = {
+                'low': 'bg-secondary',
+                'medium': 'bg-primary',
+                'high': 'bg-warning text-dark',
+                'urgent': 'bg-danger'
+            };
+            
+            document.getElementById('ticketsTable').innerHTML = filtered.map(t => `
+                <tr>
+                    <td>#${t._id.slice(-6).toUpperCase()}</td>
+                    <td>
+                        <div class="user-cell">
+                            <div>
+                                <div style="font-weight: 600;">${t.user?.name || 'Unknown'}</div>
+                                <div style="font-size: 11px; color: #6b7280;">${t.user?.email || ''}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="max-width: 200px;">${t.subject}</td>
+                    <td><span class="badge bg-secondary">${t.category}</span></td>
+                    <td><span class="badge ${priorityColors[t.priority]}">${t.priority}</span></td>
+                    <td><span class="status-badge ${statusColors[t.status]}">${t.status}</span></td>
+                    <td>${formatDate(t.createdAt)}</td>
+                    <td>
+                        <button class="action-btn action-btn-view" onclick="viewTicketAdmin('${t._id}')">View</button>
+                        <button class="action-btn action-btn-delete" onclick="deleteTicket('${t._id}')">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        async function viewTicketAdmin(ticketId) {
+            currentTicketId = ticketId;
+            
+            try {
+                const response = await fetch(`${API_URL}/tickets/${ticketId}`, {
+                    headers: getHeaders()
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    const ticket = data.data;
+                    
+                    document.getElementById('ticketModalTitle').textContent = ticket.subject;
+                    document.getElementById('ticketId').textContent = '#' + ticket._id.slice(-6).toUpperCase();
+                    document.getElementById('ticketCategory').textContent = ticket.category;
+                    document.getElementById('ticketPriority').textContent = ticket.priority;
+                    document.getElementById('ticketUser').textContent = `${ticket.user?.name || 'Unknown'} (${ticket.user?.email || ''})`;
+                    
+                    // Status dropdown
+                    const statusSelect = document.getElementById('ticketStatusSelect');
+                    statusSelect.innerHTML = `
+                        <option value="open" ${ticket.status === 'open' ? 'selected' : ''}>Open</option>
+                        <option value="in-progress" ${ticket.status === 'in-progress' ? 'selected' : ''}>In Progress</option>
+                        <option value="resolved" ${ticket.status === 'resolved' ? 'selected' : ''}>Resolved</option>
+                        <option value="closed" ${ticket.status === 'closed' ? 'selected' : ''}>Closed</option>
+                    `;
+                    
+                    // Messages
+                    document.getElementById('ticketMessagesContainer').innerHTML = ticket.messages.map(msg => {
+                        const isAdmin = msg.senderRole === 'admin';
+                        return `
+                            <div class="mb-2 p-2" style="background: ${isAdmin ? '#e0f2fe' : '#f3f4f6'}; border-radius: 8px; margin-${isAdmin ? 'left' : 'right'}: 30px;">
+                                <div class="d-flex justify-content-between" style="font-size: 12px;">
+                                    <strong>${isAdmin ? '👨‍💼 Admin' : '👤 User'}</strong>
+                                    <small class="text-muted">${formatDate(msg.createdAt)}</small>
+                                </div>
+                                <p class="mb-0 mt-1" style="font-size: 13px;">${msg.message}</p>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    document.getElementById('adminReply').value = '';
+                    document.getElementById('ticketModal').classList.add('active');
+                } else {
+                    alert('Failed to load ticket: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error viewing ticket:', error);
+                alert('Failed to load ticket details.');
+            }
+        }
+        
+        function closeTicketModal() {
+            document.getElementById('ticketModal').classList.remove('active');
+            currentTicketId = null;
+        }
+        
+        async function updateTicketStatus() {
+            if (!currentTicketId) return;
+            
+            const newStatus = document.getElementById('ticketStatusSelect').value;
+            
+            try {
+                const response = await fetch(`${API_URL}/tickets/${currentTicketId}/status`, {
+                    method: 'PUT',
+                    headers: getHeaders(),
+                    body: JSON.stringify({ status: newStatus })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Status updated successfully!');
+                    await fetchTickets();
+                    renderTickets();
+                } else {
+                    alert('Failed to update status: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error updating ticket status:', error);
+                alert('Failed to update status.');
+            }
+        }
+        
+        async function sendAdminReply() {
+            if (!currentTicketId) return;
+            
+            const message = document.getElementById('adminReply').value.trim();
+            if (!message) {
+                alert('Please enter a reply message.');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/tickets/${currentTicketId}/reply`, {
+                    method: 'POST',
+                    headers: getHeaders(),
+                    body: JSON.stringify({ message })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('adminReply').value = '';
+                    viewTicketAdmin(currentTicketId); // Reload to show new message
+                    await fetchTickets();
+                    renderTickets();
+                } else {
+                    alert('Failed to send reply: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error sending reply:', error);
+                alert('Failed to send reply.');
+            }
+        }
+        
+        async function deleteTicket(ticketId) {
+            if (!confirm('Are you sure you want to delete this ticket?')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/tickets/${ticketId}`, {
+                    method: 'DELETE',
+                    headers: getHeaders()
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Ticket deleted successfully!');
+                    await fetchTickets();
+                    renderTickets();
+                } else {
+                    alert('Failed to delete ticket: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error deleting ticket:', error);
+                alert('Failed to delete ticket.');
+            }
         }
         
         function logout() { 

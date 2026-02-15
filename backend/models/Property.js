@@ -14,7 +14,7 @@ const propertySchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['villa', 'apartment', 'suite', 'eco-lodge', 'cabin', 'hotel'],
+        enum: ['villa', 'apartment', 'suite', 'eco-lodge', 'cabin', 'hotel', 'house', 'cottage', 'room', 'eco'],
         required: [true, 'Property type is required']
     },
     host: {

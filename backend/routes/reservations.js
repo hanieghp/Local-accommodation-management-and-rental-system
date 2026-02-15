@@ -527,8 +527,8 @@ router.get('/:id/receipt', protect, async (req, res) => {
         }
 
         // Check authorization
-        const isGuest = reservation.guest._id.toString() === req.user.id;
-        const isHost = reservation.host._id.toString() === req.user.id;
+        const isGuest = reservation.guest && reservation.guest._id.toString() === req.user.id;
+        const isHost = reservation.host && reservation.host._id.toString() === req.user.id;
         const isAdmin = req.user.role === 'admin';
 
         if (!isGuest && !isHost && !isAdmin) {
@@ -539,146 +539,173 @@ router.get('/:id/receipt', protect, async (req, res) => {
         }
 
         // Create PDF document
-        const doc = new PDFDocument({ margin: 50 });
+        const doc = new PDFDocument({ 
+            margin: 50,
+            size: 'A4',
+            bufferPages: true
+        });
+        
+        // Collect PDF data in buffer
+        const buffers = [];
+        doc.on('data', buffers.push.bind(buffers));
+        doc.on('end', () => {
+            const pdfData = Buffer.concat(buffers);
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', `attachment; filename=receipt-${reservation._id}.pdf`);
+            res.setHeader('Content-Length', pdfData.length);
+            res.send(pdfData);
+        });
 
-        // Set response headers
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename=reservation-${reservation._id}.pdf`);
-
-        // Pipe to response
-        doc.pipe(res);
+        // Safe getters
+        const guestName = reservation.guest?.name || 'Guest';
+        const guestEmail = reservation.guest?.email || 'N/A';
+        const guestPhone = reservation.guest?.phone || '';
+        const propertyTitle = reservation.property?.title || 'Property';
+        const hostName = reservation.host?.name || 'Host';
+        const pricing = reservation.pricing || {};
 
         // Header
-        doc.fontSize(24).font('Helvetica-Bold').text('StayLocal', { align: 'center' });
-        doc.fontSize(12).font('Helvetica').text('Reservation Receipt', { align: 'center' });
-        doc.moveDown();
-
-        // Line
-        doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
-        doc.moveDown();
-
-        // Reservation ID
-        doc.fontSize(12).font('Helvetica-Bold').text('Reservation ID: ', { continued: true });
-        doc.font('Helvetica').text(reservation._id.toString());
-        doc.moveDown(0.5);
-
-        // Booking Date
-        doc.font('Helvetica-Bold').text('Booking Date: ', { continued: true });
-        doc.font('Helvetica').text(new Date(reservation.createdAt).toLocaleString());
+        doc.fontSize(28).font('Helvetica-Bold').fillColor('#18a999').text('StayLocal', { align: 'center' });
+        doc.fontSize(14).font('Helvetica').fillColor('#666666').text('Reservation Receipt', { align: 'center' });
         doc.moveDown(1.5);
 
-        // Guest Information Section
+        // Line
+        doc.strokeColor('#18a999').lineWidth(2);
+        doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke();
+        doc.moveDown(1);
+
+        // Reservation Info Box
+        doc.fillColor('#000000');
+        doc.fontSize(11).font('Helvetica-Bold').text('Reservation ID: ', { continued: true });
+        doc.font('Helvetica').text(reservation._id.toString());
+        
+        doc.font('Helvetica-Bold').text('Booking Date: ', { continued: true });
+        doc.font('Helvetica').text(new Date(reservation.createdAt).toLocaleDateString('en-US', { 
+            year: 'numeric', month: 'long', day: 'numeric' 
+        }));
+        
+        doc.font('Helvetica-Bold').text('Status: ', { continued: true });
+        const statusText = reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1);
+        doc.fillColor(reservation.status === 'confirmed' ? '#10b981' : 
+                      reservation.status === 'cancelled' ? '#ef4444' : '#f59e0b')
+           .font('Helvetica-Bold').text(statusText);
+        doc.fillColor('#000000');
+        doc.moveDown(1.5);
+
+        // Guest Information
         doc.fontSize(14).font('Helvetica-Bold').fillColor('#18a999').text('Guest Information');
-        doc.fillColor('black');
-        doc.moveDown(0.5);
+        doc.strokeColor('#e0e0e0').lineWidth(1);
+        doc.moveTo(50, doc.y + 5).lineTo(545, doc.y + 5).stroke();
+        doc.moveDown(0.8);
+        doc.fillColor('#000000');
         
         doc.fontSize(11).font('Helvetica-Bold').text('Name: ', { continued: true });
-        doc.font('Helvetica').text(reservation.guest.name);
-        
+        doc.font('Helvetica').text(guestName);
         doc.font('Helvetica-Bold').text('Email: ', { continued: true });
-        doc.font('Helvetica').text(reservation.guest.email);
-        
-        if (reservation.guest.phone) {
+        doc.font('Helvetica').text(guestEmail);
+        if (guestPhone) {
             doc.font('Helvetica-Bold').text('Phone: ', { continued: true });
-            doc.font('Helvetica').text(reservation.guest.phone);
+            doc.font('Helvetica').text(guestPhone);
         }
         doc.moveDown(1.5);
 
-        // Property Information Section
+        // Property Information
         doc.fontSize(14).font('Helvetica-Bold').fillColor('#18a999').text('Property Details');
-        doc.fillColor('black');
-        doc.moveDown(0.5);
+        doc.strokeColor('#e0e0e0');
+        doc.moveTo(50, doc.y + 5).lineTo(545, doc.y + 5).stroke();
+        doc.moveDown(0.8);
+        doc.fillColor('#000000');
         
         doc.fontSize(11).font('Helvetica-Bold').text('Property: ', { continued: true });
-        doc.font('Helvetica').text(reservation.property.title);
+        doc.font('Helvetica').text(propertyTitle);
         
-        if (reservation.property.address) {
+        if (reservation.property?.address) {
             const addr = reservation.property.address;
-            const fullAddress = [addr.street, addr.city, addr.state, addr.country].filter(Boolean).join(', ');
-            doc.font('Helvetica-Bold').text('Address: ', { continued: true });
-            doc.font('Helvetica').text(fullAddress || 'N/A');
+            const addressParts = [addr.fullAddress, addr.city, addr.state, addr.country].filter(Boolean);
+            if (addressParts.length > 0) {
+                doc.font('Helvetica-Bold').text('Address: ', { continued: true });
+                doc.font('Helvetica').text(addressParts.join(', '));
+            }
         }
         
         doc.font('Helvetica-Bold').text('Host: ', { continued: true });
-        doc.font('Helvetica').text(reservation.host.name);
+        doc.font('Helvetica').text(hostName);
         doc.moveDown(1.5);
 
-        // Stay Details Section
+        // Stay Details
         doc.fontSize(14).font('Helvetica-Bold').fillColor('#18a999').text('Stay Details');
-        doc.fillColor('black');
-        doc.moveDown(0.5);
+        doc.strokeColor('#e0e0e0');
+        doc.moveTo(50, doc.y + 5).lineTo(545, doc.y + 5).stroke();
+        doc.moveDown(0.8);
+        doc.fillColor('#000000');
         
         doc.fontSize(11).font('Helvetica-Bold').text('Check-in: ', { continued: true });
-        doc.font('Helvetica').text(new Date(reservation.checkIn).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
+        doc.font('Helvetica').text(new Date(reservation.checkIn).toLocaleDateString('en-US', { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        }));
         
         doc.font('Helvetica-Bold').text('Check-out: ', { continued: true });
-        doc.font('Helvetica').text(new Date(reservation.checkOut).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
+        doc.font('Helvetica').text(new Date(reservation.checkOut).toLocaleDateString('en-US', { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        }));
         
-        doc.font('Helvetica-Bold').text('Number of Guests: ', { continued: true });
-        doc.font('Helvetica').text(reservation.guests.toString());
+        doc.font('Helvetica-Bold').text('Guests: ', { continued: true });
+        doc.font('Helvetica').text(String(reservation.guests || 1));
         
-        doc.font('Helvetica-Bold').text('Number of Nights: ', { continued: true });
-        doc.font('Helvetica').text(reservation.pricing?.nights?.toString() || 'N/A');
-        
-        doc.font('Helvetica-Bold').text('Status: ', { continued: true });
-        const statusColors = {
-            'pending': '#f59e0b',
-            'confirmed': '#10b981',
-            'cancelled': '#ef4444',
-            'completed': '#3b82f6'
-        };
-        doc.fillColor(statusColors[reservation.status] || 'black')
-           .text(reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1));
-        doc.fillColor('black');
+        doc.font('Helvetica-Bold').text('Nights: ', { continued: true });
+        doc.font('Helvetica').text(String(pricing.nights || 1));
         doc.moveDown(1.5);
 
-        // Pricing Section
-        doc.fontSize(14).font('Helvetica-Bold').fillColor('#18a999').text('Payment Details');
-        doc.fillColor('black');
-        doc.moveDown(0.5);
-        
-        const pricing = reservation.pricing || {};
+        // Payment Details
+        doc.fontSize(14).font('Helvetica-Bold').fillColor('#18a999').text('Payment Summary');
+        doc.strokeColor('#e0e0e0');
+        doc.moveTo(50, doc.y + 5).lineTo(545, doc.y + 5).stroke();
+        doc.moveDown(0.8);
+        doc.fillColor('#000000');
         
         doc.fontSize(11).font('Helvetica-Bold').text('Price per Night: ', { continued: true });
-        doc.font('Helvetica').text(`$${pricing.perNight || 0}`);
+        doc.font('Helvetica').text('$' + (pricing.perNight || 0));
         
         doc.font('Helvetica-Bold').text('Subtotal: ', { continued: true });
-        doc.font('Helvetica').text(`$${pricing.subtotal || 0}`);
+        doc.font('Helvetica').text('$' + (pricing.subtotal || 0));
         
         if (pricing.cleaningFee) {
             doc.font('Helvetica-Bold').text('Cleaning Fee: ', { continued: true });
-            doc.font('Helvetica').text(`$${pricing.cleaningFee}`);
+            doc.font('Helvetica').text('$' + pricing.cleaningFee);
         }
         
         if (pricing.serviceFee) {
             doc.font('Helvetica-Bold').text('Service Fee: ', { continued: true });
-            doc.font('Helvetica').text(`$${pricing.serviceFee}`);
+            doc.font('Helvetica').text('$' + pricing.serviceFee);
         }
         
         doc.moveDown(0.5);
+        doc.strokeColor('#18a999').lineWidth(2);
         doc.moveTo(50, doc.y).lineTo(250, doc.y).stroke();
         doc.moveDown(0.5);
         
-        doc.fontSize(14).font('Helvetica-Bold').text('Total Amount: ', { continued: true });
-        doc.fillColor('#18a999').text(`$${pricing.total || 0}`);
-        doc.fillColor('black');
+        doc.fontSize(16).font('Helvetica-Bold').text('Total: ', { continued: true });
+        doc.fillColor('#18a999').text('$' + (pricing.total || 0));
         doc.moveDown(2);
 
         // Footer
-        doc.fontSize(9).fillColor('gray');
+        doc.fillColor('#999999').fontSize(10);
         doc.text('Thank you for choosing StayLocal!', { align: 'center' });
-        doc.text(`Generated on ${new Date().toLocaleString()}`, { align: 'center' });
         doc.text('This is an electronically generated receipt.', { align: 'center' });
+        doc.text('Generated on: ' + new Date().toLocaleString(), { align: 'center' });
 
-        // Finalize PDF
+        // Finalize
         doc.end();
 
     } catch (error) {
         console.error('PDF generation error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error generating receipt'
-        });
+        // Only send error if headers not sent
+        if (!res.headersSent) {
+            res.status(500).json({
+                success: false,
+                message: 'Error generating receipt: ' + error.message
+            });
+        }
     }
 });
 

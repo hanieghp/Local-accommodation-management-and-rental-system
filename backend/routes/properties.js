@@ -151,7 +151,7 @@ router.post('/', protect, authorize('host', 'admin'), [
         const propertyData = {
             ...req.body,
             host: req.user.id,
-            isApproved: true // Auto-approve all properties
+            isApproved: false // Needs admin approval
         };
 
         const property = await Property.create(propertyData);

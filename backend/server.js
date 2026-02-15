@@ -11,6 +11,7 @@ const propertyRoutes = require('./routes/properties');
 const reservationRoutes = require('./routes/reservations');
 const notificationRoutes = require('./routes/notifications');
 const reportRoutes = require('./routes/reports');
+const ticketRoutes = require('./routes/tickets');
 
 const app = express();
 
@@ -22,8 +23,8 @@ app.use(cors({
     origin: process.env.FRONTEND_URL || '*',
     credentials: true
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -32,6 +33,7 @@ app.use('/api/properties', propertyRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/tickets', ticketRoutes);
 
 // Serve static files from frontend
 app.use(express.static(path.join(__dirname, '../frontend')));
