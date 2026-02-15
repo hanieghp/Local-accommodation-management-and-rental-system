@@ -1,8 +1,54 @@
 # StayLocal - Accommodation Management & Rental System
 
-A modern, responsive web application for managing and renting local accommodations including villas, apartments, eco-lodges, and suites.
+A full-stack web application for managing and renting local accommodations including villas, apartments, eco-lodges, and suites.
 
-![StayLocal](assets/images/img_1.png)
+![StayLocal](frontend/assets/images/img_1.png)
+
+## 📁 Project Structure
+
+```
+Local-accommodation-management-and-rental-system/
+├── frontend/                 # Frontend (HTML, CSS, JS)
+│   ├── index.html           # Main landing page
+│   ├── pages/               # HTML pages
+│   │   ├── add-property.html
+│   │   ├── admin.html
+│   │   ├── contact.html
+│   │   ├── loginup.html
+│   │   ├── profile.html
+│   │   ├── properties.html
+│   │   └── property-detail.html
+│   └── assets/
+│       ├── css/
+│       │   └── style.css
+│       ├── js/
+│       │   ├── utils.js
+│       │   └── api.js       # API service for backend
+│       └── images/
+│
+├── backend/                  # Backend (Node.js + Express + MongoDB)
+│   ├── server.js            # Main server file
+│   ├── package.json         # Dependencies
+│   ├── .env                 # Environment variables
+│   ├── config/
+│   │   └── db.js            # Database connection
+│   ├── models/
+│   │   ├── User.js          # User model
+│   │   ├── Property.js      # Property model
+│   │   ├── Reservation.js   # Reservation model
+│   │   └── Notification.js  # Notification model
+│   ├── routes/
+│   │   ├── auth.js          # Authentication routes
+│   │   ├── users.js         # User management routes
+│   │   ├── properties.js    # Property CRUD routes
+│   │   ├── reservations.js  # Reservation CRUD routes
+│   │   ├── notifications.js # Notification routes
+│   │   └── reports.js       # Reporting routes
+│   └── middleware/
+│       └── auth.js          # JWT authentication
+│
+└── README.md
+```
 
 ## 🌟 Features
 
@@ -29,68 +75,99 @@ A modern, responsive web application for managing and renting local accommodatio
 
 ## 🛠️ Technologies Used
 
-- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
+### Frontend
+- **HTML5, CSS3, JavaScript (ES6+)**
 - **UI Framework**: Bootstrap 5.3.3
-- **Storage**: LocalStorage (for demo purposes)
-- **Icons**: Bootstrap Icons
-- **Fonts**: Google Fonts
+- **Fonts**: Google Fonts (Inter)
 
-## 📁 Project Structure
-
-```
-Local-accommodation-management-and-rental-system/
-├── index.html                 # Landing page
-├── README.md                  # Project documentation
-├── assets/
-│   ├── css/
-│   │   └── style.css         # Global styles
-│   ├── images/               # Property and UI images
-│   └── js/
-│       └── utils.js          # Utility functions
-└── pages/
-    ├── add-property.html     # Add new property (hosts only)
-    ├── admin.html            # Admin dashboard
-    ├── contact.html          # Contact page with FAQ
-    ├── homePage.html         # Alternative home page
-    ├── loginup.html          # Login & Registration
-    ├── profile.html          # User profile management
-    ├── properties.html       # Property listings with search
-    └── property-detail.html  # Individual property details
-```
+### Backend
+- **Runtime**: Node.js
+- **Framework**: Express.js
+- **Database**: MongoDB with Mongoose
+- **Authentication**: JWT (JSON Web Tokens)
+- **Security**: bcryptjs, CORS, express-validator
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- A modern web browser (Chrome, Firefox, Safari, Edge)
-- A local web server (optional, but recommended)
+- Node.js (v18 or higher)
+- MongoDB (local or Atlas)
+- npm or yarn
+- VS Code with Live Server extension (recommended)
 
-### Installation
+### Backend Setup
 
-1. **Clone or Download** the repository:
+1. **Navigate to backend folder**:
    ```bash
-   git clone https://github.com/yourusername/Local-accommodation-management-and-rental-system.git
+   cd backend
    ```
 
-2. **Navigate** to the project directory:
+2. **Install dependencies**:
    ```bash
-   cd Local-accommodation-management-and-rental-system
+   npm install
    ```
 
-3. **Open** the project:
-   - **Option A**: Simply open `index.html` in your browser
-   - **Option B**: Use a local server (recommended):
-     ```bash
-     # Using Python 3
-     python -m http.server 8080
-     
-     # Using Node.js (with http-server)
-     npx http-server
-     
-     # Using VS Code Live Server extension
-     # Right-click index.html → "Open with Live Server"
-     ```
+3. **Configure environment variables** in `.env`:
+   ```env
+   PORT=5000
+   MONGODB_URI=mongodb://localhost:27017/staylocal
+   JWT_SECRET=your_super_secret_key
+   JWT_EXPIRE=7d
+   FRONTEND_URL=http://localhost:5500
+   ```
 
-4. **Access** the application at `http://localhost:8080` (or your configured port)
+4. **Start the server**:
+   ```bash
+   # Development mode (with auto-reload)
+   npm run dev
+
+   # Production mode
+   npm start
+   ```
+
+### Frontend Setup
+
+1. Open VS Code in the `frontend` folder
+2. Right-click on `index.html` → "Open with Live Server"
+3. Frontend will be available at `http://localhost:5500`
+
+## 📡 API Endpoints
+
+### Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/register` | Register new user |
+| POST | `/api/auth/login` | Login user |
+| GET | `/api/auth/me` | Get current user |
+| PUT | `/api/auth/updateprofile` | Update profile |
+
+### Properties
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/properties` | Get all (with search & filter) |
+| GET | `/api/properties/:id` | Get single property |
+| POST | `/api/properties` | Create property (Host) |
+| PUT | `/api/properties/:id` | Update property |
+| DELETE | `/api/properties/:id` | Delete property |
+
+### Reservations
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/reservations` | Get user's reservations |
+| POST | `/api/reservations` | Create reservation |
+| PUT | `/api/reservations/:id/confirm` | Confirm (Host) |
+| PUT | `/api/reservations/:id/cancel` | Cancel reservation |
+
+### Reports (Admin)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/reports/dashboard` | Dashboard stats |
+| GET | `/api/reports/revenue` | Revenue report |
+
+## 📁 Project Structure (Legacy Files)
+
+The root `index.html`, `pages/`, and `assets/` folders are kept for backward compatibility. 
+The main development should be done in the `frontend/` folder.
 
 ## 👤 User Roles & Access
 
