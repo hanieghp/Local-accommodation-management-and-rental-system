@@ -300,6 +300,70 @@
             height: 14px;
         }
         
+        .btn-review {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-review:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+        }
+        
+        .btn-review:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .star-rating {
+            display: flex;
+            gap: 5px;
+            font-size: 30px;
+            cursor: pointer;
+        }
+        
+        .star-rating .star {
+            color: #d1d5db;
+            transition: color 0.2s;
+        }
+        
+        .star-rating .star.active,
+        .star-rating .star:hover,
+        .star-rating .star:hover ~ .star {
+            color: #d1d5db;
+        }
+        
+        .star-rating:hover .star {
+            color: #d1d5db;
+        }
+        
+        .star-rating .star:hover,
+        .star-rating .star:hover ~ .star {
+            color: #d1d5db;
+        }
+        
+        .star-rating:hover .star:hover,
+        .star-rating:hover .star:hover ~ .star,
+        .star-rating:hover .star.hovered {
+            color: #fbbf24;
+        }
+        
+        .star-rating .star.selected {
+            color: #fbbf24;
+        }
+        
         .property-card-manage {
             border: 1px solid #e5e7eb;
             border-radius: 15px;
@@ -707,6 +771,35 @@
         </div>
     </div>
 
+    <!-- Review Modal -->
+    <div id="reviewModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+        <div style="background:white; border-radius:20px; padding:30px; max-width:500px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+            <h4 style="margin-bottom:20px; color:#1f2937;">Leave a Review</h4>
+            <p style="color:#6b7280; margin-bottom:20px;">Property: <strong id="reviewPropertyTitle"></strong></p>
+            
+            <div style="margin-bottom:20px;">
+                <label style="display:block; margin-bottom:10px; font-weight:600; color:#374151;">Rating</label>
+                <div id="starRating" class="star-rating" style="display:flex; flex-direction:row-reverse; justify-content:flex-end;">
+                    <span class="star" data-rating="5">★</span>
+                    <span class="star" data-rating="4">★</span>
+                    <span class="star" data-rating="3">★</span>
+                    <span class="star" data-rating="2">★</span>
+                    <span class="star" data-rating="1">★</span>
+                </div>
+            </div>
+            
+            <div style="margin-bottom:20px;">
+                <label style="display:block; margin-bottom:10px; font-weight:600; color:#374151;">Comment (Optional)</label>
+                <textarea id="reviewComment" rows="4" style="width:100%; padding:12px; border:1px solid #d1d5db; border-radius:10px; resize:vertical; font-family:inherit;" placeholder="Share your experience..."></textarea>
+            </div>
+            
+            <div style="display:flex; gap:10px; justify-content:flex-end;">
+                <button onclick="closeReviewModal()" style="padding:10px 25px; border:1px solid #d1d5db; background:white; border-radius:10px; cursor:pointer; font-weight:600;">Cancel</button>
+                <button onclick="submitReview()" style="padding:10px 25px; border:none; background:linear-gradient(135deg, #f59e0b, #d97706); color:white; border-radius:10px; cursor:pointer; font-weight:600;">Submit Review</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/api.js"></script>
     <script>
@@ -1039,6 +1132,8 @@
                         
                         const propertyImg = res.property?.images?.[0]?.url || '../assets/images/img_7.png';
                         const propertyTitle = res.property?.title || 'Property';
+                        const hasReview = res.review && res.review.rating;
+                        const canReview = res.status === 'completed' && !hasReview;
                         
                         return `
                             <div class="reservation-card">
@@ -1047,16 +1142,24 @@
                                     <div class="reservation-title">${propertyTitle}</div>
                                     <div class="reservation-dates">${formatDate(res.checkIn)} - ${formatDate(res.checkOut)} (${res.pricing?.nights || 0} nights)</div>
                                     <span class="reservation-status ${statusClass}">${res.status.charAt(0).toUpperCase() + res.status.slice(1)}</span>
+                                    ${hasReview ? `<span style="color:#f59e0b; font-size:14px; margin-left:10px;">★ ${res.review.rating}/5 - Reviewed</span>` : ''}
                                 </div>
                                 <div class="reservation-actions-col">
                                     <div class="reservation-price">$${res.pricing?.total || 0}</div>
-                                    <button class="btn-download-receipt" onclick="downloadReceipt('${res._id}')" title="Download Receipt">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                                            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-                                        </svg>
-                                        PDF
-                                    </button>
+                                    <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+                                        ${canReview ? `
+                                            <button class="btn-review" onclick="openReviewModal('${res._id}', '${propertyTitle.replace(/'/g, "\\'")}')">
+                                                ★ Leave Review
+                                            </button>
+                                        ` : ''}
+                                        <button class="btn-download-receipt" onclick="downloadReceipt('${res._id}')" title="Download Receipt">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                                            </svg>
+                                            PDF
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         `;
@@ -1498,7 +1601,111 @@
             }
         }
         
-        document.addEventListener('DOMContentLoaded', loadUserData);
+        // Review Modal Functions
+        let currentReviewReservationId = null;
+        let selectedRating = 0;
+        
+        function openReviewModal(reservationId, propertyTitle) {
+            currentReviewReservationId = reservationId;
+            document.getElementById('reviewPropertyTitle').textContent = propertyTitle;
+            document.getElementById('reviewComment').value = '';
+            selectedRating = 0;
+            updateStars(0);
+            document.getElementById('reviewModal').style.display = 'flex';
+        }
+        
+        function closeReviewModal() {
+            document.getElementById('reviewModal').style.display = 'none';
+            currentReviewReservationId = null;
+            selectedRating = 0;
+        }
+        
+        function setRating(rating) {
+            selectedRating = rating;
+            updateStars(rating);
+        }
+        
+        function updateStars(rating) {
+            const stars = document.querySelectorAll('#starRating .star');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('selected');
+                } else {
+                    star.classList.remove('selected');
+                }
+            });
+        }
+        
+        function initStarHover() {
+            const container = document.getElementById('starRating');
+            const stars = container.querySelectorAll('.star');
+            
+            stars.forEach((star, index) => {
+                star.addEventListener('mouseenter', () => {
+                    stars.forEach((s, i) => {
+                        if (i <= index) {
+                            s.style.color = '#fbbf24';
+                        } else {
+                            s.style.color = '#d1d5db';
+                        }
+                    });
+                });
+                
+                star.addEventListener('click', () => {
+                    setRating(index + 1);
+                });
+            });
+            
+            container.addEventListener('mouseleave', () => {
+                stars.forEach((s, i) => {
+                    if (i < selectedRating) {
+                        s.style.color = '#fbbf24';
+                    } else {
+                        s.style.color = '#d1d5db';
+                    }
+                });
+            });
+        }
+        
+        async function submitReview() {
+            if (!currentReviewReservationId) return;
+            
+            if (selectedRating === 0) {
+                alert('Please select a rating (1-5 stars)');
+                return;
+            }
+            
+            const comment = document.getElementById('reviewComment').value.trim();
+            
+            try {
+                const response = await fetch(`${API_URL}/reservations/${currentReviewReservationId}/review`, {
+                    method: 'PUT',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({
+                        rating: selectedRating,
+                        comment: comment
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Review submitted successfully! Thank you for your feedback.');
+                    closeReviewModal();
+                    loadReservations(); // Reload to update UI
+                } else {
+                    alert('❌ ' + (data.message || 'Error submitting review'));
+                }
+            } catch (error) {
+                console.error('Submit review error:', error);
+                alert('❌ Connection error. Please try again.');
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserData();
+            initStarHover();
+        });
     </script>
 </body>
 </html>

@@ -2,7 +2,6 @@ require('dotenv').config({ path: '../.env' });
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-// Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/staylocal')
     .then(() => console.log('MongoDB Connected'))
     .catch(err => {
@@ -10,7 +9,6 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/staylocal
         process.exit(1);
     });
 
-// User Schema
 const userSchema = new mongoose.Schema({
     name: String,
     email: { type: String, unique: true },

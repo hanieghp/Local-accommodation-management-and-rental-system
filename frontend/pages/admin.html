@@ -820,50 +820,72 @@
                 const matchStatus = !statusFilter || r.status === statusFilter;
                 return matchSearch && matchStatus;
             });
-            document.getElementById('reservationsTable').innerHTML = filtered.map(r => `<tr><td>#${r.id.slice(-6)}</td><td>${r.guestName}</td><td>${r.propertyTitle}</td><td>${formatDate(r.checkin)}</td><td>${formatDate(r.checkout)}</td><td>$${r.total}</td><td><span class="status-badge status-${r.status}">${r.status}</span></td><td>${r.status === 'pending' ? `<button class="action-btn action-btn-edit" onclick="confirmReservation('${r.id}')">Confirm</button><button class="action-btn action-btn-delete" onclick="cancelReservation('${r.id}')">Cancel</button>` : r.status === 'confirmed' ? `<button class="action-btn action-btn-delete" onclick="cancelReservation('${r.id}')">Cancel</button>` : ''}</td></tr>`).join('') || '<tr><td colspan="8" class="text-center text-muted">No reservations found</td></tr>';
+            document.getElementById('reservationsTable').innerHTML = filtered.map(r => `
+                <tr>
+                    <td>#${r.id.slice(-6)}</td>
+                    <td>${r.guestName}</td>
+                    <td>${r.propertyTitle}</td>
+                    <td>${formatDate(r.checkin)}</td>
+                    <td>${formatDate(r.checkout)}</td>
+                    <td>$${r.total}</td>
+                    <td><span class="status-badge status-${r.status}">${r.status}</span></td>
+                    <td>
+                        <select class="form-select form-select-sm" style="width:auto;display:inline-block;" onchange="changeReservationStatus('${r.id}', this.value)">
+                            <option value="">Change Status</option>
+                            <option value="pending" ${r.status === 'pending' ? 'disabled' : ''}>Pending</option>
+                            <option value="confirmed" ${r.status === 'confirmed' ? 'disabled' : ''}>Confirmed</option>
+                            <option value="cancelled" ${r.status === 'cancelled' ? 'disabled' : ''}>Cancelled</option>
+                            <option value="completed" ${r.status === 'completed' ? 'disabled' : ''}>Completed</option>
+                            <option value="rejected" ${r.status === 'rejected' ? 'disabled' : ''}>Rejected</option>
+                        </select>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="8" class="text-center text-muted">No reservations found</td></tr>';
         }
         
-        async function confirmReservation(id) {
-            try {
-                const response = await fetch(`${API_URL}/reservations/${id}/status`, {
-                    method: 'PUT',
-                    headers: getHeaders(),
-                    body: JSON.stringify({ status: 'confirmed' })
-                });
-                const data = await response.json();
-                if (data.success) {
-                    alert('Reservation confirmed!');
-                    await fetchReservations();
-                    renderReservations();
-                    updateDashboard();
-                } else {
-                    alert(data.message || 'Error confirming reservation');
-                }
-            } catch (error) {
-                console.error('Error confirming reservation:', error);
-                alert('Error confirming reservation');
-            }
-        }
-        
-        async function cancelReservation(id) {
-            if (confirm('Cancel this reservation?')) {
+        async function changeReservationStatus(id, newStatus) {
+            if (!newStatus) return;
+            
+            const statusLabels = {
+                'pending': 'Pending',
+                'confirmed': 'Confirmed', 
+                'cancelled': 'Cancelled',
+                'completed': 'Completed',
+                'rejected': 'Rejected'
+            };
+            
+            if (confirm(`Change reservation status to "${statusLabels[newStatus]}"?`)) {
                 try {
                     const response = await fetch(`${API_URL}/reservations/${id}/status`, {
                         method: 'PUT',
                         headers: getHeaders(),
-                        body: JSON.stringify({ status: 'cancelled' })
+                        body: JSON.stringify({ status: newStatus, reason: `Status changed to ${newStatus} by admin` })
                     });
                     const data = await response.json();
                     if (data.success) {
-                        alert('Reservation cancelled!');
+                        alert(`Reservation status changed to ${statusLabels[newStatus]}!`);
                         await fetchReservations();
                         renderReservations();
                         updateDashboard();
+                    } else {
+                        alert(data.message || 'Error changing reservation status');
                     }
                 } catch (error) {
-                    console.error('Error cancelling reservation:', error);
+                    console.error('Error changing reservation status:', error);
+                    alert('Error changing reservation status');
                 }
+            } else {
+                // Reset dropdown to empty if user cancels
+                renderReservations();
             }
+        }
+        
+        async function confirmReservation(id) {
+            await changeReservationStatus(id, 'confirmed');
+        }
+        
+        async function cancelReservation(id) {
+            await changeReservationStatus(id, 'cancelled');
         }
         
         function updateReports() {

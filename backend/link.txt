@@ -1,0 +1,3 @@
+http://localhost:5000/pages/loginup.html
+
+http://localhost:5000/pages/properties.html

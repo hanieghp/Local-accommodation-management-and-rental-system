@@ -28,7 +28,7 @@ router.get('/', protect, async (req, res) => {
             query = { guest: req.user.id };
         }
 
-        if (req.query.status) {
+        if (req.query.status) { // /api/reservations?status=confirmed
             query.status = req.query.status;
         }
         
@@ -110,7 +110,7 @@ router.get('/:id', protect, async (req, res) => {
             });
         }
 
-        // Check authorization
+        // Check auth
         const isGuest = reservation.guest._id.toString() === req.user.id;
         const isHost = reservation.host._id.toString() === req.user.id;
         const isAdmin = req.user.role === 'admin';
@@ -154,7 +154,6 @@ router.post('/', protect, [
 
         const { property: propertyId, checkIn, checkOut, guests, specialRequests } = req.body;
 
-        // Get property
         const property = await Property.findById(propertyId);
         if (!property) {
             return res.status(404).json({
@@ -170,7 +169,7 @@ router.post('/', protect, [
             });
         }
 
-        // Check capacity - handle both number and object format
+        // Check capacity
         const totalGuests = typeof guests === 'object' ? (guests.adults || 0) + (guests.children || 0) : parseInt(guests) || 1;
         if (totalGuests > property.capacity.guests) {
             return res.status(400).json({
@@ -212,7 +211,6 @@ router.post('/', protect, [
         const taxes = Math.round(subtotal * 0.08); // 8% tax
         const total = subtotal + serviceFee + taxes;
 
-        // Format guests properly
         const guestsData = typeof guests === 'object' ? guests : { adults: parseInt(guests) || 1, children: 0 };
 
         const reservation = await Reservation.create({
@@ -234,7 +232,6 @@ router.post('/', protect, [
             specialRequests
         });
 
-        // Notify host
         await createNotification({
             recipient: property.host,
             sender: req.user.id,
@@ -259,6 +256,74 @@ router.post('/', protect, [
     }
 });
 
+// @route   PUT /api/reservations/:id/status
+// @desc    Update reservation status (Admin only - can change to any status)
+// @access  Private/Admin
+router.put('/:id/status', protect, authorize('admin'), async (req, res) => {
+    try {
+        const { status, reason } = req.body;
+        
+        const validStatuses = ['pending', 'confirmed', 'cancelled', 'completed', 'rejected'];
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: `Invalid status. Valid statuses: ${validStatuses.join(', ')}`
+            });
+        }
+
+        const reservation = await Reservation.findById(req.params.id)
+            .populate('property', 'title')
+            .populate('guest', 'name')
+            .populate('host', 'name');
+
+        if (!reservation) {
+            return res.status(404).json({
+                success: false,
+                message: 'Reservation not found'
+            });
+        }
+
+        const oldStatus = reservation.status;
+        reservation.status = status;
+        reservation.updatedAt = Date.now();
+        
+        // If cancelling, add cancellation info
+        if (status === 'cancelled') {
+            reservation.cancellation = {
+                cancelledBy: req.user.id,
+                reason: reason || 'Cancelled by admin',
+                cancelledAt: Date.now(),
+                refundAmount: reservation.pricing?.total || 0
+            };
+        }
+        
+        await reservation.save();
+
+        // Notify guest about status change
+        await createNotification({
+            recipient: reservation.guest._id,
+            sender: req.user.id,
+            type: 'reservation_updated',
+            title: 'Reservation Status Updated',
+            message: `Your reservation for ${reservation.property.title} status changed from ${oldStatus} to ${status}`,
+            relatedProperty: reservation.property._id,
+            relatedReservation: reservation._id
+        });
+
+        res.json({
+            success: true,
+            message: `Reservation status updated to ${status}`,
+            data: reservation
+        });
+    } catch (error) {
+        console.error('Update reservation status error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error'
+        });
+    }
+});
+
 // @route   PUT /api/reservations/:id/confirm
 // @desc    Confirm reservation (Host only)
 // @access  Private/Host
@@ -274,7 +339,6 @@ router.put('/:id/confirm', protect, authorize('host', 'admin'), async (req, res)
             });
         }
 
-        // Check if user is the host
         if (reservation.host.toString() !== req.user.id && req.user.role !== 'admin') {
             return res.status(403).json({
                 success: false,
@@ -293,7 +357,6 @@ router.put('/:id/confirm', protect, authorize('host', 'admin'), async (req, res)
         reservation.updatedAt = Date.now();
         await reservation.save();
 
-        // Notify guest
         await createNotification({
             recipient: reservation.guest,
             sender: req.user.id,
@@ -332,7 +395,7 @@ router.put('/:id/cancel', protect, async (req, res) => {
             });
         }
 
-        // Check authorization
+        // Check auth
         const isGuest = reservation.guest.toString() === req.user.id;
         const isHost = reservation.host.toString() === req.user.id;
         const isAdmin = req.user.role === 'admin';
@@ -361,7 +424,6 @@ router.put('/:id/cancel', protect, async (req, res) => {
         reservation.updatedAt = Date.now();
         await reservation.save();
 
-        // Notify the other party
         const notifyUser = isGuest ? reservation.host : reservation.guest;
         await createNotification({
             recipient: notifyUser,
@@ -439,7 +501,6 @@ router.put('/:id/review', protect, [
         };
         await reservation.save();
 
-        // Update property rating
         const property = await Property.findById(reservation.property);
         const allReviews = await Reservation.find({
             property: reservation.property,
@@ -523,7 +584,7 @@ router.get('/:id/receipt', protect, async (req, res) => {
             });
         }
 
-        // Check authorization
+        // Check auth
         const isGuest = reservation.guest && reservation.guest._id.toString() === req.user.id;
         const isHost = reservation.host && reservation.host._id.toString() === req.user.id;
         const isAdmin = req.user.role === 'admin';
@@ -535,14 +596,13 @@ router.get('/:id/receipt', protect, async (req, res) => {
             });
         }
 
-        // Create PDF document
+        // Create PDF
         const doc = new PDFDocument({ 
             margin: 50,
             size: 'A4',
             bufferPages: true
         });
         
-        // Collect PDF data in buffer
         const buffers = [];
         doc.on('data', buffers.push.bind(buffers));
         doc.on('end', () => {
@@ -553,7 +613,6 @@ router.get('/:id/receipt', protect, async (req, res) => {
             res.send(pdfData);
         });
 
-        // Safe getters
         const guestName = reservation.guest?.name || 'Guest';
         const guestEmail = reservation.guest?.email || 'N/A';
         const guestPhone = reservation.guest?.phone || '';
@@ -696,7 +755,6 @@ router.get('/:id/receipt', protect, async (req, res) => {
 
     } catch (error) {
         console.error('PDF generation error:', error);
-        // Only send error if headers not sent
         if (!res.headersSent) {
             res.status(500).json({
                 success: false,

@@ -14,7 +14,6 @@ router.get('/', protect, async (req, res) => {
 
         const query = { recipient: req.user.id };
 
-        // Filter by read status
         if (req.query.unread === 'true') {
             query.isRead = false;
         }
