@@ -6,7 +6,7 @@ const { protect, authorize } = require('../middleware/auth');
 // @route   GET /api/users
 // @desc    Get all users (Admin only)
 // @access  Private/Admin
-router.get('/', protect, authorize('admin'), async (req, res) => {
+router.get('/', protect, authorize('admin'), async (req, res) => { // protect → authorize('admin')
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
@@ -14,13 +14,11 @@ router.get('/', protect, authorize('admin'), async (req, res) => {
 
         const query = {};
         
-        // Filter by role
-        if (req.query.role) {
+        if (req.query.role) { /// api/users?role=admin for filtering
             query.role = req.query.role;
         }
 
-        // Filter by status
-        if (req.query.isActive !== undefined) {
+        if (req.query.isActive !== undefined) { // filter by status
             query.isActive = req.query.isActive === 'true';
         }
 
@@ -162,7 +160,7 @@ router.delete('/:id', protect, authorize('admin'), async (req, res) => {
             });
         }
 
-        // Prevent deleting self
+        // Check self-deletion
         if (req.params.id === req.user.id) {
             return res.status(400).json({
                 success: false,

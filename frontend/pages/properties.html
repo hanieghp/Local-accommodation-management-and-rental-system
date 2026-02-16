@@ -261,16 +261,27 @@
                         <div class="col-md-2">
                             <label class="form-label">Guests</label>
                             <select class="form-control" id="guestCount">
+                                <option value="0">Any</option>
                                 <option value="1">1 Guest</option>
-                                <option value="2" selected>2 Guests</option>
+                                <option value="2">2 Guests</option>
                                 <option value="3">3 Guests</option>
                                 <option value="4">4 Guests</option>
                                 <option value="5">5+ Guests</option>
                             </select>
                         </div>
                     </div>
-                    <div class="row mt-3">
-                        <div class="col-12">
+                    <div class="row mt-3 g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Bedrooms</label>
+                            <select class="form-control" id="bedroomCount">
+                                <option value="0">Any</option>
+                                <option value="1">1+ Bedroom</option>
+                                <option value="2">2+ Bedrooms</option>
+                                <option value="3">3+ Bedrooms</option>
+                                <option value="4">4+ Bedrooms</option>
+                            </select>
+                        </div>
+                        <div class="col-md-9 d-flex align-items-end">
                             <button type="submit" class="btn btn-filter" style="width: auto; padding: 12px 40px;">Search</button>
                         </div>
                     </div>
@@ -291,10 +302,10 @@
                             </div>
                         </div>
                         
-                        <div class="filter-section">
+                        <div class="filter-section" id="propertyTypeSection">
                             <h6>Property Type</h6>
                             <div class="filter-checkbox">
-                                <input type="checkbox" id="villa" checked>
+                                <input type="checkbox" id="villa">
                                 <label for="villa">Villa</label>
                             </div>
                             <div class="filter-checkbox">
@@ -306,12 +317,16 @@
                                 <label for="suite">Suite</label>
                             </div>
                             <div class="filter-checkbox">
-                                <input type="checkbox" id="eco">
-                                <label for="eco">Eco-Lodge</label>
+                                <input type="checkbox" id="house">
+                                <label for="house">House</label>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox" id="cabin">
+                                <label for="cabin">Cabin</label>
                             </div>
                         </div>
                         
-                        <div class="filter-section">
+                        <div class="filter-section" id="amenitiesSection">
                             <h6>Amenities</h6>
                             <div class="filter-checkbox">
                                 <input type="checkbox" id="wifi">
@@ -494,7 +509,7 @@
                 _id: 'demo1',
                 title: "Modern 1BR Apartment",
                 address: { city: "New York", state: "Manhattan" },
-                propertyType: "apartment",
+                type: "apartment",
                 price: { perNight: 150 },
                 capacity: { guests: 3, bedrooms: 1 },
                 rating: { average: 4.8, count: 24 },
@@ -505,7 +520,7 @@
                 _id: 'demo2',
                 title: "Historic Suite Near Park",
                 address: { city: "Boston", state: "Downtown" },
-                propertyType: "suite",
+                type: "suite",
                 price: { perNight: 120 },
                 capacity: { guests: 3, bedrooms: 1 },
                 rating: { average: 4.6, count: 18 },
@@ -516,7 +531,7 @@
                 _id: 'demo3',
                 title: "Luxury Beach Villa",
                 address: { city: "Malibu", state: "California" },
-                propertyType: "villa",
+                type: "villa",
                 price: { perNight: 350 },
                 capacity: { guests: 8, bedrooms: 3 },
                 rating: { average: 4.9, count: 37 },
@@ -527,7 +542,7 @@
                 _id: 'demo4',
                 title: "Eco-Lodge with Garden",
                 address: { city: "San Francisco", state: "Bay Area" },
-                propertyType: "eco",
+                type: "cabin",
                 price: { perNight: 95 },
                 capacity: { guests: 4, bedrooms: 2 },
                 rating: { average: 4.7, count: 15 },
@@ -555,13 +570,17 @@
 
         async function loadProperties() {
             try {
-                const response = await fetch(`${API_URL}/properties`);
+                const response = await fetch(`${API_URL}/properties?limit=100`);
                 const data = await response.json();
+                
+                console.log('API Response:', data);
                 
                 if (data.success && data.data.length > 0) {
                     allProperties = data.data;
+                    console.log('Loaded properties from API:', allProperties.length);
                 } else {
                     // Use demo properties if no data from API
+                    console.log('No properties from API, using demo');
                     allProperties = demoProperties;
                 }
                 
@@ -613,12 +632,20 @@
         function filterProperties() {
             const destination = document.getElementById('destinationInput').value.toLowerCase().trim();
             const guests = parseInt(document.getElementById('guestCount').value) || 0;
+            const bedrooms = parseInt(document.getElementById('bedroomCount').value) || 0;
             const minPrice = parseInt(document.querySelector('.price-input[placeholder="Min"]').value) || 0;
             const maxPrice = parseInt(document.querySelector('.price-input[placeholder="Max"]').value) || Infinity;
             
+            // Get selected property types
             const selectedTypes = [];
-            document.querySelectorAll('.filter-checkbox input[type="checkbox"]:checked').forEach(checkbox => {
-                selectedTypes.push(checkbox.id);
+            document.querySelectorAll('#propertyTypeSection .filter-checkbox input[type="checkbox"]:checked').forEach(checkbox => {
+                selectedTypes.push(checkbox.id.toLowerCase());
+            });
+            
+            // Get selected amenities
+            const selectedAmenities = [];
+            document.querySelectorAll('#amenitiesSection .filter-checkbox input[type="checkbox"]:checked').forEach(checkbox => {
+                selectedAmenities.push(checkbox.id.toLowerCase());
             });
             
             const cityAliases = {
@@ -630,13 +657,18 @@
             };
             const searchTerm = cityAliases[destination] || destination;
             
+            console.log('Filter values:', { destination, guests, bedrooms, minPrice, maxPrice, selectedTypes, selectedAmenities });
+            console.log('All properties:', allProperties);
+            
             let filteredProperties = allProperties.filter(property => {
                 const city = (property.address?.city || '').toLowerCase();
                 const state = (property.address?.state || '').toLowerCase();
-                const title = property.title.toLowerCase();
-                const propertyType = property.propertyType || '';
+                const title = (property.title || '').toLowerCase();
+                const propertyType = (property.type || property.propertyType || '').toLowerCase();
                 const price = property.price?.perNight || 0;
                 const capacity = property.capacity?.guests || 0;
+                const propBedrooms = property.capacity?.bedrooms || 0;
+                const propAmenities = (property.amenities || []).map(a => a.toLowerCase());
                 
                 const matchesDestination = !searchTerm || 
                     city.includes(searchTerm) || 
@@ -644,11 +676,19 @@
                     title.includes(searchTerm) ||
                     searchTerm.includes(city.split(' ')[0]);
                 
-                const matchesCapacity = capacity >= guests;
+                const matchesCapacity = guests === 0 || capacity >= guests;
+                const matchesBedrooms = bedrooms === 0 || propBedrooms >= bedrooms;
                 const matchesPrice = price >= minPrice && price <= maxPrice;
                 const matchesType = selectedTypes.length === 0 || selectedTypes.includes(propertyType);
+                const matchesAmenities = selectedAmenities.length === 0 || 
+                    selectedAmenities.every(amenity => propAmenities.some(a => a.includes(amenity)));
                 
-                return matchesDestination && matchesCapacity && matchesPrice && matchesType;
+                console.log(`Property "${property.title}":`, { 
+                    matchesDestination, matchesCapacity, matchesBedrooms, matchesPrice, matchesType, matchesAmenities,
+                    propType: propertyType, propPrice: price, propGuests: capacity, propBeds: propBedrooms
+                });
+                
+                return matchesDestination && matchesCapacity && matchesBedrooms && matchesPrice && matchesType && matchesAmenities;
             });
             
             displayProperties(filteredProperties);

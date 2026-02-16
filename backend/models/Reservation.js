@@ -39,11 +39,11 @@ const reservationSchema = new mongoose.Schema({
             type: Number,
             required: true
         },
-        subtotal: {
+        subtotal: { // perNight * nights
             type: Number,
             required: true
         },
-        serviceFee: {
+        serviceFee: { // subtotal * 0.10
             type: Number,
             default: 0
         },
@@ -51,11 +51,11 @@ const reservationSchema = new mongoose.Schema({
             type: Number,
             default: 0
         },
-        taxes: {
+        taxes: { // subtotal * 0.08
             type: Number,
             default: 0
         },
-        total: {
+        total: { // subtotal + serviceFee + taxes + cleaningFee
             type: Number,
             required: true
         },
@@ -114,7 +114,7 @@ reservationSchema.pre('save', function(next) {
     next();
 });
 
-// Index for queries
+
 reservationSchema.index({ guest: 1, status: 1 });
 reservationSchema.index({ host: 1, status: 1 });
 reservationSchema.index({ property: 1, checkIn: 1, checkOut: 1 });

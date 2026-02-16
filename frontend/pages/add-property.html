@@ -485,51 +485,51 @@
                     <div class="form-group">
                         <label>Amenities</label>
                         <div class="amenities-grid">
-                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this, event)">
                                 <input type="checkbox" value="wifi">
                                 High-Speed WiFi
                             </label>
-                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this, event)">
                                 <input type="checkbox" value="parking">
                                 Parking
                             </label>
-                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this, event)">
                                 <input type="checkbox" value="ac">
                                 Air Conditioning
                             </label>
-                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this, event)">
                                 <input type="checkbox" value="heating">
                                 Heating
                             </label>
-                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this, event)">
                                 <input type="checkbox" value="tv">
                                 Smart TV
                             </label>
-                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this, event)">
                                 <input type="checkbox" value="kitchen">
                                 Full Kitchen
                             </label>
-                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this, event)">
                                 <input type="checkbox" value="washer">
                                 Washer/Dryer
                             </label>
-                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this, event)">
                                 <input type="checkbox" value="pool">
                                 Pool
                             </label>
-                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this, event)">
                                 <input type="checkbox" value="gym">
                                 Gym
                             </label>
-                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this, event)">
                                 <input type="checkbox" value="pets">
                                 Pet Friendly
                             </label>
-                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this, event)">
                                 <input type="checkbox" value="balcony">
                                 Balcony
                             </label>
-                            <label class="amenity-checkbox" onclick="toggleAmenity(this)">
+                            <label class="amenity-checkbox" onclick="toggleAmenity(this, event)">
                                 <input type="checkbox" value="workspace">
                                 Workspace
                             </label>
@@ -723,13 +723,20 @@
             selectedType = type;
         }
         
-        function toggleAmenity(element) {
+        function toggleAmenity(element, event) {
+            // Prevent double toggle from label default behavior
+            if (event) {
+                event.preventDefault();
+            }
+            
             element.classList.toggle('selected');
             const checkbox = element.querySelector('input');
             checkbox.checked = !checkbox.checked;
             
             if (checkbox.checked) {
-                selectedAmenities.push(checkbox.value);
+                if (!selectedAmenities.includes(checkbox.value)) {
+                    selectedAmenities.push(checkbox.value);
+                }
             } else {
                 selectedAmenities = selectedAmenities.filter(a => a !== checkbox.value);
             }

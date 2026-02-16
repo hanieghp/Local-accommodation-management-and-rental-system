@@ -13,7 +13,6 @@ router.get('/', async (req, res) => {
         const limit = parseInt(req.query.limit) || 12;
         const skip = (page - 1) * limit;
 
-        // Build query - for admin show all, for public show only approved
         const query = {};
         
         // If not admin request (no all=true param), only show approved and available
@@ -22,22 +21,18 @@ router.get('/', async (req, res) => {
             query.isApproved = true;
         }
 
-        // Search by text
         if (req.query.search) {
             query.$text = { $search: req.query.search };
         }
 
-        // Filter by city
         if (req.query.city) {
             query['address.city'] = new RegExp(req.query.city, 'i');
         }
 
-        // Filter by type
         if (req.query.type) {
             query.type = req.query.type;
         }
 
-        // Filter by price range
         if (req.query.minPrice || req.query.maxPrice) {
             query['price.perNight'] = {};
             if (req.query.minPrice) {
@@ -48,17 +43,14 @@ router.get('/', async (req, res) => {
             }
         }
 
-        // Filter by capacity
         if (req.query.guests) {
             query['capacity.guests'] = { $gte: parseInt(req.query.guests) };
         }
 
-        // Filter by bedrooms
         if (req.query.bedrooms) {
             query['capacity.bedrooms'] = { $gte: parseInt(req.query.bedrooms) };
         }
 
-        // Filter by amenities
         if (req.query.amenities) {
             const amenitiesArray = req.query.amenities.split(',');
             query.amenities = { $all: amenitiesArray };
@@ -151,7 +143,7 @@ router.post('/', protect, authorize('host', 'admin'), [
         const propertyData = {
             ...req.body,
             host: req.user.id,
-            isApproved: false // Needs admin approval
+            isApproved: false 
         };
 
         const property = await Property.create(propertyData);

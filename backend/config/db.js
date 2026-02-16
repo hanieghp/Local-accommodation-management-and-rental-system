@@ -11,3 +11,6 @@ const connectDB = async () => {
 };
 
 module.exports = connectDB;
+
+
+// db url: mongodb://localhost:27017/staylocal

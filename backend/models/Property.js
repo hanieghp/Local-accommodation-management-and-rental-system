@@ -137,7 +137,7 @@ const propertySchema = new mongoose.Schema({
 });
 
 // Index for search and filtering
-propertySchema.index({ 'address.city': 'text', title: 'text', description: 'text' });
+propertySchema.index({ 'address.city': 'text', title: 'text', description: 'text' }); //Property.find({ $text: { $search: "Dublin apartment" } })
 propertySchema.index({ 'price.perNight': 1 });
 propertySchema.index({ type: 1 });
 propertySchema.index({ 'capacity.guests': 1 });

@@ -7,7 +7,6 @@ const Property = require('../models/Property');
 const Notification = require('../models/Notification');
 const { protect, authorize } = require('../middleware/auth');
 
-// Helper to create notification
 const createNotification = async (data) => {
     try {
         await Notification.create(data);
@@ -23,11 +22,9 @@ router.get('/', protect, async (req, res) => {
     try {
         let query = {};
         
-        // Admin can see all reservations
         if (req.user.role === 'admin') {
             // No filter - see all
         } else {
-            // Regular users see only their reservations
             query = { guest: req.user.id };
         }
 

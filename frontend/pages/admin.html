@@ -481,17 +481,18 @@
                 if (data.success) {
                     allProperties = data.data.map(p => ({
                         id: p._id,
-                        title: p.title,
+                        title: p.title || '',
                         host: p.host?.name || 'Unknown',
                         hostId: p.host?._id,
-                        city: p.location?.city || '',
-                        area: p.location?.area || p.location?.address || '',
-                        capacity: p.capacity?.guests || p.capacity || 1,
-                        price: p.price,
+                        city: p.address?.city || p.location?.city || '',
+                        area: p.address?.state || p.address?.fullAddress || p.location?.area || '',
+                        capacity: p.capacity?.guests || (typeof p.capacity === 'number' ? p.capacity : 1),
+                        price: p.price?.perNight || (typeof p.price === 'number' ? p.price : 0),
                         status: p.isApproved ? 'active' : 'pending',
                         isApproved: p.isApproved,
                         createdAt: p.createdAt
                     }));
+                    console.log('Properties loaded:', allProperties);
                 }
             } catch (error) {
                 console.error('Error fetching properties:', error);
@@ -686,11 +687,11 @@
         }
         
         function renderProperties() {
-            const search = document.getElementById('propertySearch').value.toLowerCase();
-            const statusFilter = document.getElementById('propertyStatusFilter').value;
-            const locationFilter = document.getElementById('propertyLocationFilter').value;
-            const capacityFilter = document.getElementById('propertyCapacityFilter').value;
-            const sortBy = document.getElementById('propertySortBy').value;
+            const search = (document.getElementById('propertySearch')?.value || '').toLowerCase().trim();
+            const statusFilter = document.getElementById('propertyStatusFilter')?.value || '';
+            const locationFilter = document.getElementById('propertyLocationFilter')?.value || '';
+            const capacityFilter = document.getElementById('propertyCapacityFilter')?.value || '';
+            const sortBy = document.getElementById('propertySortBy')?.value || '';
             
             // Update location filter options
             const locations = [...new Set(allProperties.map(p => p.city).filter(Boolean))].sort();
@@ -719,9 +720,12 @@
             }
             
             let filtered = allProperties.filter(p => {
-                const matchSearch = !search || p.title.toLowerCase().includes(search) || (p.host && p.host.toLowerCase().includes(search));
+                const title = (p.title || '').toLowerCase();
+                const host = (p.host || '').toLowerCase();
+                const city = (p.city || '').toLowerCase();
+                const matchSearch = !search || title.includes(search) || host.includes(search) || city.includes(search);
                 const matchStatus = !statusFilter || p.status === statusFilter;
-                const matchLocation = !locationFilter || p.city === locationFilter;
+                const matchLocation = !locationFilter || (p.city || '').toLowerCase() === locationFilter.toLowerCase();
                 const matchCap = matchCapacity(p.capacity, capacityFilter);
                 return matchSearch && matchStatus && matchLocation && matchCap;
             });

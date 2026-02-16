@@ -15,7 +15,6 @@ const ticketRoutes = require('./routes/tickets');
 
 const app = express();
 
-// Connect to database
 connectDB();
 
 // Middleware
@@ -26,7 +25,7 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// API Routes
+// API
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/properties', propertyRoutes);
@@ -35,7 +34,6 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/tickets', ticketRoutes);
 
-// Serve static files from frontend
 app.use(express.static(path.join(__dirname, '../frontend')));
 
 // Health check endpoint
@@ -68,13 +66,18 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
     console.log(`
-🚀 StayLocal Backend Server
+** StayLocal Backend Server
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📡 Server running on port ${PORT}
-🌐 API URL: http://localhost:${PORT}/api
-📊 Health check: http://localhost:${PORT}/api/health
+Server running on port ${PORT}
+API URL: http://localhost:${PORT}/api
+Health check: http://localhost:${PORT}/api/health
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     `);
 });
 
 module.exports = app;
+
+
+
+// for testing health of server
+// curl http://localhost:5000/api/health

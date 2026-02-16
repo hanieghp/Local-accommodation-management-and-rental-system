@@ -1,11 +1,12 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// Protect routes - require authentication
+// Protect -> checking JWT token
 const protect = async (req, res, next) => {
     let token;
 
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+        // heder defined like: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
         token = req.headers.authorization.split(' ')[1];
     }
 
@@ -18,6 +19,12 @@ const protect = async (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        // token payload
+        // {
+        //    id: "65abc123...",    
+        //    iat: 1707091200,      
+        //    exp: 1707696000       
+        // }
         req.user = await User.findById(decoded.id).select('-password');
 
         if (!req.user) {
@@ -35,7 +42,7 @@ const protect = async (req, res, next) => {
         }
 
         next();
-    } catch (error) {
+    } catch (error) { // TokenExpiredError, JsonWebTokenError
         return res.status(401).json({
             success: false,
             message: 'Not authorized - Invalid token'

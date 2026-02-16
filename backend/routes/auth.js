@@ -5,7 +5,6 @@ const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
 const { protect } = require('../middleware/auth');
 
-// Generate JWT Token
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRE || '7d'
@@ -41,7 +40,6 @@ router.post('/register', [
             });
         }
 
-        // Create user
         user = await User.create({
             name,
             email,
@@ -50,7 +48,6 @@ router.post('/register', [
             role: role || 'traveler'
         });
 
-        // Generate token
         const token = generateToken(user._id);
 
         res.status(201).json({
@@ -93,7 +90,6 @@ router.post('/login', [
 
         const { email, password } = req.body;
 
-        // Check user exists and get password
         const user = await User.findOne({ email }).select('+password');
         if (!user) {
             return res.status(401).json({
@@ -102,7 +98,6 @@ router.post('/login', [
             });
         }
 
-        // Check if user is active
         if (!user.isActive) {
             return res.status(401).json({
                 success: false,
@@ -110,7 +105,6 @@ router.post('/login', [
             });
         }
 
-        // Verify password
         const isMatch = await user.matchPassword(password);
         if (!isMatch) {
             return res.status(401).json({
@@ -119,7 +113,6 @@ router.post('/login', [
             });
         }
 
-        // Generate token
         const token = generateToken(user._id);
 
         res.json({
@@ -265,21 +258,16 @@ router.post('/forgotpassword', [
             });
         }
 
-        // Generate a random password
         const newPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-4).toUpperCase();
         
-        // Update user's password
         user.password = newPassword;
         await user.save();
 
-        // In a real app, you would send this via email
-        // For demo, we'll return it in response (remove in production!)
         console.log(`Password reset for ${email}: ${newPassword}`);
 
         res.json({
             success: true,
             message: 'Password reset successful! Check the console for the new password (in production, this would be sent via email)',
-            // Remove this in production - only for demo!
             newPassword: newPassword
         });
     } catch (error) {
